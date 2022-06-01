@@ -1,0 +1,110 @@
+.flower-spinner,
+.flower-spinner * {
+  box-sizing: border-box;
+}
+
+.flower-spinner {
+  height: 94vh;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.dots-container {
+  height: calc(70px / 7);
+  width: calc(70px / 7);
+}
+
+.flower-spinner .smaller-dot {
+  background: teal;
+  height: 100%;
+  width: 100%;
+  border-radius: 50%;
+  animation: flower-spinner-smaller-dot-animation 2.5s 0s infinite both;
+}
+
+.flower-spinner .bigger-dot {
+  background: teal;
+  height: 100%;
+  width: 100%;
+  padding: 10%;
+  border-radius: 50%;
+  animation: flower-spinner-bigger-dot-animation 5s 0s infinite both;
+}
+
+@keyframes flower-spinner-bigger-dot-animation {
+  0%,
+  100% {
+    box-shadow: teal 0px 0px 0px, teal 0px 0px 0px, teal 0px 0px 0px,
+      teal 0px 0px 0px, teal 0px 0px 0px, teal 0px 0px 0px, teal 0px 0px 0px,
+      teal 0px 0px 0px;
+  }
+
+  50% {
+    transform: rotate(180deg);
+  }
+
+  25%,
+  75% {
+    box-shadow: teal 26px 0px 0px, teal -26px 0px 0px, teal 0px 26px 0px,
+      teal 0px -26px 0px, teal 19px -19px 0px, teal 19px 19px 0px,
+      teal -19px -19px 0px, teal -19px 19px 0px;
+  }
+
+  100% {
+    transform: rotate(360deg);
+    box-shadow: teal 0px 0px 0px, teal 0px 0px 0px, teal 0px 0px 0px,
+      teal 0px 0px 0px, teal 0px 0px 0px, teal 0px 0px 0px, teal 0px 0px 0px,
+      teal 0px 0px 0px;
+  }
+}
+
+@keyframes flower-spinner-smaller-dot-animation {
+  0%,
+  100% {
+    box-shadow: teal 0px 0px 0px, teal 0px 0px 0px, teal 0px 0px 0px,
+      teal 0px 0px 0px, teal 0px 0px 0px, teal 0px 0px 0px, teal 0px 0px 0px,
+      teal 0px 0px 0px;
+  }
+
+  25%,
+  75% {
+    box-shadow: teal 14px 0px 0px, teal -14px 0px 0px, teal 0px 14px 0px,
+      teal 0px -14px 0px, teal 10px -10px 0px, teal 10px 10px 0px,
+      teal -10px -10px 0px, teal -10px 10px 0px;
+  }
+
+  100% {
+    box-shadow: teal 0px 0px 0px, teal 0px 0px 0px, teal 0px 0px 0px,
+      teal 0px 0px 0px, teal 0px 0px 0px, teal 0px 0px 0px, teal 0px 0px 0px,
+      teal 0px 0px 0px;
+  }
+}
+.invisible {
+  display: none !important;
+}
+.scale {
+  color: teal;
+  transition: "transform";
+  animation: grow 2.5s ease-in-out infinite both;
+  transform: scale(1);
+  padding: 20px;
+  margin: 40px;
+}
+@keyframes grow {
+  0% {
+    transform: scale(1);
+    transition: "transform";
+  }
+  50% {
+    transform: scale(1.5);
+    transition: "transform";
+  }
+  100% {
+    transform: scale(1);
+    transition: "transform";
+  }
+}
