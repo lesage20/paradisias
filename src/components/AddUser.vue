@@ -6,14 +6,15 @@
     @close="cancel"
   />
 </template>
-<script>
-import { ref } from "vue";
+
+<script setup>
+import { inject, ref } from "vue";
 import axios from "axios";
 import { useQuasar } from "quasar";
-</script>
-<script setup>
+
+const api = inject("api");
 const groups = await axios
-  .get("http://127.0.0.1:8000/auth/accounts/groups/")
+  .get(api + "accounts/groups/")
   .then((res) => res.data);
 let options = [];
 if (Array.isArray(groups)) {
@@ -69,7 +70,7 @@ function getFormContent(data) {
   loading.value = true;
   console.log(data);
   axios
-    .post("http://127.0.0.1:8000/auth/profil/registration/", data)
+    .post(api + "auth/registration/", data)
     .then((res) => {
       console.log(res);
       loading.value = false;

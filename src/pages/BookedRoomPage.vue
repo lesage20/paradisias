@@ -27,18 +27,19 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, inject } from "vue";
 import { useQuasar } from "quasar";
 import axios from "axios";
 import { isWithinInterval, formatDistanceToNow } from "date-fns";
 import CountDown from "../components/CountDown.vue";
 
+const api = inject("api");
 const $q = useQuasar();
 const bookings = ref([]);
 const endpoints = [
-  "http://127.0.0.1:8000/locations/",
-  "http://127.0.0.1:8000/chambres/",
-  "http://127.0.0.1:8000/auth/accounts/clients/",
+  api + "hotel/locations/",
+  api + "hotel/chambres/",
+  api + "accounts/clients/",
 ];
 onMounted(() => {
   axios

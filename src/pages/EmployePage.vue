@@ -69,19 +69,17 @@ import AddProfil from "src/components/AddProfil.vue";
 import ListTable from "src/components/ListTable.vue";
 import AddUser from "src/components/AddUser.vue";
 import { useQuasar } from "quasar";
-import { ref, onMounted } from "vue";
+import { ref, onMounted, inject } from "vue";
 import axios from "axios";
 
+const api = inject("api");
 const $q = useQuasar();
 const add = ref(false);
 const step = ref(1);
 const groups = ref([]);
 const role = ref("");
 const employes = ref([]);
-const endpoints = [
-  "http://127.0.0.1:8000/auth/accounts/groups",
-  "http://127.0.0.1:8000/auth/accounts/clients/",
-];
+const endpoints = [api + "accounts/groups", api + "accounts/clients/"];
 function startAdd() {
   add.value = true;
   $q.dialog({
@@ -184,7 +182,7 @@ function createRole() {
         });
       }
       axios
-        .post("http://127.0.0.1:8000/auth/accounts/groups/", {
+        .post(api + "accounts/groups/", {
           name: role.value,
         })
         .then((res) => {

@@ -7,10 +7,12 @@
   />
 </template>
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, inject } from "vue";
 import axios from "axios";
 import { useQuasar } from "quasar";
 import { useLoginStore } from "src/stores/login";
+
+const api = inject("api");
 const $q = useQuasar();
 const loading = ref(false);
 const emits = defineEmits(["close", "saved"]);
@@ -18,9 +20,9 @@ function cancel() {
   emits("close");
 }
 const endpoints = [
-  "http://127.0.0.1:8000/types_chambre/",
-  "http://127.0.0.1:8000/auth/accounts/clients/",
-  "http://127.0.0.1:8000/chambres/",
+  api + "types_chambre/",
+  api + "auth/accounts/clients/",
+  api + "chambres/",
 ];
 let typeOptions = ref([]);
 let clientOptions = ref([]);
@@ -104,7 +106,7 @@ function getFormContent(data) {
   loading.value = true;
   data.recorded_by = useLoginStore().user.profil;
   axios
-    .post("http://127.0.0.1:8000/locations/", data)
+    .post(api + "locations/", data)
     .then((res) => {
       console.log(res);
       loading.value = false;

@@ -8,20 +8,18 @@
   />
 </template>
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, inject } from "vue";
 import axios from "axios";
 import { useQuasar } from "quasar";
 
+const api = inject("api");
 const $q = useQuasar();
 const loading = ref(false);
 const emits = defineEmits(["close", "saved"]);
 function cancel() {
   emits("close");
 }
-const endpoints = [
-  "http://127.0.0.1:8000/types_chambre/",
-  "http://127.0.0.1:8000/etages/",
-];
+const endpoints = [api + "types_chambre/", api + "etages/"];
 let typeOptions = ref([]);
 let floorOptions = ref([]);
 onMounted(() => {
@@ -76,7 +74,7 @@ function getFormContent(data) {
   loading.value = true;
   console.log(data);
   axios
-    .post("http://127.0.0.1:8000/chambres/", data)
+    .post(api + "chambres/", data)
     .then((res) => {
       console.log(res);
       loading.value = false;

@@ -92,7 +92,7 @@
       </q-toolbar>
     </q-header>
 
-    <q-drawer v-model="leftDrawerOpen" class="bg-grey-2 text-dark">
+    <q-drawer v-model="leftDrawerOpen" class="text-dark">
       <q-img class="absolute-top gradian" style="height: 150px">
         <div class="absolute-bottom bg-transparent">
           <div class="row justify-center">

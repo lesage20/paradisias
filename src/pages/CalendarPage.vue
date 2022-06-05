@@ -15,14 +15,12 @@ import {
 } from "@quasar/quasar-ui-qcalendar/src/index.js";
 import axios from "axios";
 import RoomValidity from "src/components/RoomValidity.vue";
-import { onMounted, ref } from "vue";
+import { inject, onMounted, ref } from "vue";
 
+const api = inject("api");
 const rooms = ref([]);
 const bookings = ref([]);
-const endpoints = [
-  "http://127.0.0.1:8000/chambres",
-  "http://127.0.0.1:8000/locations/",
-];
+const endpoints = [api + "hotel/chambres", api + "hotel/locations/"];
 const bgcolors = ["orange", "teal", "purple", "blue", "red"];
 onMounted(() => {
   axios.all(endpoints.map((endpoint) => axios.get(endpoint))).then(

@@ -21,17 +21,18 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, inject } from "vue";
 import AddRoomType from "src/components/AddRoomType.vue";
 import ListTable from "src/components/ListTable.vue";
 import { useQuasar } from "quasar";
 import axios from "axios";
 
+const api = inject("api");
 const $q = useQuasar();
 const items = ref([]);
 onMounted(() => {
   axios
-    .get("http://127.0.0.1:8000/types_chambre/")
+    .get(api + "hotel/types_chambre/")
     .then((res) => (items.value = [...res.data]))
     .catch((err) => {
       console.dir(err);

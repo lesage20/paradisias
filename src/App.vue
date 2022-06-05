@@ -5,10 +5,8 @@
   </div>
 </template>
 
-<script>
-import { defineComponent } from "vue";
+<script setup>
+import { provide } from "@vue/runtime-core";
 
-export default defineComponent({
-  name: "App",
-});
+provide("api", "https://paradisias-api.herokuapp.com/");
 </script>

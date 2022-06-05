@@ -60,9 +60,10 @@ import AddProfil from "src/components/AddProfil.vue";
 import ListTable from "src/components/ListTable.vue";
 import AddUser from "src/components/AddUser.vue";
 import { useQuasar } from "quasar";
-import { ref, onMounted } from "vue";
+import { ref, onMounted, inject } from "vue";
 import axios from "axios";
 
+const api = inject("api");
 const $q = useQuasar();
 const add = ref(false);
 const step = ref(1);
@@ -94,7 +95,7 @@ function employeeCreated() {
 }
 onMounted(() => {
   axios
-    .get("http://127.0.0.1:8000/auth/accounts/clients/")
+    .get(api + "accounts/clients/")
     .then((res) => (items.value = [...res.data]))
     .catch((err) => {
       console.dir(err);

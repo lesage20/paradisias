@@ -10,12 +10,13 @@
 <script setup>
 import ListTable from "../components/ListTable.vue";
 import axios from "axios";
-import { onMounted, ref } from "vue";
+import { inject, onMounted, ref } from "vue";
 
+const api = inject("api");
 const items = ref([]);
 onMounted(() => {
   axios
-    .get("http://127.0.0.1:8000/depenses/")
+    .get(api + "hotel/depenses/")
     .then((res) => {
       items.value = res.data;
     })

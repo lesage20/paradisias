@@ -71,12 +71,13 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { inject, ref } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import { useLoginStore } from "src/stores/login";
 import axios from "axios";
 import { useQuasar } from "quasar";
 
+const api = inject("api");
 const $q = useQuasar();
 const username = ref("");
 const password = ref("");
@@ -86,7 +87,7 @@ const loading = ref(false);
 const login = () => {
   loading.value = true;
   axios
-    .post("http://127.0.0.1:8000/auth/login/", {
+    .post(api + "auth/login/", {
       username: username.value,
       password: password.value,
     })

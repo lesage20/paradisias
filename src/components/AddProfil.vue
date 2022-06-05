@@ -7,10 +7,11 @@
   />
 </template>
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, inject } from "vue";
 import axios from "axios";
 import { useQuasar } from "quasar";
 
+const api = inject("api");
 const $q = useQuasar();
 const props = defineProps({
   title: {
@@ -24,7 +25,7 @@ let userOptions = ref([]);
 
 onMounted(() => {
   axios
-    .get("http://127.0.0.1:8000/auth/accounts/users/")
+    .get(api + "accounts/users/")
     .then((res) => {
       users = res.data;
       console.log(users.value);
@@ -135,7 +136,7 @@ function getFormContent(data) {
   loading.value = true;
   console.log(data);
   axios
-    .post("http://127.0.0.1:8000/auth/accounts/profiles/", data)
+    .post(api + "accounts/profiles/", data)
     .then((res) => {
       console.log(res);
       loading.value = false;

@@ -8,9 +8,11 @@
   />
 </template>
 <script setup>
-import { ref } from "vue";
+import { ref, inject } from "vue";
 import axios from "axios";
 import { useQuasar } from "quasar";
+
+const api = inject("api");
 const $q = useQuasar();
 
 const loading = ref(false);
@@ -54,7 +56,7 @@ function getFormContent(data) {
   loading.value = true;
   console.log(data);
   axios
-    .post("http://127.0.0.1:8000/etages/", data)
+    .post(api + "hotel/etages/", data)
     .then((res) => {
       console.log(res);
       loading.value = false;
