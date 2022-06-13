@@ -1,9 +1,26 @@
 <template>
   <q-card :flat="flat">
     <q-toolbar v-if="title" :class="barClass">
+      <q-btn
+        v-if="$q.platform.is.mobile"
+        round
+        icon="fa fa-arrow-left"
+        flat
+        color="white"
+        class="q-mx-none"
+        @click="cancel"
+      ></q-btn>
+
       <q-toolbar-title> {{ title }} </q-toolbar-title>
-      <q-space />
-      <q-btn round icon="close" flat color="white" @click="cancel"></q-btn>
+      <q-space v-if="$q.platform.is.desktop" />
+      <q-btn
+        v-if="$q.platform.is.desktop"
+        round
+        icon="close"
+        flat
+        color="white"
+        @click="cancel"
+      ></q-btn>
     </q-toolbar>
     <q-form>
       <div class="row">
@@ -13,7 +30,11 @@
           class="col-xs-12 col-sm-12 col-md-6 q-pa-sm"
         >
           <q-input
-            v-if="field.type != 'select' && field.type != 'date'"
+            v-if="
+              field.type != 'select' &&
+              field.type != 'date' &&
+              field.type != 'datetime'
+            "
             v-model="formContent[field.model]"
             :type="field.type ? field.type : ''"
             :label="field.label"
@@ -22,8 +43,38 @@
             :prefix="field.prefix ? field.prefix : ''"
             :suffix="field.suffix ? field.suffix : ''"
             :dense="dense"
+            :autogrow="field.autogrow"
           />
-          <template v-else-if="field.type === 'date'">
+          <template v-else-if="field.type == 'date'">
+            <q-input
+              v-if="dateFocus[i] === undefined || dateFocus[i] === false"
+              v-model="formContent[field.model]"
+              :type="'text'"
+              :label="field.label"
+              :hint="field.hint ? field.hint : ''"
+              :required="field.required ? true : false"
+              :prefix="field.prefix ? field.prefix : ''"
+              :suffix="field.suffix ? field.suffix : ''"
+              :dense="dense"
+              @click="textToDate(i)"
+            />
+            <div v-else>
+              <q-dialog
+                v-model="dateFocus[i]"
+                transition-show="scale"
+                transition-hide="scale"
+              >
+                <q-date
+                  v-model="formContent[field.model]"
+                  :title="field.label"
+                  years-in-month-view
+                  today-btn
+                  mask="YYYY-MM-DD"
+                ></q-date>
+              </q-dialog>
+            </div>
+          </template>
+          <template v-else-if="field.type == 'datetime'">
             <q-input
               v-if="dateFocus[i] === undefined || dateFocus[i] === false"
               v-model="formContent[field.model]"
@@ -50,6 +101,7 @@
                   mask="YYYY-MM-DD HH:mm"
                 ></q-date>
                 <q-time
+                  now-btn
                   v-model="formContent[field.model]"
                   class="q-mx-md"
                   mask="YYYY-MM-DD HH:mm"

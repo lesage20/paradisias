@@ -19,7 +19,7 @@ const emits = defineEmits(["close", "saved"]);
 function cancel() {
   emits("close");
 }
-const endpoints = [api + "types_chambre/", api + "etages/"];
+const endpoints = [api + "hotel/types_chambre/", api + "hotel/etages/"];
 let typeOptions = ref([]);
 let floorOptions = ref([]);
 onMounted(() => {
@@ -74,11 +74,11 @@ function getFormContent(data) {
   loading.value = true;
   console.log(data);
   axios
-    .post(api + "chambres/", data)
+    .post(api + "hotel/chambres/", data)
     .then((res) => {
       console.log(res);
       loading.value = false;
-      $q.notify("Client crée avec succès");
+      $q.notify("Chambre crée avec succès");
     })
     .catch((err) => {
       console.dir(err);

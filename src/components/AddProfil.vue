@@ -45,7 +45,7 @@ onMounted(() => {
       );
     });
 });
-const emits = defineEmits(["close", "save"]);
+const emits = defineEmits(["close", "saved"]);
 function cancel() {
   emits("close");
 }
@@ -140,6 +140,7 @@ function getFormContent(data) {
     .then((res) => {
       console.log(res);
       loading.value = false;
+      emits('saved')
       $q.notify("Client crée avec succès");
     })
     .catch((err) => {

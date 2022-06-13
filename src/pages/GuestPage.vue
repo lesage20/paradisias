@@ -17,13 +17,7 @@
               :done="step > 1"
               caption="Optionnel"
             >
-              <Suspense>
-                <AddUser @close="add = false" />
-                <template #fallback>
-                  <q-spinner name="gears"></q-spinner>
-                  Loading...
-                </template>
-              </Suspense>
+              <AddUser @close="add = false" @saved="$refs.stepper.next()" />
             </q-step>
 
             <q-step
@@ -35,7 +29,7 @@
               <AddProfil
                 title="client"
                 @close="$refs.stepper.previous()"
-                @saved="emplCreated"
+                @saved="guestCreated"
               />
             </q-step>
           </q-stepper>
@@ -43,13 +37,42 @@
       </div>
     </div>
     <div v-else class="row">
-      <div class="col">
+      <div class="col-12 desktop-only">
         <ListTable
           :items="items"
           :columns="columns"
           title="Clients"
           @add="startAdd"
         />
+      </div>
+      <div class="col-12 mobile-only">
+        <q-toolbar>
+          <q-toolbar-title> Liste de clients </q-toolbar-title>
+          <q-btn label="ajouter" outline @click="startAdd" color="teal-8" />
+        </q-toolbar>
+        <q-list>
+          <q-item v-for="item in items" :key="item.name + item.firstname">
+            <q-item-section side>
+              <q-avatar size="55px" color="teal-7">
+                <q-icon color="white" name="fa fa-user"> </q-icon>
+              </q-avatar>
+            </q-item-section>
+            <q-item-section>
+              <q-item-section>
+                <q-item-label>
+                  {{ item.name + " " + item.firstname }}
+                </q-item-label>
+                <q-item-label caption class="text-grey">
+                  Tel: {{ item.phone }} <br />
+                  id: {{ item.idNumber }}
+                </q-item-label>
+              </q-item-section>
+            </q-item-section>
+            <q-item-section side>
+              <q-badge>{{ item.gender }}</q-badge>
+            </q-item-section>
+          </q-item>
+        </q-list>
       </div>
     </div>
   </q-page>
@@ -66,7 +89,7 @@ import axios from "axios";
 const api = inject("api");
 const $q = useQuasar();
 const add = ref(false);
-const step = ref(1);
+const step = ref(0);
 const items = ref([]);
 
 function startAdd() {
@@ -74,7 +97,7 @@ function startAdd() {
   $q.dialog({
     title: "Question",
     message:
-      "Pour Ajouter un client il faut d'abord ajouter son compte utilisateur. L'employé a t'il un compte enregistré?",
+      "Pour Ajouter un client il faut d'abord ajouter son compte utilisateur. Le client a t'il un compte enregistré?",
     cancel: "non",
     ok: "oui",
     persistent: true,
@@ -82,26 +105,29 @@ function startAdd() {
     .onOk(() => {
       step.value = 2;
     })
-
     .onCancel(() => {
       step.value = 1;
     });
 }
-function emplCreated() {
-  $q.notify("Employé créé avec succès");
-}
-function employeeCreated() {
-  //
-}
-onMounted(() => {
+function getClients() {
   axios
     .get(api + "accounts/clients/")
-    .then((res) => (items.value = [...res.data]))
+    .then((res) => {
+      items.value = [...res.data];
+    })
     .catch((err) => {
       console.dir(err);
       $q.notify("Une erreur s'est produite durant la recuperation des données");
     });
-});
+}
+function guestCreated() {
+  getClients();
+  add.value = false;
+}
+function employeeCreated() {
+  //
+}
+onMounted(getClients);
 
 const columns = [
   {
@@ -125,6 +151,13 @@ const columns = [
     align: "center",
     label: "prénom",
     field: (row) => row.firstname,
+    sortable: true,
+  },
+  {
+    name: "idNumber",
+    align: "center",
+    label: "N° piece",
+    field: "idNumber",
     sortable: true,
   },
   {

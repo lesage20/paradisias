@@ -2,19 +2,40 @@
   <q-page>
     <div class="row">
       <div class="col">
-        <q-dialog v-model="add">
+        <q-dialog :maximized="$q.platform.is.mobile" v-model="add">
           <AddRoomType @close="add = false"></AddRoomType>
         </q-dialog>
       </div>
     </div>
     <div class="row">
-      <div class="col">
+      <div class="col-12 desktop-only">
         <ListTable
           :columns="columns"
           title="Type de Chambre"
           :items="items"
           @add="add = true"
         />
+      </div>
+      <div class="col-12 mobile-only">
+        <q-toolbar>
+          <q-toolbar-title> Types de chambre </q-toolbar-title>
+          <q-btn label="ajouter" outline @click="add = true" color="teal-8" />
+        </q-toolbar>
+        <q-list separator>
+          <q-item v-for="item in items" :key="item.name">
+            <q-item-section>
+              <q-item-label>
+                {{ item.name }}
+              </q-item-label>
+              <q-item-section caption class="text-grey">
+                {{ item.description }}
+              </q-item-section>
+            </q-item-section>
+            <q-item-section side>
+              <q-badge size="xs">{{ item.price }}FCFA</q-badge>
+            </q-item-section>
+          </q-item>
+        </q-list>
       </div>
     </div>
   </q-page>

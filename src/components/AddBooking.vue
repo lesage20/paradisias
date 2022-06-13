@@ -4,6 +4,7 @@
     title="Ajouter une reservation"
     @save="getFormContent"
     @close="cancel"
+    :dense="$q.platform.is.desktop"
   />
 </template>
 <script setup>
@@ -20,14 +21,14 @@ function cancel() {
   emits("close");
 }
 const endpoints = [
-  api + "types_chambre/",
-  api + "auth/accounts/clients/",
-  api + "chambres/",
+  api + "hotel/types_chambre/",
+  api + "accounts/clients/",
+  api + "hotel/chambres/",
 ];
 let typeOptions = ref([]);
 let clientOptions = ref([]);
 let roomOptions = ref([]);
-onMounted(() => {
+function getDatas() {
   axios.all(endpoints.map((endpoint) => axios.get(endpoint))).then(
     axios.spread((types, clients, rooms) => {
       types.data.forEach((el) => {
@@ -53,7 +54,8 @@ onMounted(() => {
       });
     })
   );
-});
+}
+onMounted(getDatas);
 
 const fields = ref([
   {
@@ -81,14 +83,14 @@ const fields = ref([
   },
   {
     name: "checkIn",
-    type: "date",
+    type: "datetime",
     model: "checkIn",
     required: true,
     label: "Date d'entrée",
   },
   {
     name: "checkOut",
-    type: "date",
+    type: "datetime",
     model: "checkOut",
     required: true,
     label: "Date de sorti",
@@ -104,13 +106,14 @@ const fields = ref([
 
 function getFormContent(data) {
   loading.value = true;
+
   data.recorded_by = useLoginStore().user.profil;
   axios
-    .post(api + "locations/", data)
+    .post(api + "hotel/locations/", data)
     .then((res) => {
-      console.log(res);
       loading.value = false;
-      $q.notify("Client crée avec succès");
+      emits("saved");
+      $q.notify("Location crée avec succès");
     })
     .catch((err) => {
       console.dir(err);

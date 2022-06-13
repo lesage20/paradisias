@@ -1,82 +1,70 @@
 <template>
   <form-generator
     :fields="fields"
-    :loading="loading"
+    title="Ajouter une dépense"
+    :dense="false"
     @save="getFormContent"
     @close="cancel"
   />
 </template>
-
 <script setup>
-import { inject, ref, onMounted } from "vue";
+import { ref, inject } from "vue";
 import axios from "axios";
 import { useQuasar } from "quasar";
+import { useLoginStore as store } from "src/stores/login";
 
 const api = inject("api");
-const groups = ref([]);
-let options = [];
-const fields = ref([
-  {
-    type: "text",
-    name: "username",
-    required: true,
-    model: "username",
-    label: "Nom d'utilisateur",
-    hint: "Ce nom sera utilisé pour se connecter. Il ne doit pas contenir de symbole ou d'espace",
-  },
-  {
-    name: "email",
-    type: "email",
-    model: "email",
-    required: true,
-    label: "Email de l'utilisateur",
-  },
-  {
-    type: "password",
-    name: "password1",
-    required: true,
-    model: "password1",
-    label: "Mot de passe",
-  },
-  {
-    type: "password",
-    name: "password2",
-    required: true,
-    model: "password2",
-    label: "Confirmer mot de passe",
-  },
-]);
-onMounted(() => {
-  axios.get(api + "accounts/groups/").then((res) => {
-    groups.value = res.data;
-    groups.value.forEach((el) => {
-      options.push(el.name);
-    });
-    fields.value.push({
-      type: "select",
-      label: "Le role de l'employé",
-      model: "groups",
-      options: options,
-    });
-    emits('saved')
-  });
-});
+console.dir(store().profile);
+const $q = useQuasar();
+
+const loading = ref(false);
 const emits = defineEmits(["close", "saved"]);
 function cancel() {
   emits("close");
 }
-const $q = useQuasar();
-const loading = ref(false);
-
+const fields = ref([
+  {
+    type: "text",
+    name: "title",
+    required: true,
+    model: "title",
+    label: "Titre de la depense",
+  },
+  {
+    autogrow: true,
+    required: true,
+    name: "description",
+    model: "description",
+    label: "Description de  la dépense",
+    type: "text",
+  },
+  {
+    name: "amount",
+    type: "number",
+    model: "amount",
+    required: true,
+    label: "Le montant de la dépense",
+    prefix: "FCFA",
+  },
+  {
+    name: "date",
+    type: "date",
+    model: "date",
+    required: true,
+    label: "La date ",
+    prefix: "FCFA",
+  },
+]);
 function getFormContent(data) {
   loading.value = true;
   console.log(data);
+  data.spent_by = store().user.profil;
   axios
-    .post(api + "auth/registration/", data)
+    .post(api + "hotel/depenses/", data)
     .then((res) => {
       console.log(res);
       loading.value = false;
-      $q.notify("Compte crée avec succès");
+      $q.notify("Dépense crée avec succès");
       emits("saved");
     })
     .catch((err) => {
@@ -92,10 +80,12 @@ function getFormContent(data) {
           }
         } else {
           for (let msg in data) {
-            if (data[msg] === "Ce champs est obligatoire.") {
+            console.log(data[msg] == "Ce champ est obligatoire.");
+            if (data[msg] == "Ce champ est obligatoire.") {
               $q.notify(
-                "Tous les champs sont obligatoires, veuillez les remplir svp"
+                "Tous les champs avec « * »  sont obligatoires, veuillez les remplir svp"
               );
+              break;
             } else {
               $q.notify(data[msg]);
             }
@@ -107,6 +97,5 @@ function getFormContent(data) {
         $q.notify(err.message);
       }
     });
-  return data;
 }
 </script>

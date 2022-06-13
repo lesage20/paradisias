@@ -57,11 +57,11 @@ function getFormContent(data) {
   loading.value = true;
   console.log(data);
   axios
-    .post(api + "coupons/", data)
+    .post(api + "hotel/coupons/", data)
     .then((res) => {
       console.log(res);
       loading.value = false;
-      $q.notify("Etage crée avec succès");
+      $q.notify("Coupon crée avec succès");
       emits("saved");
     })
     .catch((err) => {

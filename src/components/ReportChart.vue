@@ -7,25 +7,10 @@
     </q-toolbar>
     <q-card-section horizontal>
       <div class="row">
-        <div class="col-xs-6">
-          <q-card-section>
-            <q-list separator>
-              <q-item
-                class="q-pa-sm q-ma-none"
-                v-for="(cat, i) in options.xaxis.categories"
-                :key="cat"
-              >
-                <q-item-section>
-                  <q-item-label caption> {{ cat }} </q-item-label>
-                </q-item-section>
-                <q-item-section side> {{ series[0].data[i] }}</q-item-section>
-              </q-item>
-            </q-list>
-          </q-card-section>
-        </div>
-        <div class="col-xs-6 q-pt-lg">
+        <div class="col-xs-12 q-pt-lg">
           <apexchart
-            width="550"
+            width="100%"
+            height="100%"
             type="bar"
             :options="options"
             :series="series"

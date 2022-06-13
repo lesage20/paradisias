@@ -1,5 +1,5 @@
 <template>
-  <q-card bordered flat>
+  <q-card>
     <q-toolbar class="row justify-between no-wrap">
       <div class="col-auto q-py-md">
         <div class="doc-card-title text-subtitle1">{{ title }}</div>

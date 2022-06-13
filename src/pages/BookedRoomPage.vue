@@ -2,7 +2,11 @@
   <q-page padding>
     <p class="text-h5">Chambres Occupées</p>
     <div v-if="bookings.length" class="row">
-      <div v-for="item in bookings" :key="item.reference" class="col-xs-4">
+      <div
+        v-for="item in bookings"
+        :key="item.reference"
+        class="col-xs-12 col-md-4 q-pa-sm"
+      >
         <q-card dark bordered class="bg-grey-9 my-card">
           <q-card-section class="q-pb-none">
             <div class="text-h6 text-center">{{ item.room_.number }}</div>

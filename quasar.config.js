@@ -90,6 +90,9 @@ module.exports = configure(function (/* ctx */) {
           color: "teal",
           position: "bottom",
         },
+        Notify: {
+          position: "bottom center",
+        },
       },
 
       iconSet: "fontawesome-v6", // Quasar icon set
@@ -103,7 +106,7 @@ module.exports = configure(function (/* ctx */) {
       // directives: [],
 
       // Quasar plugins
-      plugins: ["Loading", "Notify", "Dialog"],
+      plugins: ["Loading", "Notify", "Dialog", "Platform"],
     },
 
     // animations: 'all', // --- includes all animations

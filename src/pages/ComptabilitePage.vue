@@ -1,29 +1,75 @@
 <template>
   <q-page>
-    <q-toolbar>
-      <q-toolbar-title> Depenses </q-toolbar-title>
-    </q-toolbar>
-    <ListTable title="Dépenses" :columns="columns" :items="items" />
+    <div class="row">
+      <div class="col">
+        <q-dialog :maximized="$q.platform.is.mobile" v-model="add" persistent>
+          <AddDepense @close="add = false" @saved="created" />
+        </q-dialog>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-12 desktop-only">
+        <ListTable
+          @add="add = true"
+          title="Dépenses"
+          :columns="columns"
+          :items="items"
+        />
+      </div>
+      <div class="col-12">
+        <div class="col-12 mobile-only">
+          <q-toolbar>
+            <q-toolbar-title>Liste de dépenses </q-toolbar-title>
+            <q-btn label="ajouter" outline @click="add = true" color="teal-8" />
+          </q-toolbar>
+          <q-list separator>
+            <q-item v-for="item in items" :key="item.title">
+              <q-item-section>
+                <q-item-label>
+                  {{ item.author.name }} {{ item.author.firstname }}
+                </q-item-label>
+                <q-item-section caption class="text-grey">
+                  {{ item.title }} le
+                  {{ new Date(item.date).toLocaleDateString() }}
+                </q-item-section>
+              </q-item-section>
+              <q-item-section side>
+                <q-badge>{{ item.amount }} FCFA</q-badge>
+              </q-item-section>
+            </q-item>
+          </q-list>
+        </div>
+      </div>
+    </div>
   </q-page>
 </template>
 
 <script setup>
 import ListTable from "../components/ListTable.vue";
+import AddDepense from "../components/AddDepense.vue";
 import axios from "axios";
 import { inject, onMounted, ref } from "vue";
 
 const api = inject("api");
+const add = ref(false);
 const items = ref([]);
-onMounted(() => {
-  axios
-    .get(api + "hotel/depenses/")
-    .then((res) => {
-      items.value = res.data;
+const profiles = ref([]);
+const endpoints = [api + "hotel/depenses/", api + "accounts/profiles/"];
+function getDatas() {
+  axios.all(endpoints.map((endpoint) => axios.get(endpoint))).then(
+    axios.spread((depenses, profilesData) => {
+      profiles.value = profilesData.data;
+      items.value = depenses.data;
+      items.value.forEach((el) => {
+        el.author = profiles.value.filter(
+          (profile) => (profile.id = el.spent_by)
+        )[0];
+      });
     })
-    .catch((err) => {
-      console.dir(err);
-    });
-});
+  );
+}
+onMounted(getDatas);
 
 const columns = ref([
   {
@@ -58,7 +104,7 @@ const columns = ref([
     required: true,
     label: "Auteur",
     align: "center",
-    field: (row) => row.spent_by,
+    field: (row) => row.author.name + " " + row.author.firstname,
     format: (val) => `${val}`,
     sortable: true,
   },
@@ -72,4 +118,8 @@ const columns = ref([
     sortable: true,
   },
 ]);
+function created() {
+  getDatas();
+  add.value = false;
+}
 </script>

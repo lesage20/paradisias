@@ -2,19 +2,41 @@
   <q-page>
     <div class="row">
       <div class="col">
-        <q-dialog v-model="add">
+        <q-dialog :maximized="$q.platform.is.mobile" v-model="add">
           <AddRoom @close="add = false" />
         </q-dialog>
       </div>
     </div>
     <div class="row">
-      <div class="col">
+      <div class="col-12 desktop-only">
         <ListTable
           :columns="columns"
           :items="items"
           title="Chambres"
           @add="add = true"
         />
+      </div>
+      <div class="col-12 mobile-only">
+        <q-toolbar>
+          <q-toolbar-title> Liste de chambres </q-toolbar-title>
+          <q-btn label="ajouter" outline @click="add = true" color="teal-8" />
+        </q-toolbar>
+        <q-list separator>
+          <q-item v-for="item in items" :key="item.number">
+            <q-item-section>
+              <q-item-label>
+                {{ item.number }}
+              </q-item-label>
+              <q-item-section caption class="text-grey">
+                etage: {{ item.etage.number }} &bullet; prix:
+                {{ item.type_chambre.price }} FCFA
+              </q-item-section>
+            </q-item-section>
+            <q-item-section side>
+              <q-badge size="xs">{{ item.type_chambre.name }}</q-badge>
+            </q-item-section>
+          </q-item>
+        </q-list>
       </div>
     </div>
   </q-page>
@@ -30,14 +52,27 @@ import axios from "axios";
 const api = inject("api");
 const $q = useQuasar();
 const items = ref([]);
+const types_chambre = ref([]);
+const etages = ref([]);
+const endpoints = [
+  api + "hotel/chambres/",
+  api + "hotel/types_chambre/",
+  api + "hotel/etages/",
+];
 onMounted(() => {
-  axios
-    .get(api + "hotel/chambres/")
-    .then((res) => (items.value = [...res.data]))
-    .catch((err) => {
-      console.dir(err);
-      $q.notify("Une erreur s'est produite durant la recuperation des données");
-    });
+  axios.all(endpoints.map((endpoint) => axios.get(endpoint))).then(
+    axios.spread((chambres, types, floors) => {
+      types_chambre.value = types.data;
+      etages.value = floors.data;
+      items.value = chambres.data;
+      items.value.forEach((el) => {
+        el.etage = etages.value.filter((etage) => (etage.id = el.floor))[0];
+        el.type_chambre = types_chambre.value.filter(
+          (type) => (type.id = el.type)
+        )[0];
+      });
+    })
+  );
 });
 const add = ref(false);
 const columns = [
@@ -61,14 +96,21 @@ const columns = [
     name: "type",
     align: "center",
     label: "Type de Chambre",
-    field: "type",
+    field: (row) => row.type_chambre.name,
     sortable: true,
   },
   {
     name: "floor",
     align: "center",
     label: "Etage",
-    field: "floor",
+    field: (row) => row.etage.number,
+    sortable: true,
+  },
+  {
+    name: "price",
+    align: "center",
+    label: "Prix",
+    field: (row) => row.type_chambre.price,
     sortable: true,
   },
   {

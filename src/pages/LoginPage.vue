@@ -1,13 +1,11 @@
 <template>
-  <q-page padding class="flex flex-center">
-    <!-- content -->
-    <div>
-      <q-card
-        class="my-card align-item-center"
-        style="width: 400px"
-        flat
-        bordered
-      >
+  <q-page
+    :padding="$q.platform.is.desktop"
+    :class="$q.platform.is.desktop ? 'flex flex-center' : 'column'"
+  >
+    <!-- desktop display -->
+    <div class="desktop-only">
+      <q-card class="align-item-center" style="width: 400px" flat bordered>
         <h4 class="text-center text-grey-9 q-ma-sm">Connexion</h4>
         <q-card-section class="text-body2 text-grey q-py-none q-my-none">
           <p class="q-my-none q-px-md text-center">
@@ -67,6 +65,67 @@
         </q-card-section>
       </q-card>
     </div>
+
+    <!-- mobile display -->
+    <div class="mobile-only">
+      <q-card class="align-item-center bg-transparent" style="width: 100%" flat>
+        <h3 class="text-center text-grey-9 q-ma-sm">Connexion</h3>
+        <q-card-section class="text-body1 text-grey q-py-none q-my-none">
+          <p class="q-my-none q-px-md text-center">
+            Connectez vous a votre compte utilisateur pour accéder à
+            l'application
+          </p>
+        </q-card-section>
+        <q-card-section>
+          <div class="q-px-none">
+            <q-form class="q-gutter-md">
+              <q-input
+                v-model="username"
+                prepend="fa fa-lock"
+                label="Nom d'utilisateur *"
+                lazy-rules
+                :rules="[
+                  (val) => (val && val.length > 0) || 'Please type something',
+                ]"
+              >
+                <template #prepend>
+                  <q-icon name="fa fa-user"></q-icon>
+                </template>
+              </q-input>
+
+              <q-input
+                v-model="password"
+                type="password"
+                placeholder="Mot de passe"
+                name="password"
+                label="Mot de passe"
+                lazy-rules
+                :rules="[
+                  (val) =>
+                    (val !== null && val !== '') ||
+                    'Veuillez entrer votre mot de passe',
+                ]"
+              >
+                <template #prepend>
+                  <q-icon name="fa fa-lock"></q-icon>
+                </template>
+              </q-input>
+              <q-space vertical></q-space>
+              <div>
+                <q-btn
+                  class="full-width"
+                  label="Submit"
+                  type="submit"
+                  color="primary"
+                  :loading="loading"
+                  @click.prevent="login()"
+                />
+              </div>
+            </q-form>
+          </div>
+        </q-card-section>
+      </q-card>
+    </div>
   </q-page>
 </template>
 
@@ -79,6 +138,7 @@ import { useQuasar } from "quasar";
 
 const api = inject("api");
 const $q = useQuasar();
+console.log($q.platform);
 const username = ref("");
 const password = ref("");
 const router = useRouter();
@@ -115,3 +175,13 @@ const login = () => {
   // }
 };
 </script>
+<style>
+.column {
+  display: flex !important;
+  justify-content: end !important;
+  align-items: flex-end !important;
+  align-content: flex-end !important;
+  justify-items: end !important;
+  flex-direction: column !important;
+}
+</style>

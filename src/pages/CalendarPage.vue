@@ -1,8 +1,8 @@
 <template>
-  <q-page padding>
+  <q-page :padding="$q.platform.is.desktop">
     <!-- <q-date class="full-width" calendar></q-date> -->
-    <q-card bordered flat>
-      <RoomValidity :events="events"></RoomValidity>
+    <q-card class="bg-transparent q-py-sm" flat>
+      <RoomValidity class="bg-transparent" :events="events"></RoomValidity>
     </q-card>
     <div class="q-py-md"></div>
   </q-page>
@@ -14,9 +14,11 @@ import {
   today,
 } from "@quasar/quasar-ui-qcalendar/src/index.js";
 import axios from "axios";
+import { useQuasar } from "quasar";
 import RoomValidity from "src/components/RoomValidity.vue";
 import { inject, onMounted, ref } from "vue";
 
+const $q = useQuasar();
 const api = inject("api");
 const rooms = ref([]);
 const bookings = ref([]);

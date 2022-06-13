@@ -130,11 +130,8 @@
     </q-drawer>
 
     <q-page-container class="bg-grey-2">
-      <div class="row justify-between q-py-sm q-px-lg">
-        <div class="col">
-          <p class="text-h6 text-teal-8">{{ items[items.length - 1].name }}</p>
-        </div>
-        <div class="col justify-end items-end">
+      <div class="row justify-center q-py-sm q-px-lg">
+        <div class="col-xs-12 text-center">
           <BreadCrumb :items="items" />
         </div>
       </div>
@@ -155,8 +152,10 @@ import { defineComponent, watch, ref } from "vue";
 import EssentialLink from "components/EssentialLink.vue";
 import { useLoginStore as store } from "src/stores/login";
 import BreadCrumb from "src/components/BreadCrumb.vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
+import { useQuasar } from "quasar";
 
+const $q = useQuasar();
 const night = ref(true);
 const linksList = [
   {
@@ -184,10 +183,6 @@ const linksList = [
         link: { name: "Rooms" },
         title: "Chambres",
       },
-      // {
-      //   link: { name: "PriceManager" },
-      //   title: "Gestion de Prix",
-      // },
       {
         link: { name: "Coupon" },
         title: "Coupon de Reduction",
@@ -236,6 +231,10 @@ const linksList = [
         link: { name: "Comptabilite" },
         title: "Comptabilite",
       },
+      {
+        link: { name: "Statistics" },
+        title: "Statistiques",
+      },
     ],
   },
   {
@@ -248,6 +247,7 @@ const linksList = [
 
 let items = ref([]);
 const route = useRoute();
+const router = useRouter();
 
 items.value = route.matched;
 const user = store().user;
@@ -256,9 +256,10 @@ watch(route, () => {
 });
 function logout() {
   store().logout();
+  router.push({ name: "Login" });
 }
 
-const leftDrawerOpen = ref(true);
+const leftDrawerOpen = ref($q.platform.is.desktop);
 
 function toggleLeftDrawer() {
   leftDrawerOpen.value = !leftDrawerOpen.value;

@@ -81,12 +81,22 @@ const routes = [
             name: "Employees",
             component: () => import("pages/EmployePage.vue"),
           },
+          {
+            path: "statistics",
+            name: "Statistics",
+            component: () => import("pages/StatisticPage.vue"),
+          },
         ],
       },
       {
         path: "/reports",
         component: () => import("pages/ReportPage.vue"),
         name: "Reports",
+      },
+      {
+        path: "/test",
+        component: () => import("pages/TestPage.vue"),
+        name: "Tests",
       },
     ],
   },
