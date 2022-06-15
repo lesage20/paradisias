@@ -3,12 +3,19 @@
     <div class="row">
       <div class="col q-pa-md">
         <q-btn
-          class="full-width" color="primary" @click="comp = 'TitleComponent'">
+          class="full-width"
+          color="primary"
+          @click="comp = 'TitleComponent'"
+        >
           titre
         </q-btn>
       </div>
       <div class="col q-pa-md">
-        <q-btn class="full-width" color="blue-8" @click="comp = 'ContentComponent'">
+        <q-btn
+          class="full-width"
+          color="blue-8"
+          @click="comp = 'ContentComponent'"
+        >
           Contenu
         </q-btn>
       </div>
@@ -20,6 +27,9 @@
         </keep-alive>
       </div>
     </div>
+    <div class="row">
+      <div class="gradient" style="width: 40%; height: 20vh"></div>
+    </div>
   </q-page>
 </template>
 <script setup>
@@ -28,3 +38,9 @@ import ContentComponent from "src/components/ContentComponent.vue";
 import { ref } from "vue";
 const comp = ref("TitleComponent");
 </script>
+
+<style>
+.gradient {
+  background-image: linear-gradient( 135deg, #ABDCFF 10%, #0396FF 100%);
+}
+</style>

@@ -271,7 +271,6 @@ function toggleLeftDrawer() {
   --animate-delay: 0.9s;
 }
 .gradian {
-  background: teal;
-  background-size: 40px 40px;
+  background: linear-gradient(to top, teal 20%, rgb(47, 163, 163));
 }
 </style>

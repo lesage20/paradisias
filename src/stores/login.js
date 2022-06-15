@@ -1,10 +1,11 @@
 import { defineStore } from "pinia";
 import axios from "axios";
 
-async function getProfile(id) {
-  const profile = await axios.get(
-    `http://127.0.0.1:800/auth/accounts/profiles/${id}`
-  );
+function getProfile(id) {
+  const profile = {};
+  axios.get(`http://127.0.0.1:800/auth/accounts/profiles/${id}`).then((res) => {
+    profile = res.data;
+  });
   return profile;
 }
 export const useLoginStore = defineStore("login", {
@@ -20,9 +21,9 @@ export const useLoginStore = defineStore("login", {
       this.loggedIn = true;
       this.token = data.access_token;
       this.user = data.user;
-      this.profile = await axios.get(
-        `http://127.0.0.1:800/auth/accounts/profiles/${data.user.profil}`
-      );
+      this.profile = await axios
+        .get(`http://127.0.0.1:800/auth/accounts/profiles/${data.user.profil}`)
+        .then((res) => res.data);
     },
     logout() {
       this.loggedIn = false;

@@ -10,6 +10,6 @@
 <script setup>
 import { provide } from "@vue/runtime-core";
 
-// provide("api", "https://paradisias-api.herokuapp.com/");
-provide("api", "http://192.168.43.108:8000/");
+provide("api", "https://paradisias-api.herokuapp.com/");
+// provide("api", "http://192.168.43.108:8000/");
 </script>

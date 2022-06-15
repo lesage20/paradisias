@@ -1,19 +1,11 @@
 <template>
   <q-page :padding="true">
-    <h2
-      :class="{
-        'q-px-sm text-subtitle1': true,
-        'text-center': $q.platform.is.mobile,
-      }"
-    >
-      Aujourd'hui
-    </h2>
     <div class="row desktop-only">
       <div class="col-xs-12 col-sm-6 col-md-3 q-pa-xs">
         <ImportantCard
           color="teal"
           title="Locations"
-          :number="todayLoc.length"
+          :number="locations.length"
           icon="fa fa-list"
         />
       </div>
@@ -22,37 +14,40 @@
           title="Revenue"
           color="orange-9"
           icon="fa fa-dollar-sign fa-bounce"
+          :number="chambres.length"
         />
       </div>
       <div class="col-xs-12 col-sm-6 col-md-3 q-pa-xs">
         <ImportantCard
           color="blue-8"
           title="Chambres louées"
-          :number="3"
           icon="fa fa-bed"
+          :number="chambres.length"
         />
       </div>
       <div class="col-xs-12 col-sm-6 col-md-3 q-pa-xs">
         <ImportantCard
           color="teal"
           title="Clients"
-          :number="3"
           icon="fa fa-users"
+          :number="clients.length"
         />
       </div>
     </div>
 
-    <q-card bordered flat class="q-py-md mobile-only">
+    <q-card class="q-py-md gradient mobile-only">
       <div class="row">
         <div class="col-xs-4 text-center">
           <div>
-            <q-chip square class="text-h6 text-teal" color="white"> 12 </q-chip>
+            <q-chip square class="text-h6 text-white" color="transparent">
+              {{ locations.length }}
+            </q-chip>
           </div>
           Locations
         </div>
         <div class="col-xs-4 text-center">
           <div>
-            <q-chip square class="text-h6 text-teal" color="white">
+            <q-chip square class="text-h6 text-white" color="transparent">
               600000F
             </q-chip>
           </div>
@@ -60,7 +55,9 @@
         </div>
         <div class="col-xs-4 text-center">
           <div>
-            <q-chip square class="text-h6 text-teal" color="white"> 6 </q-chip>
+            <q-chip square class="text-h6 text-white" color="transparent">
+              {{ clients.length }}
+            </q-chip>
           </div>
           Clients
         </div>
@@ -805,3 +802,9 @@ const locationColumns = [
   },
 ];
 </script>
+<style>
+.gradient {
+  background: linear-gradient(to right,  teal 25%, rgb(47, 163, 163) );
+  color: white;
+}
+</style>
