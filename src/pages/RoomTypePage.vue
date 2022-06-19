@@ -2,7 +2,7 @@
   <q-page>
     <div class="row">
       <div class="col">
-        <q-dialog :maximized="$q.platform.is.mobile" v-model="add">
+        <q-dialog v-model="add" :maximized="$q.platform.is.mobile">
           <AddRoomType @close="add = false"></AddRoomType>
         </q-dialog>
       </div>
@@ -19,7 +19,7 @@
       <div class="col-12 mobile-only">
         <q-toolbar>
           <q-toolbar-title> Types de chambre </q-toolbar-title>
-          <q-btn label="ajouter" outline @click="add = true" color="teal-8" />
+          <q-btn label="ajouter" outline color="teal-8" @click="add = true" />
         </q-toolbar>
         <q-list separator>
           <q-item v-for="item in items" :key="item.name">

@@ -13,7 +13,7 @@
 
         <q-toolbar-title> Paradisias Hotel </q-toolbar-title>
 
-        <q-btn-dropdown flat dropdown-icon="fa fa-bell" @click="onMainClick">
+        <q-btn-dropdown flat dropdown-icon="fa fa-bell">
           <q-list>
             <q-item>
               <q-item-section>

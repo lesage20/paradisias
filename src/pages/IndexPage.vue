@@ -1,31 +1,24 @@
 <template>
   <q-page :padding="true">
-    <div class="row desktop-only">
-      <div class="col-xs-12 col-sm-6 col-md-3 q-pa-xs">
-        <ImportantCard
-          color="teal"
-          title="Locations"
-          :number="locations.length"
-          icon="fa fa-list"
-        />
-      </div>
-      <div class="col-xs-12 col-sm-6 col-md-3 q-pa-xs">
+    <div class="row justify-between desktop-only">
+      <div class="col-xs-12 col-sm-6 col-md-5 q-pa-xs">
         <ImportantCard
           title="Revenue"
-          color="orange-9"
+          color="teal"
           icon="fa fa-dollar-sign fa-bounce"
-          :number="chambres.length"
+          :number="revenue"
         />
       </div>
-      <div class="col-xs-12 col-sm-6 col-md-3 q-pa-xs">
+
+      <div class="col-xs-12 col-sm-6 col-md-2 q-pa-xs">
         <ImportantCard
-          color="blue-8"
-          title="Chambres louées"
+          color="orange-9"
+          title="Chambres"
           icon="fa fa-bed"
           :number="chambres.length"
         />
       </div>
-      <div class="col-xs-12 col-sm-6 col-md-3 q-pa-xs">
+      <div class="col-xs-12 col-sm-6 col-md-2 q-pa-xs">
         <ImportantCard
           color="teal"
           title="Clients"
@@ -33,36 +26,46 @@
           :number="clients.length"
         />
       </div>
+      <div class="col-xs-12 col-sm-6 col-md-3 q-pa-xs">
+        <ImportantCard
+          color="orange-9"
+          title="Locations"
+          :number="locations.length"
+          icon="fa fa-list"
+        />
+      </div>
     </div>
 
-    <q-card class="q-py-md gradient mobile-only">
-      <div class="row">
-        <div class="col-xs-4 text-center">
-          <div>
-            <q-chip square class="text-h6 text-white" color="transparent">
-              {{ locations.length }}
-            </q-chip>
+    <div class="row mobile-only">
+      <q-card style="width: 100%" class="q-py-md gradient">
+        <div class="row">
+          <div class="col-xs-4 text-center">
+            <div>
+              <q-chip square class="text-h6 text-white" color="transparent">
+                {{ locations.length }}
+              </q-chip>
+            </div>
+            Locations
           </div>
-          Locations
-        </div>
-        <div class="col-xs-4 text-center">
-          <div>
-            <q-chip square class="text-h6 text-white" color="transparent">
-              600000F
-            </q-chip>
+          <div class="col-xs-4 text-center">
+            <div>
+              <q-chip square class="text-h6 text-white" color="transparent">
+                600000F
+              </q-chip>
+            </div>
+            Revenue
           </div>
-          Revenue
-        </div>
-        <div class="col-xs-4 text-center">
-          <div>
-            <q-chip square class="text-h6 text-white" color="transparent">
-              {{ clients.length }}
-            </q-chip>
+          <div class="col-xs-4 text-center">
+            <div>
+              <q-chip square class="text-h6 text-white" color="transparent">
+                {{ clients.length }}
+              </q-chip>
+            </div>
+            Clients
           </div>
-          Clients
         </div>
-      </div>
-    </q-card>
+      </q-card>
+    </div>
 
     <div class="row">
       <div class="col-xs-12">
@@ -130,10 +133,39 @@
         </q-card>
       </div>
     </div>
-    <div class="row">
+    <div class="row content-end items-end">
+      <div class="col-xs-12 col-sm-12 col-md-8 q-py-sm q-pr-sm">
+        <q-card id="chart" class="">
+          <q-item>
+            <q-item-section
+              :class="{
+                'text-body2 text-center': true,
+                'text-center': true,
+              }"
+            >
+              <q-item-label
+                :class="{
+                  'text-body2 text-center': true,
+                  'text-center': true,
+                }"
+              >
+                Revenues et dépenses de la semaine
+              </q-item-label>
+            </q-item-section>
+          </q-item>
+          <q-separator></q-separator>
+          <apexchart
+            type="bar"
+            width="100%"
+            height="130%"
+            :options="chartOptions"
+            :series="series"
+          ></apexchart>
+        </q-card>
+      </div>
       <div
+        class="col-xs-12 col-sm-4 q-py-sm"
         :class="{
-          'col-xs-12 col-sm-6 col-md-4 q-py-sm': true,
           'q-pr-sm': $q.platform.is.desktop,
         }"
       >
@@ -141,40 +173,45 @@
           <q-list separator>
             <q-item>
               <q-item-section>
-                <q-item-label> Etages </q-item-label>
+                <q-item-label> Chambres </q-item-label>
               </q-item-section>
               <q-item-section side>
                 <q-btn
                   dense
-                  :to="{ name: 'Floors' }"
+                  :to="{ name: 'Rooms' }"
                   flat
                   color="primary"
                   no-caps
                 >
-                  Tous les étages
+                  Toutes les chambres
                   <q-icon right name="keyboard_arrow_right"></q-icon>
                   <q-tooltip> Voir tous les étages </q-tooltip>
                 </q-btn>
               </q-item-section>
             </q-item>
-            <q-item v-for="etage in etages.slice(0, 5)" :key="etage.name">
+            <q-item
+              v-for="chambre in chambres.slice(0, 5)"
+              :key="chambre.number"
+            >
               <q-item-section>
                 <q-item-label>
-                  {{ etage.name }}
+                  {{ chambre.number }}
                 </q-item-label>
-                <q-item-label caption>
-                  {{ etage.description }}
+                <q-item-label caption class="text-grey">
+                  {{ chambre.type_chambre.price }} FCFA
                 </q-item-label>
               </q-item-section>
               <q-item-section side>
-                <q-badge> étage {{ etage.number }} </q-badge>
+                <q-badge size="xs">{{ chambre.type_chambre.name }}</q-badge>
               </q-item-section>
             </q-item>
           </q-list>
         </q-card>
       </div>
+    </div>
+    <div class="row items-end">
       <div
-        class="col-xs-12 col-sm-6 col-md-4 q-py-sm"
+        class="col-xs-12 col-sm-6 col-md-6 q-py-sm"
         :class="{
           'q-pa-sm': $q.platform.is.desktop,
         }"
@@ -216,7 +253,7 @@
         </q-card>
       </div>
       <div
-        class="col-xs-12 col-sm-6 col-md-4 q-py-sm"
+        class="col-xs-12 col-sm-6 col-md-6 q-py-sm"
         :class="{
           'q-pl-sm': $q.platform.is.desktop,
         }"
@@ -258,10 +295,10 @@
         </q-card>
       </div>
     </div>
-    <div class="row">
+    <div class="row items-end">
       <div
-        class="col-xs-12 col-sm-6 q-py-sm"
         :class="{
+          'col-xs-12 col-sm-6 col-md-6 q-py-sm': true,
           'q-pr-sm': $q.platform.is.desktop,
         }"
       >
@@ -269,36 +306,33 @@
           <q-list separator>
             <q-item>
               <q-item-section>
-                <q-item-label> Chambres </q-item-label>
+                <q-item-label> Etages </q-item-label>
               </q-item-section>
               <q-item-section side>
                 <q-btn
                   dense
-                  :to="{ name: 'Rooms' }"
+                  :to="{ name: 'Floors' }"
                   flat
                   color="primary"
                   no-caps
                 >
-                  Toutes les chambres
+                  Tous les étages
                   <q-icon right name="keyboard_arrow_right"></q-icon>
                   <q-tooltip> Voir tous les étages </q-tooltip>
                 </q-btn>
               </q-item-section>
             </q-item>
-            <q-item
-              v-for="chambre in chambres.slice(0, 5)"
-              :key="chambre.number"
-            >
+            <q-item v-for="etage in etages.slice(0, 5)" :key="etage.name">
               <q-item-section>
                 <q-item-label>
-                  {{ chambre.number }}
+                  {{ etage.name }}
                 </q-item-label>
-                <q-item-label caption class="text-grey">
-                  {{ chambre.type_chambre.price }} FCFA
+                <q-item-label caption>
+                  {{ etage.description }}
                 </q-item-label>
               </q-item-section>
               <q-item-section side>
-                <q-badge size="xs">{{ chambre.type_chambre.name }}</q-badge>
+                <q-badge> étage {{ etage.number }} </q-badge>
               </q-item-section>
             </q-item>
           </q-list>
@@ -353,7 +387,7 @@
         </q-card>
       </div>
     </div>
-    <div class="row">
+    <div class="row items-end">
       <div
         class="col-xs-12 col-sm-8 q-py-sm"
         :class="{
@@ -441,14 +475,14 @@
         </q-card>
       </div>
     </div>
-    <div class="row">
+    <div class="row items-end">
       <div
         class="col-xs-12 col-sm-4 q-py-sm"
         :class="{
           'q-pr-sm': $q.platform.is.desktop,
         }"
       >
-        <q-card>
+        <q-card class="gradient">
           <q-list separator>
             <q-item>
               <q-item-section>
@@ -465,6 +499,7 @@
             Vous pouvez aussi télécharger la liste des locations, et des
             depenses du jour, de la semaine, du mois ...
             <q-btn
+              unelevated
               :to="{ name: 'Reports' }"
               color="primary"
               class="q-mx-lg q-mt-sm full-width"
@@ -503,7 +538,7 @@
                 </q-btn>
               </q-item-section>
             </q-item>
-            <q-list dense separator>
+            <q-list separator>
               <q-item
                 v-for="item in clients.slice(0, 5)"
                 :key="item.name + item.firstname"
@@ -540,14 +575,28 @@
 import { ref, onMounted, watchEffect, inject } from "vue";
 import ImportantCard from "src/components/ImportantCard.vue";
 import ReportChart from "src/components/ReportChart.vue";
-import { useQuasar } from "quasar";
+import { QSpinnerIos, useQuasar } from "quasar";
 import axios from "axios";
-import { isThisWeek, isThisMonth, isToday } from "date-fns";
+import {
+  isThisWeek,
+  isThisMonth,
+  isToday,
+  isMonday,
+  isTuesday,
+  isThursday,
+  isWednesday,
+  isFriday,
+  isSaturday,
+  isSunday,
+} from "date-fns";
 
 const api = inject("api");
 
 const $q = useQuasar();
-const series = ref([]);
+const series = ref([
+  { name: "Revenues", data: [0, 0, 0, 0, 0, 0, 0], color: "#30BFBF" },
+  { name: "Dépenses", data: [0, 0, 0, 0, 0, 0, 0], color: "#f67" },
+]);
 
 // variable dont la valeur se trouve dans la bd
 const locations = ref([]);
@@ -562,12 +611,21 @@ const employes = ref([]);
 const roles = ref([]);
 
 // variable calculée des precedentes variables
-const todayLoc = ref([]);
-const weekLoc = ref([]);
-const monthLoc = ref([]);
-const todayDep = ref([]);
-const weekDep = ref([]);
-const monthDep = ref([]);
+const revenue = ref(0);
+const monRev = ref(0);
+const tueRev = ref(0);
+const wedRev = ref(0);
+const thuRev = ref(0);
+const friRev = ref(0);
+const satRev = ref(0);
+const sunRev = ref(0);
+const monDep = ref(0);
+const tueDep = ref(0);
+const wedDep = ref(0);
+const thuDep = ref(0);
+const friDep = ref(0);
+const satDep = ref(0);
+const sunDep = ref(0);
 
 const endpoints = [
   api + "hotel/locations/",
@@ -582,6 +640,13 @@ const endpoints = [
   api + "accounts/employes/",
 ];
 function getAllData() {
+  let dialog = $q.dialog({
+    title: "Récupération de données",
+    persistent: true,
+    progress: { spinner: QSpinnerIos, color: "primary" },
+    message: "Veuillez patienter pendant que les données se chargent.",
+    ok: false,
+  });
   axios.all(endpoints.map((endpoint) => axios.get(endpoint))).then(
     axios.spread(
       (
@@ -607,6 +672,38 @@ function getAllData() {
         profiles.value = profileList.data;
         employes.value = employeList.data;
         depenses.value.forEach((el) => {
+          if (isThisWeek(new Date(el.date))) {
+            monDep.value += isMonday(new Date(el.date))
+              ? parseInt(el.amount)
+              : 0;
+            tueDep.value += isTuesday(new Date(el.date))
+              ? parseInt(el.amount)
+              : 0;
+            wedDep.value += isWednesday(new Date(el.date))
+              ? parseInt(el.amount)
+              : 0;
+            thuDep.value += isThursday(new Date(el.date))
+              ? parseInt(el.amount)
+              : 0;
+            friDep.value += isFriday(new Date(el.date))
+              ? parseInt(el.amount)
+              : 0;
+            satDep.value += isSaturday(new Date(el.date))
+              ? parseInt(el.amount)
+              : 0;
+            sunDep.value += isSunday(new Date(el.date))
+              ? parseInt(el.amount)
+              : 0;
+          }
+          series.value[1].data = [
+            monDep.value,
+            tueDep.value,
+            wedDep.value,
+            thuDep.value,
+            friDep.value,
+            satDep.value,
+            sunDep.value,
+          ];
           el.author = profiles.value.filter(
             (profile) => (profile.id = el.spent_by)
           )[0];
@@ -619,6 +716,7 @@ function getAllData() {
           )[0];
         });
         locations.value.forEach((el) => {
+          revenue.value += el.totalPrice;
           el.chambre = chambres.value.filter(
             (chambre) => (chambre.id = el.room)
           )[0];
@@ -628,17 +726,41 @@ function getAllData() {
           el.client = clients.value.filter(
             (client) => client.id == el.guest
           )[0];
-          if (isToday(new Date(el.checkIn))) {
-            todayLoc.value.push(el);
-          }
+
           if (isThisWeek(new Date(el.checkIn))) {
-            weekLoc.value.push(el);
-          }
-          if (isThisMonth(new Date(el.checkIn))) {
-            monthLoc.value.push(el);
-            series.value.push(el.totalPrice);
+            monRev.value += isMonday(new Date(el.checkIn))
+              ? parseInt(el.totalPrice)
+              : 0;
+            tueRev.value += isTuesday(new Date(el.checkIn))
+              ? parseInt(el.totalPrice)
+              : 0;
+            wedRev.value += isWednesday(new Date(el.checkIn))
+              ? parseInt(el.totalPrice)
+              : 0;
+            thuRev.value += isThursday(new Date(el.checkIn))
+              ? parseInt(el.totalPrice)
+              : 0;
+            friRev.value += isFriday(new Date(el.checkIn))
+              ? parseInt(el.totalPrice)
+              : 0;
+            satRev.value += isSaturday(new Date(el.checkIn))
+              ? parseInt(el.totalPrice)
+              : 0;
+            sunRev.value += isSunday(new Date(el.checkIn))
+              ? parseInt(el.totalPrice)
+              : 0;
           }
         });
+        series.value[0].data = [
+          monRev.value,
+          tueRev.value,
+          wedRev.value,
+          thuRev.value,
+          friRev.value,
+          satRev.value,
+          sunRev.value,
+        ];
+        dialog.hide();
       }
     )
   );
@@ -657,6 +779,7 @@ const chartOptions = {
     {
       name: "Revenue",
       data: [76000, 85000, 101000, 98000, 87000, 105000, 91000],
+      color: "#30BFBF",
     },
   ],
   chart: {
@@ -691,6 +814,7 @@ const chartOptions = {
         return val + " FCFA";
       },
     },
+    color: "#000",
   },
 };
 
@@ -699,6 +823,10 @@ watchEffect(() => {});
 var colorPalette = ["#00D8B6", "#008FFB", "#FEB019", "#FF4560", "#775DD0"];
 var optionsBar = {
   dataLabels: {
+    enabled: false,
+  },
+  tooltip: {
+    theme: "dark",
     enabled: false,
   },
   chart: {
@@ -744,7 +872,7 @@ var optionsBar = {
     },
     labels: {
       style: {
-        colors: "#78909c",
+        colors: "#fff",
       },
     },
   },
@@ -804,7 +932,21 @@ const locationColumns = [
 </script>
 <style>
 .gradient {
-  background: linear-gradient(to right,  teal 25%, rgb(47, 163, 163) );
+  background: linear-gradient(to right, teal 25%, rgb(47, 163, 163));
+  color: white;
+}
+.blue-gradient {
+  background: #00b4db; /* fallback for old browsers */
+  background: -webkit-linear-gradient(
+    to right,
+    #0083b0,
+    #00b4db
+  ); /* Chrome 10-25, Safari 5.1-6 */
+  background: linear-gradient(
+    to right,
+    #186db6,
+    #00b4db
+  ); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
   color: white;
 }
 </style>

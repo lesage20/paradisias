@@ -55,9 +55,14 @@
                     label="Submit"
                     type="submit"
                     color="primary"
+                    :percentage="percentage"
                     :loading="loading"
                     @click.prevent="login()"
-                  />
+                  >
+                    <template #loading>
+                      <q-spinner name="facebook"></q-spinner>
+                    </template>
+                  </q-btn>
                 </div>
               </q-form>
             </div>
@@ -134,7 +139,7 @@ import { inject, ref } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import { useLoginStore } from "src/stores/login";
 import axios from "axios";
-import { useQuasar } from "quasar";
+import { useQuasar, QSpinnerCube, QSpinnerFacebook, QSpinnerIos } from "quasar";
 
 const api = inject("api");
 const $q = useQuasar();
@@ -144,35 +149,60 @@ const password = ref("");
 const router = useRouter();
 const route = useRoute();
 const loading = ref(false);
+const percentage = ref(0);
+
+let config = {
+  onUploadProgress: (progressEvent) => {
+    percentage.value = progressEvent.loaded;
+  },
+};
 const login = () => {
   loading.value = true;
+  const dialog = $q.dialog({
+    progress: {
+      spinner: QSpinnerIos,
+      color: "teal",
+    },
+    persistant: true,
+    title: "Connexion",
+    message:
+      "Nous sommes entrain de vérifier vos informations veuillez patienter",
+    ok: false,
+  });
+
   axios
-    .post(api + "auth/login/", {
-      username: username.value,
-      password: password.value,
-    })
+    .post(
+      api + "auth/login/",
+      {
+        username: username.value,
+        password: password.value,
+      },
+      config
+    )
     .then((res) => {
-      loading.value = false;
       console.log(res.data);
       useLoginStore().login(res.data);
-      $q.notify("Bienvenue à paradisias.");
       Boolean(route.redirectedFrom)
         ? router.push(route.redirectedFrom)
         : router.push({ name: "Dashboard" });
+      console.log(res.data);
+      loading.value = false;
+
+      axios
+        .get(`${api}accounts/profiles/${res.data.user.profil}`)
+        .then((resp) => {
+          useLoginStore().setProfile(resp.data);
+        });
+      $q.notify("Compte vérifié. Bienvenue à paradisias.");
     })
     .catch((err) => {
       loading.value = false;
+      dialog.hide();
       $q.notify({
         message: "Nom d'utilisateur ou mot de passe incorrect",
         position: "top",
       });
     });
-  // if (username.value === "admin" && password.value === "admin") {
-  //   useLoginStore().login();
-  //   Boolean(route.redirectedFrom)
-  //     ? router.push(route.redirectedFrom)
-  //     : router.push({ name: "Dashboard" });
-  // }
 };
 </script>
 <style>

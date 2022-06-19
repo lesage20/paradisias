@@ -58,7 +58,6 @@ onMounted(() => {
       model: "groups",
       options: options,
     });
-    emits('saved')
   });
 });
 const emits = defineEmits(["close", "saved"]);
@@ -74,10 +73,10 @@ function getFormContent(data) {
   axios
     .post(api + "auth/registration/", data)
     .then((res) => {
+      emits("saved");
       console.log(res);
       loading.value = false;
       $q.notify("Compte crée avec succès");
-      emits("saved");
     })
     .catch((err) => {
       console.dir(err);
