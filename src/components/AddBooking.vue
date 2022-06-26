@@ -2,9 +2,9 @@
   <form-generator
     :fields="fields"
     title="Ajouter une reservation"
+    :dense="$q.platform.is.desktop"
     @save="getFormContent"
     @close="cancel"
-    :dense="$q.platform.is.desktop"
   />
 </template>
 <script setup>
@@ -13,6 +13,7 @@ import axios from "axios";
 import { useQuasar } from "quasar";
 import { useLoginStore } from "src/stores/login";
 
+const token = inject("token");
 const api = inject("api");
 const $q = useQuasar();
 const loading = ref(false);
@@ -29,31 +30,41 @@ let typeOptions = ref([]);
 let clientOptions = ref([]);
 let roomOptions = ref([]);
 function getDatas() {
-  axios.all(endpoints.map((endpoint) => axios.get(endpoint))).then(
-    axios.spread((types, clients, rooms) => {
-      types.data.forEach((el) => {
-        let opt = {
-          label: el.name,
-          value: el.id,
-        };
-        typeOptions.value.push(opt);
-      });
-      clients.data.forEach((el) => {
-        let opt = {
-          label: el.name,
-          value: el.id,
-        };
-        clientOptions.value.push(opt);
-      });
-      rooms.data.forEach((el) => {
-        let opt = {
-          label: el.number,
-          value: el.id,
-        };
-        roomOptions.value.push(opt);
-      });
-    })
-  );
+  axios
+    .all(
+      endpoints.map((endpoint) =>
+        axios.get(endpoint, {
+          headers: {
+            Authorization: "Bearer " + token,
+          },
+        })
+      )
+    )
+    .then(
+      axios.spread((types, clients, rooms) => {
+        types.data.forEach((el) => {
+          let opt = {
+            label: el.name,
+            value: el.id,
+          };
+          typeOptions.value.push(opt);
+        });
+        clients.data.forEach((el) => {
+          let opt = {
+            label: el.name,
+            value: el.id,
+          };
+          clientOptions.value.push(opt);
+        });
+        rooms.data.forEach((el) => {
+          let opt = {
+            label: el.number,
+            value: el.id,
+          };
+          roomOptions.value.push(opt);
+        });
+      })
+    );
 }
 onMounted(getDatas);
 
@@ -109,7 +120,11 @@ function getFormContent(data) {
 
   data.recorded_by = useLoginStore().user.profil;
   axios
-    .post(api + "hotel/locations/", data)
+    .post(api + "hotel/locations/", data, {
+      headers: {
+        Authorization: "Bearer " + token,
+      },
+    })
     .then((res) => {
       loading.value = false;
       emits("saved");

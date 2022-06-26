@@ -8,14 +8,21 @@
 </template>
 
 <script setup>
-import { inject, ref, onMounted } from "vue";
+import { inject, ref, computed, onMounted } from "vue";
 import axios from "axios";
 import { useQuasar } from "quasar";
 
+const props = defineProps({
+  client: {
+    type: Boolean,
+    default: true,
+  },
+});
+const token = inject("token");
 const api = inject("api");
 const groups = ref([]);
 let options = [];
-const fields = ref([
+const fields = computed(() => [
   {
     type: "text",
     name: "username",
@@ -46,19 +53,28 @@ const fields = ref([
     label: "Confirmer mot de passe",
   },
 ]);
+
 onMounted(() => {
-  axios.get(api + "accounts/groups/").then((res) => {
-    groups.value = res.data;
-    groups.value.forEach((el) => {
-      options.push(el.name);
+  axios
+    .get(api + "accounts/groups/", {
+      headers: {
+        Authorization: "Bearer " + token,
+      },
+    })
+    .then((res) => {
+      groups.value = res.data;
+      groups.value.forEach((el) => {
+        options.push(el.name);
+      });
+      if (!props.client) {
+        fields.value.push({
+          type: "select",
+          label: "Le role de l'employé",
+          model: "groups",
+          options: options,
+        });
+      }
     });
-    fields.value.push({
-      type: "select",
-      label: "Le role de l'employé",
-      model: "groups",
-      options: options,
-    });
-  });
 });
 const emits = defineEmits(["close", "saved"]);
 function cancel() {
@@ -69,9 +85,16 @@ const loading = ref(false);
 
 function getFormContent(data) {
   loading.value = true;
-  console.log(data);
+  console.log(options);
+  if (props.client) {
+    data.groups = "client";
+  }
   axios
-    .post(api + "auth/registration/", data)
+    .post(api + "auth/registration/", data, {
+      headers: {
+        Authorization: "Bearer " + token,
+      },
+    })
     .then((res) => {
       emits("saved");
       console.log(res);

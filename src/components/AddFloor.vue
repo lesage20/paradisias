@@ -12,6 +12,7 @@ import { ref, inject } from "vue";
 import axios from "axios";
 import { useQuasar } from "quasar";
 
+const token = inject("token");
 const api = inject("api");
 const $q = useQuasar();
 
@@ -56,7 +57,11 @@ function getFormContent(data) {
   loading.value = true;
   console.log(data);
   axios
-    .post(api + "hotel/etages/", data)
+    .post(api + "hotel/etages/", data, {
+      headers: {
+        Authorization: "Bearer " + token,
+      },
+    })
     .then((res) => {
       console.log(res);
       loading.value = false;

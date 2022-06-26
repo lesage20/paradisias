@@ -43,12 +43,12 @@
           :columns="columns"
           title="Clients"
           @add="startAdd"
+          @delete="deleteGuest"
         />
       </div>
       <div class="col-12 mobile-only">
         <q-toolbar>
           <q-toolbar-title> Liste de clients </q-toolbar-title>
-          <q-btn label="ajouter" outline @click="startAdd" color="teal-8" />
         </q-toolbar>
         <q-list>
           <q-item v-for="item in items" :key="item.name + item.firstname">
@@ -73,6 +73,9 @@
             </q-item-section>
           </q-item>
         </q-list>
+        <q-page-sticky :offset="[18, 18]">
+          <q-btn fab icon="fa fa-plus" color="teal-8" @click="startAdd" />
+        </q-page-sticky>
       </div>
     </div>
   </q-page>
@@ -86,6 +89,7 @@ import { useQuasar } from "quasar";
 import { ref, onMounted, inject } from "vue";
 import axios from "axios";
 
+const token = inject("token");
 const api = inject("api");
 const $q = useQuasar();
 const add = ref(false);
@@ -111,7 +115,11 @@ function startAdd() {
 }
 function getClients() {
   axios
-    .get(api + "accounts/clients/")
+    .get(api + "accounts/clients/", {
+      headers: {
+        Authorization: "Bearer " + token,
+      },
+    })
     .then((res) => {
       items.value = [...res.data];
     })
@@ -124,8 +132,15 @@ function guestCreated() {
   getClients();
   add.value = false;
 }
-function employeeCreated() {
-  //
+function deleteGuest(guest) {
+  $q.dialog({
+    title: "Suppression d'élément",
+    message: `Voulez vous vraiment supprimer ${
+      guest.name + " " + guest.firstname
+    } de la liste de clients?`,
+    ok: "supprimer",
+    cancel: "annuler",
+  });
 }
 onMounted(getClients);
 

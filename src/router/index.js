@@ -40,5 +40,10 @@ export default route(function (/* { store, ssrContext } */) {
     }
   });
 
+  Router.afterEach((to, from) => {
+    if (from.name == "Login") {
+      window.location.reload();
+    }
+  });
   return Router;
 });

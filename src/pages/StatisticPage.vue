@@ -267,6 +267,8 @@ import {
   isSaturday,
   isSunday,
 } from "date-fns";
+
+const token = inject("token");
 const api = inject("api");
 
 const $q = useQuasar();
@@ -342,140 +344,150 @@ function getAllData() {
     message: "Veuillez patienter pendant que les données se chargent.",
     ok: false,
   });
-  axios.all(endpoints.map((endpoint) => axios.get(endpoint))).then(
-    axios.spread(
-      (locationList, chambresList, types, depenseList, clientsList) => {
-        types_chambre.value = types.data;
-        chambres.value = chambresList.data;
-        locations.value = locationList.data;
-        clients.value = clientsList.data;
-        depenses.value = depenseList.data;
-        clients.value.forEach((el) => {
-          if (isToday(new Date(el.created_at))) {
-            todayClient.value += 1;
-          }
-          if (isThisWeek(new Date(el.created_at))) {
-            weekClient.value += 1;
-            monClient.value += isMonday(new Date(el.created_at)) ? 1 : 0;
-            tueClient.value += isTuesday(new Date(el.created_at)) ? 1 : 0;
-            wedClient.value += isWednesday(new Date(el.created_at)) ? 1 : 0;
-            thuClient.value += isThursday(new Date(el.created_at)) ? 1 : 0;
-            friClient.value += isFriday(new Date(el.created_at)) ? 1 : 0;
-            satClient.value += isSaturday(new Date(el.created_at)) ? 1 : 0;
-            sunClient.value += isSunday(new Date(el.created_at)) ? 1 : 0;
-          }
-        });
-
-        depenses.value.forEach((el) => {
-          if (isToday(new Date(el.date))) {
-            // todayDep.value.push(el);
-            todayDep.value += el.amount;
-          }
-          if (isThisWeek(new Date(el.date))) {
-            weekDep.value += el.amount;
-            monDep.value += isMonday(new Date(el.date))
-              ? parseInt(el.amount)
-              : 0;
-            tueDep.value += isTuesday(new Date(el.date))
-              ? parseInt(el.amount)
-              : 0;
-            wedDep.value += isWednesday(new Date(el.date))
-              ? parseInt(el.amount)
-              : 0;
-            thuDep.value += isThursday(new Date(el.date))
-              ? parseInt(el.amount)
-              : 0;
-            friDep.value += isFriday(new Date(el.date))
-              ? parseInt(el.amount)
-              : 0;
-            satDep.value += isSaturday(new Date(el.date))
-              ? parseInt(el.amount)
-              : 0;
-            sunDep.value += isSunday(new Date(el.date))
-              ? parseInt(el.amount)
-              : 0;
-          }
-          daySeries.value[1].data = [
-            monDep.value,
-            tueDep.value,
-            wedDep.value,
-            thuDep.value,
-            friDep.value,
-            satDep.value,
-            sunDep.value,
-          ];
-
-          if (isThisMonth(new Date(el.date))) {
-            monthDep.value.push(el);
-            series.value.push(el.totalPrice);
-          }
-        });
-        locations.value.forEach((el) => {
-          el.chambre = chambres.value.filter(
-            (chambre) => (chambre.id = el.room)
-          )[0];
-          el.type_chambre = types_chambre.value.filter(
-            (type) => (type.id = el.chambre.type)
-          )[0];
-          el.client = clients.value.filter(
-            (client) => client.id == el.guest
-          )[0];
-          if (isToday(new Date(el.checkIn))) {
-            todayLoc.value.push(el);
-            todayRev.value += el.totalPrice;
-          }
-          if (isThisWeek(new Date(el.checkIn))) {
-            weekLoc.value += 1;
-            weekRev.value += el.totalPrice;
-            monRev.value += isMonday(new Date(el.checkIn))
-              ? parseInt(el.totalPrice)
-              : 0;
-            tueRev.value += isTuesday(new Date(el.checkIn))
-              ? parseInt(el.totalPrice)
-              : 0;
-            wedRev.value += isWednesday(new Date(el.checkIn))
-              ? parseInt(el.totalPrice)
-              : 0;
-            thuRev.value += isThursday(new Date(el.checkIn))
-              ? parseInt(el.totalPrice)
-              : 0;
-            friRev.value += isFriday(new Date(el.checkIn))
-              ? parseInt(el.totalPrice)
-              : 0;
-            satRev.value += isSaturday(new Date(el.checkIn))
-              ? parseInt(el.totalPrice)
-              : 0;
-            sunRev.value += isSunday(new Date(el.checkIn))
-              ? parseInt(el.totalPrice)
-              : 0;
-          }
-          if (isThisMonth(new Date(el.checkIn))) {
-            monthLoc.value.push(el);
-            series.value.push(el.totalPrice);
-          }
-        });
-        daySeries.value[0].data = [
-          monRev.value,
-          tueRev.value,
-          wedRev.value,
-          thuRev.value,
-          friRev.value,
-          satRev.value,
-          sunRev.value,
-        ];
-        seriesClient.value[0].data = [
-          monClient.value,
-          tueClient.value,
-          wedClient.value,
-          thuClient.value,
-          friClient.value,
-          satClient.value,
-          sunClient.value,
-        ];
-        dialog.hide();
-      }
+  axios
+    .all(
+      endpoints.map((endpoint) =>
+        axios.get(endpoint, {
+          headers: {
+            Authorization: "Bearer " + token,
+          },
+        })
+      )
     )
-  );
+    .then(
+      axios.spread(
+        (locationList, chambresList, types, depenseList, clientsList) => {
+          types_chambre.value = types.data;
+          chambres.value = chambresList.data;
+          locations.value = locationList.data;
+          clients.value = clientsList.data;
+          depenses.value = depenseList.data;
+          clients.value.forEach((el) => {
+            if (isToday(new Date(el.created_at))) {
+              todayClient.value += 1;
+            }
+            if (isThisWeek(new Date(el.created_at))) {
+              weekClient.value += 1;
+              monClient.value += isMonday(new Date(el.created_at)) ? 1 : 0;
+              tueClient.value += isTuesday(new Date(el.created_at)) ? 1 : 0;
+              wedClient.value += isWednesday(new Date(el.created_at)) ? 1 : 0;
+              thuClient.value += isThursday(new Date(el.created_at)) ? 1 : 0;
+              friClient.value += isFriday(new Date(el.created_at)) ? 1 : 0;
+              satClient.value += isSaturday(new Date(el.created_at)) ? 1 : 0;
+              sunClient.value += isSunday(new Date(el.created_at)) ? 1 : 0;
+            }
+          });
+
+          depenses.value.forEach((el) => {
+            if (isToday(new Date(el.date))) {
+              // todayDep.value.push(el);
+              todayDep.value += el.amount;
+            }
+            if (isThisWeek(new Date(el.date))) {
+              weekDep.value += el.amount;
+              monDep.value += isMonday(new Date(el.date))
+                ? parseInt(el.amount)
+                : 0;
+              tueDep.value += isTuesday(new Date(el.date))
+                ? parseInt(el.amount)
+                : 0;
+              wedDep.value += isWednesday(new Date(el.date))
+                ? parseInt(el.amount)
+                : 0;
+              thuDep.value += isThursday(new Date(el.date))
+                ? parseInt(el.amount)
+                : 0;
+              friDep.value += isFriday(new Date(el.date))
+                ? parseInt(el.amount)
+                : 0;
+              satDep.value += isSaturday(new Date(el.date))
+                ? parseInt(el.amount)
+                : 0;
+              sunDep.value += isSunday(new Date(el.date))
+                ? parseInt(el.amount)
+                : 0;
+            }
+            daySeries.value[1].data = [
+              monDep.value,
+              tueDep.value,
+              wedDep.value,
+              thuDep.value,
+              friDep.value,
+              satDep.value,
+              sunDep.value,
+            ];
+
+            if (isThisMonth(new Date(el.date))) {
+              monthDep.value.push(el);
+              series.value.push(el.totalPrice);
+            }
+          });
+          locations.value.forEach((el) => {
+            el.chambre = chambres.value.filter(
+              (chambre) => (chambre.id = el.room)
+            )[0];
+            el.type_chambre = types_chambre.value.filter(
+              (type) => (type.id = el.chambre.type)
+            )[0];
+            el.client = clients.value.filter(
+              (client) => client.id == el.guest
+            )[0];
+            if (isToday(new Date(el.checkIn))) {
+              todayLoc.value.push(el);
+              todayRev.value += el.totalPrice;
+            }
+            if (isThisWeek(new Date(el.checkIn))) {
+              weekLoc.value += 1;
+              weekRev.value += el.totalPrice;
+              monRev.value += isMonday(new Date(el.checkIn))
+                ? parseInt(el.totalPrice)
+                : 0;
+              tueRev.value += isTuesday(new Date(el.checkIn))
+                ? parseInt(el.totalPrice)
+                : 0;
+              wedRev.value += isWednesday(new Date(el.checkIn))
+                ? parseInt(el.totalPrice)
+                : 0;
+              thuRev.value += isThursday(new Date(el.checkIn))
+                ? parseInt(el.totalPrice)
+                : 0;
+              friRev.value += isFriday(new Date(el.checkIn))
+                ? parseInt(el.totalPrice)
+                : 0;
+              satRev.value += isSaturday(new Date(el.checkIn))
+                ? parseInt(el.totalPrice)
+                : 0;
+              sunRev.value += isSunday(new Date(el.checkIn))
+                ? parseInt(el.totalPrice)
+                : 0;
+            }
+            if (isThisMonth(new Date(el.checkIn))) {
+              monthLoc.value.push(el);
+              series.value.push(el.totalPrice);
+            }
+          });
+          daySeries.value[0].data = [
+            monRev.value,
+            tueRev.value,
+            wedRev.value,
+            thuRev.value,
+            friRev.value,
+            satRev.value,
+            sunRev.value,
+          ];
+          seriesClient.value[0].data = [
+            monClient.value,
+            tueClient.value,
+            wedClient.value,
+            thuClient.value,
+            friClient.value,
+            satClient.value,
+            sunClient.value,
+          ];
+          dialog.hide();
+        }
+      )
+    );
 }
 onMounted(() => {
   getAllData();

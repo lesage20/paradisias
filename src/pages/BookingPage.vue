@@ -2,7 +2,7 @@
   <q-page padding>
     <div class="row">
       <div class="col">
-        <q-dialog :maximized="$q.platform.is.mobile" v-model="add" persistent>
+        <q-dialog v-model="add" :maximized="$q.platform.is.mobile" persistent>
           <AddBooking @saved="created" @close="add = false" />
           {{ $q.platform.is.desktop }}
         </q-dialog>
@@ -20,7 +20,7 @@
       <div class="col-12 mobile-only">
         <q-toolbar>
           <q-toolbar-title> Liste de locations </q-toolbar-title>
-          <q-btn  label="ajouter" outline @click="add = true" color="teal-8" />
+          <q-btn label="ajouter" outline color="teal-8" @click="add = true" />
         </q-toolbar>
         <q-list separator>
           <q-item v-for="item in items" :key="item.reference">
@@ -51,6 +51,7 @@ import { ref, onMounted, inject } from "vue";
 import { useQuasar } from "quasar";
 import axios from "axios";
 
+const token = inject("token");
 const api = inject("api");
 
 const $q = useQuasar();
@@ -65,24 +66,39 @@ const endpoints = [
   api + "accounts/clients/",
 ];
 function getDatas() {
-  axios.all(endpoints.map((endpoint) => axios.get(endpoint))).then(
-    axios.spread((locations, chambresData, types, clientsData) => {
-      types_chambre.value = types.data;
-      chambres.value = chambresData.data;
-      items.value = locations.data;
-      clients.value = clientsData.data;
-      items.value.forEach((el) => {
-        el.chambre = chambres.value.filter(
-          (chambre) => (chambre.id == el.room)
-        )[0];
+  axios
+    .all(
+      endpoints.map((endpoint) =>
+        axios.get(endpoint, {
+          headers: {
+            Authorization: "Bearer " + token,
+          },
+        })
+      )
+    )
+    .then(
+      axios.spread((locations, chambresData, types, clientsData) => {
+        types_chambre.value = types.data;
+        chambres.value = chambresData.data;
+        items.value = locations.data;
+        clients.value = clientsData.data;
+        items.value.forEach((el) => {
+          el.chambre = chambres.value.filter(
+            (chambre) => chambre.id == el.room
+          )[0];
 
-        el.type_chambre = types_chambre.value.filter(
-          (type) => (type.id = el.chambre.type)
-        )[0];
-        el.client = clients.value.filter((client) => client.id == el.guest)[0];
-      });
-    })
-  );
+          el.type_chambre = types_chambre.value.filter(
+            (type) => (type.id = el.chambre.type)
+          )[0];
+          el.client = clients.value.filter(
+            (client) => client.id == el.guest
+          )[0];
+        });
+      })
+    )
+    .catch((err) => {
+      console.dir(err);
+    });
 }
 onMounted(getDatas);
 

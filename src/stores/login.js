@@ -20,9 +20,13 @@ export const useLoginStore = defineStore("login", {
       this.token = null;
       this.user = { username: undefined };
       this.permissions = [];
+      this.profile = {};
     },
     setProfile(data) {
       this.profile = data;
+    },
+    setPrerms(data) {
+      this.permissions = data;
     },
   },
   persist: true,

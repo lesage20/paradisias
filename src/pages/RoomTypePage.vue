@@ -48,12 +48,17 @@ import ListTable from "src/components/ListTable.vue";
 import { useQuasar } from "quasar";
 import axios from "axios";
 
+const token = inject("token");
 const api = inject("api");
 const $q = useQuasar();
 const items = ref([]);
 onMounted(() => {
   axios
-    .get(api + "hotel/types_chambre/")
+    .get(api + "hotel/types_chambre/", {
+      headers: {
+        Authorization: "Bearer " + token,
+      },
+    })
     .then((res) => (items.value = [...res.data]))
     .catch((err) => {
       console.dir(err);

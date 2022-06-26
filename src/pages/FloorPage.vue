@@ -2,7 +2,7 @@
   <q-page>
     <div class="row">
       <div class="col">
-        <q-dialog :maximized="$q.platform.is.mobile" v-model="add">
+        <q-dialog v-model="add" :maximized="$q.platform.is.mobile">
           <AddFloor @close="add = false"></AddFloor>
         </q-dialog>
       </div>
@@ -19,7 +19,7 @@
       <div class="col-12 mobile-only">
         <q-toolbar>
           <q-toolbar-title> Liste d'étages </q-toolbar-title>
-          <q-btn label="ajouter" outline @click="add = true" color="teal-8" />
+          <q-btn label="ajouter" outline color="teal-8" @click="add = true" />
         </q-toolbar>
         <q-list separator>
           <q-item v-for="item in items" :key="item.name">
@@ -49,12 +49,17 @@ import ListTable from "src/components/ListTable.vue";
 import { useQuasar } from "quasar";
 import axios from "axios";
 
+const token = inject("token");
 const api = inject("api");
 const $q = useQuasar();
 const items = ref([]);
 onMounted(() => {
   axios
-    .get(api + "hotel/etages/")
+    .get(api + "hotel/etages/", {
+      headers: {
+        Authorization: "Bearer " + token,
+      },
+    })
     .then((res) => (items.value = [...res.data]))
     .catch((err) => {
       console.dir(err);

@@ -63,9 +63,9 @@
             >
               <div>
                 <q-stepper
-                  flat
                   ref="stepper"
                   v-model="step"
+                  flat
                   alternative-labels
                   color="primary"
                   animated
@@ -77,7 +77,7 @@
                     icon="create_account"
                     :done="step > 1"
                   >
-                    <AddUser @close="add = false" />
+                    <AddUser :client="false" @close="add = false" />
                   </q-step>
 
                   <q-step
@@ -109,8 +109,8 @@
                   <q-btn
                     label="ajouter"
                     outline
-                    @click="startAdd"
                     color="teal-8"
+                    @click="startAdd"
                   />
                 </q-toolbar>
                 <q-list>
@@ -153,6 +153,7 @@ import { useQuasar } from "quasar";
 import { ref, onMounted, inject } from "vue";
 import axios from "axios";
 
+const token = inject("token");
 const api = inject("api");
 const $q = useQuasar();
 
@@ -189,15 +190,25 @@ function startAdd() {
 }
 
 onMounted(() => {
-  axios.all(endpoints.map((endpoint) => axios.get(endpoint))).then(
-    axios.spread((groupList, employeList) => {
-      groups.value = groupList.data;
-      employes.value = employeList.data;
-      employes.value.forEach((el) => {
-        el.group = groups.value.filter((group) => group.id == el.role)[0];
-      });
-    })
-  );
+  axios
+    .all(
+      endpoints.map((endpoint) =>
+        axios.get(endpoint, {
+          headers: {
+            Authorization: "Bearer " + token,
+          },
+        })
+      )
+    )
+    .then(
+      axios.spread((groupList, employeList) => {
+        groups.value = groupList.data;
+        employes.value = employeList.data;
+        employes.value.forEach((el) => {
+          el.group = groups.value.filter((group) => group.id == el.role)[0];
+        });
+      })
+    );
 });
 
 const columns = [

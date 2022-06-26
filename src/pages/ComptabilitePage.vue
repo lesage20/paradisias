@@ -2,7 +2,7 @@
   <q-page>
     <div class="row">
       <div class="col">
-        <q-dialog :maximized="$q.platform.is.mobile" v-model="add" persistent>
+        <q-dialog v-model="add" :maximized="$q.platform.is.mobile" persistent>
           <AddDepense @close="add = false" @saved="created" />
         </q-dialog>
       </div>
@@ -11,17 +11,17 @@
     <div class="row">
       <div class="col-12 desktop-only">
         <ListTable
-          @add="add = true"
           title="Dépenses"
           :columns="columns"
           :items="items"
+          @add="add = true"
         />
       </div>
       <div class="col-12">
         <div class="col-12 mobile-only">
           <q-toolbar>
             <q-toolbar-title>Liste de dépenses </q-toolbar-title>
-            <q-btn label="ajouter" outline @click="add = true" color="teal-8" />
+            <q-btn label="ajouter" outline color="teal-8" @click="add = true" />
           </q-toolbar>
           <q-list separator>
             <q-item v-for="item in items" :key="item.title">
@@ -51,23 +51,34 @@ import AddDepense from "../components/AddDepense.vue";
 import axios from "axios";
 import { inject, onMounted, ref } from "vue";
 
+const token = inject("token");
 const api = inject("api");
 const add = ref(false);
 const items = ref([]);
 const profiles = ref([]);
 const endpoints = [api + "hotel/depenses/", api + "accounts/profiles/"];
 function getDatas() {
-  axios.all(endpoints.map((endpoint) => axios.get(endpoint))).then(
-    axios.spread((depenses, profilesData) => {
-      profiles.value = profilesData.data;
-      items.value = depenses.data;
-      items.value.forEach((el) => {
-        el.author = profiles.value.filter(
-          (profile) => (profile.id = el.spent_by)
-        )[0];
-      });
-    })
-  );
+  axios
+    .all(
+      endpoints.map((endpoint) =>
+        axios.get(endpoint, {
+          headers: {
+            Authorization: "Bearer " + token,
+          },
+        })
+      )
+    )
+    .then(
+      axios.spread((depenses, profilesData) => {
+        profiles.value = profilesData.data;
+        items.value = depenses.data;
+        items.value.forEach((el) => {
+          el.author = profiles.value.filter(
+            (profile) => (profile.id = el.spent_by)
+          )[0];
+        });
+      })
+    );
 }
 onMounted(getDatas);
 

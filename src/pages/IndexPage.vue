@@ -1,7 +1,7 @@
 <template>
   <q-page :padding="true">
     <div class="row justify-between desktop-only">
-      <div class="col-xs-12 col-sm-6 col-md-5 q-pa-xs">
+      <div class="col-xs-12 col-sm-6 col-md-12 q-pa-xs">
         <ImportantCard
           title="Revenue"
           color="teal"
@@ -10,7 +10,7 @@
         />
       </div>
 
-      <div class="col-xs-12 col-sm-6 col-md-2 q-pa-xs">
+      <div class="col-xs-12 col-sm-6 col-md-4 q-pa-xs">
         <ImportantCard
           color="orange-9"
           title="Chambres"
@@ -18,7 +18,7 @@
           :number="chambres.length"
         />
       </div>
-      <div class="col-xs-12 col-sm-6 col-md-2 q-pa-xs">
+      <div class="col-xs-12 col-sm-6 col-md-4 q-pa-xs">
         <ImportantCard
           color="teal"
           title="Clients"
@@ -26,7 +26,7 @@
           :number="clients.length"
         />
       </div>
-      <div class="col-xs-12 col-sm-6 col-md-3 q-pa-xs">
+      <div class="col-xs-12 col-sm-6 col-md-4 q-pa-xs">
         <ImportantCard
           color="orange-9"
           title="Locations"
@@ -577,6 +577,7 @@ import ImportantCard from "src/components/ImportantCard.vue";
 import ReportChart from "src/components/ReportChart.vue";
 import { QSpinnerIos, useQuasar } from "quasar";
 import axios from "axios";
+
 import {
   isThisWeek,
   isThisMonth,
@@ -590,6 +591,7 @@ import {
   isSunday,
 } from "date-fns";
 
+const token = inject("token");
 const api = inject("api");
 
 const $q = useQuasar();
@@ -647,123 +649,133 @@ function getAllData() {
     message: "Veuillez patienter pendant que les données se chargent.",
     ok: false,
   });
-  axios.all(endpoints.map((endpoint) => axios.get(endpoint))).then(
-    axios.spread(
-      (
-        locationList,
-        depenseList,
-        chambreList,
-        types,
-        etageList,
-        couponList,
-        clientsList,
-        profileList,
-        roleList,
-        employeList
-      ) => {
-        types_chambre.value = types.data;
-        chambres.value = chambreList.data;
-        locations.value = locationList.data;
-        clients.value = clientsList.data;
-        etages.value = etageList.data;
-        coupons.value = couponList.data;
-        depenses.value = depenseList.data;
-        roles.value = roleList.data;
-        profiles.value = profileList.data;
-        employes.value = employeList.data;
-        depenses.value.forEach((el) => {
-          if (isThisWeek(new Date(el.date))) {
-            monDep.value += isMonday(new Date(el.date))
-              ? parseInt(el.amount)
-              : 0;
-            tueDep.value += isTuesday(new Date(el.date))
-              ? parseInt(el.amount)
-              : 0;
-            wedDep.value += isWednesday(new Date(el.date))
-              ? parseInt(el.amount)
-              : 0;
-            thuDep.value += isThursday(new Date(el.date))
-              ? parseInt(el.amount)
-              : 0;
-            friDep.value += isFriday(new Date(el.date))
-              ? parseInt(el.amount)
-              : 0;
-            satDep.value += isSaturday(new Date(el.date))
-              ? parseInt(el.amount)
-              : 0;
-            sunDep.value += isSunday(new Date(el.date))
-              ? parseInt(el.amount)
-              : 0;
-          }
-          series.value[1].data = [
-            monDep.value,
-            tueDep.value,
-            wedDep.value,
-            thuDep.value,
-            friDep.value,
-            satDep.value,
-            sunDep.value,
-          ];
-          el.author = profiles.value.filter(
-            (profile) => (profile.id = el.spent_by)
-          )[0];
-        });
-
-        chambres.value.forEach((el) => {
-          el.etage = etages.value.filter((etage) => (etage.id = el.floor))[0];
-          el.type_chambre = types_chambre.value.filter(
-            (type) => (type.id = el.type)
-          )[0];
-        });
-        locations.value.forEach((el) => {
-          revenue.value += el.totalPrice;
-          el.chambre = chambres.value.filter(
-            (chambre) => (chambre.id = el.room)
-          )[0];
-          el.type_chambre = types_chambre.value.filter(
-            (type) => (type.id = el.chambre.type)
-          )[0];
-          el.client = clients.value.filter(
-            (client) => client.id == el.guest
-          )[0];
-
-          if (isThisWeek(new Date(el.checkIn))) {
-            monRev.value += isMonday(new Date(el.checkIn))
-              ? parseInt(el.totalPrice)
-              : 0;
-            tueRev.value += isTuesday(new Date(el.checkIn))
-              ? parseInt(el.totalPrice)
-              : 0;
-            wedRev.value += isWednesday(new Date(el.checkIn))
-              ? parseInt(el.totalPrice)
-              : 0;
-            thuRev.value += isThursday(new Date(el.checkIn))
-              ? parseInt(el.totalPrice)
-              : 0;
-            friRev.value += isFriday(new Date(el.checkIn))
-              ? parseInt(el.totalPrice)
-              : 0;
-            satRev.value += isSaturday(new Date(el.checkIn))
-              ? parseInt(el.totalPrice)
-              : 0;
-            sunRev.value += isSunday(new Date(el.checkIn))
-              ? parseInt(el.totalPrice)
-              : 0;
-          }
-        });
-        series.value[0].data = [
-          monRev.value,
-          tueRev.value,
-          wedRev.value,
-          thuRev.value,
-          friRev.value,
-          satRev.value,
-          sunRev.value,
-        ];
-        dialog.hide();
-      }
+  axios
+    .all(
+      endpoints.map((endpoint) =>
+        axios.get(endpoint, {
+          headers: {
+            Authorization: "Bearer " + token,
+          },
+        })
+      )
     )
-  );
+    .then(
+      axios.spread(
+        (
+          locationList,
+          depenseList,
+          chambreList,
+          types,
+          etageList,
+          couponList,
+          clientsList,
+          profileList,
+          roleList,
+          employeList
+        ) => {
+          types_chambre.value = types.data;
+          chambres.value = chambreList.data;
+          locations.value = locationList.data;
+          clients.value = clientsList.data;
+          etages.value = etageList.data;
+          coupons.value = couponList.data;
+          depenses.value = depenseList.data;
+          roles.value = roleList.data;
+          profiles.value = profileList.data;
+          employes.value = employeList.data;
+          depenses.value.forEach((el) => {
+            if (isThisWeek(new Date(el.date))) {
+              monDep.value += isMonday(new Date(el.date))
+                ? parseInt(el.amount)
+                : 0;
+              tueDep.value += isTuesday(new Date(el.date))
+                ? parseInt(el.amount)
+                : 0;
+              wedDep.value += isWednesday(new Date(el.date))
+                ? parseInt(el.amount)
+                : 0;
+              thuDep.value += isThursday(new Date(el.date))
+                ? parseInt(el.amount)
+                : 0;
+              friDep.value += isFriday(new Date(el.date))
+                ? parseInt(el.amount)
+                : 0;
+              satDep.value += isSaturday(new Date(el.date))
+                ? parseInt(el.amount)
+                : 0;
+              sunDep.value += isSunday(new Date(el.date))
+                ? parseInt(el.amount)
+                : 0;
+            }
+            series.value[1].data = [
+              monDep.value,
+              tueDep.value,
+              wedDep.value,
+              thuDep.value,
+              friDep.value,
+              satDep.value,
+              sunDep.value,
+            ];
+            el.author = profiles.value.filter(
+              (profile) => (profile.id = el.spent_by)
+            )[0];
+          });
+
+          chambres.value.forEach((el) => {
+            el.etage = etages.value.filter((etage) => (etage.id = el.floor))[0];
+            el.type_chambre = types_chambre.value.filter(
+              (type) => (type.id = el.type)
+            )[0];
+          });
+          locations.value.forEach((el) => {
+            revenue.value += el.totalPrice;
+            el.chambre = chambres.value.filter(
+              (chambre) => (chambre.id = el.room)
+            )[0];
+            el.type_chambre = types_chambre.value.filter(
+              (type) => (type.id = el.chambre.type)
+            )[0];
+            el.client = clients.value.filter(
+              (client) => client.id == el.guest
+            )[0];
+
+            if (isThisWeek(new Date(el.checkIn))) {
+              monRev.value += isMonday(new Date(el.checkIn))
+                ? parseInt(el.totalPrice)
+                : 0;
+              tueRev.value += isTuesday(new Date(el.checkIn))
+                ? parseInt(el.totalPrice)
+                : 0;
+              wedRev.value += isWednesday(new Date(el.checkIn))
+                ? parseInt(el.totalPrice)
+                : 0;
+              thuRev.value += isThursday(new Date(el.checkIn))
+                ? parseInt(el.totalPrice)
+                : 0;
+              friRev.value += isFriday(new Date(el.checkIn))
+                ? parseInt(el.totalPrice)
+                : 0;
+              satRev.value += isSaturday(new Date(el.checkIn))
+                ? parseInt(el.totalPrice)
+                : 0;
+              sunRev.value += isSunday(new Date(el.checkIn))
+                ? parseInt(el.totalPrice)
+                : 0;
+            }
+          });
+          series.value[0].data = [
+            monRev.value,
+            tueRev.value,
+            wedRev.value,
+            thuRev.value,
+            friRev.value,
+            satRev.value,
+            sunRev.value,
+          ];
+          dialog.hide();
+        }
+      )
+    );
 }
 onMounted(() => {
   getAllData();

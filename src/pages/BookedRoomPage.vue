@@ -38,6 +38,8 @@ import { isWithinInterval, formatDistanceToNow } from "date-fns";
 import CountDown from "../components/CountDown.vue";
 
 const api = inject("api");
+const token = inject("token");
+
 const $q = useQuasar();
 const bookings = ref([]);
 const endpoints = [

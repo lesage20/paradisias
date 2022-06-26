@@ -226,32 +226,42 @@ const thisMonthLocations = ref([]);
 const thisMonthDepenses = ref([]);
 
 onMounted(() => {
-  axios.all(endpoints.map((endpoint) => axios.get(endpoint))).then(
-    axios.spread((locationList, depenseList, chambreList, clientList) => {
-      locations.value = locationList.data;
-      depenses.value = depenseList.data;
-      chambres.value = chambreList.data;
-      clients.value = clientList.data;
-      todayLocations.value = locations.value.filter((loc) =>
-        isToday(new Date(loc.checkIn))
-      );
-      thisWeekLocations.value = locations.value.filter((loc) =>
-        isThisWeek(new Date(loc.checkIn))
-      );
-      thisMonthLocations.value = locations.value.filter((loc) =>
-        isThisMonth(new Date(loc.checkIn))
-      );
-      todayDepenses.value = depenses.value.filter((dep) =>
-        isToday(new Date(dep.date))
-      );
-      thisWeekDepenses.value = depenses.value.filter((dep) =>
-        isThisWeek(new Date(dep.date))
-      );
-      thisMonthDepenses.value = depenses.value.filter((dep) =>
-        isThisMonth(new Date(dep.date))
-      );
-    })
-  );
+  axios
+    .all(
+      endpoints.map((endpoint) =>
+        axios.get(endpoint, {
+          headers: {
+            Authorization: "Bearer " + token,
+          },
+        })
+      )
+    )
+    .then(
+      axios.spread((locationList, depenseList, chambreList, clientList) => {
+        locations.value = locationList.data;
+        depenses.value = depenseList.data;
+        chambres.value = chambreList.data;
+        clients.value = clientList.data;
+        todayLocations.value = locations.value.filter((loc) =>
+          isToday(new Date(loc.checkIn))
+        );
+        thisWeekLocations.value = locations.value.filter((loc) =>
+          isThisWeek(new Date(loc.checkIn))
+        );
+        thisMonthLocations.value = locations.value.filter((loc) =>
+          isThisMonth(new Date(loc.checkIn))
+        );
+        todayDepenses.value = depenses.value.filter((dep) =>
+          isToday(new Date(dep.date))
+        );
+        thisWeekDepenses.value = depenses.value.filter((dep) =>
+          isThisWeek(new Date(dep.date))
+        );
+        thisMonthDepenses.value = depenses.value.filter((dep) =>
+          isThisMonth(new Date(dep.date))
+        );
+      })
+    );
 });
 
 // fonctionalites

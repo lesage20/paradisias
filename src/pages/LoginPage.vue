@@ -143,7 +143,6 @@ import { useQuasar, QSpinnerCube, QSpinnerFacebook, QSpinnerIos } from "quasar";
 
 const api = inject("api");
 const $q = useQuasar();
-console.log($q.platform);
 const username = ref("");
 const password = ref("");
 const router = useRouter();
@@ -187,17 +186,33 @@ const login = () => {
         : router.push({ name: "Dashboard" });
       console.log(res.data);
       loading.value = false;
+      useLoginStore().setPrerms(res.data.user.groups[0].permissions);
 
+      // const endpoints = [
+      //   `${api}accounts/profiles/${res.data.user.profil}`,
+      //   `${api}accounts/groups/${res.data.user.groups[0]}`,
+      // ];
       axios
         .get(`${api}accounts/profiles/${res.data.user.profil}`)
         .then((resp) => {
           useLoginStore().setProfile(resp.data);
         });
+      // axios.all(
+      //   endpoints
+      //     .map((endpoint) => axios.get(endpoint))
+      //     .then(
+      //       axios.spread((profile, permissions) => {
+      //         useLoginStore().setProfile(profile.data);
+      //         useLoginStore().setPrerms(permissions.data);
+      //       })
+      //     )
+      // );
       $q.notify("Compte vérifié. Bienvenue à paradisias.");
     })
     .catch((err) => {
       loading.value = false;
       dialog.hide();
+      console.dir(err);
       $q.notify({
         message: "Nom d'utilisateur ou mot de passe incorrect",
         position: "top",

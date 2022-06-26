@@ -2,7 +2,7 @@
   <q-page>
     <div class="row">
       <div class="col">
-        <q-dialog :maximized="$q.platform.is.mobile" v-model="add">
+        <q-dialog v-model="add" :maximized="$q.platform.is.mobile">
           <AddRoom @close="add = false" />
         </q-dialog>
       </div>
@@ -19,7 +19,7 @@
       <div class="col-12 mobile-only">
         <q-toolbar>
           <q-toolbar-title> Liste de chambres </q-toolbar-title>
-          <q-btn label="ajouter" outline @click="add = true" color="teal-8" />
+          <q-btn label="ajouter" outline color="teal-8" @click="add = true" />
         </q-toolbar>
         <q-list separator>
           <q-item v-for="item in items" :key="item.number">
@@ -49,6 +49,7 @@ import { ref, onMounted, inject } from "vue";
 import { useQuasar } from "quasar";
 import axios from "axios";
 
+const token = inject("token");
 const api = inject("api");
 const $q = useQuasar();
 const items = ref([]);
@@ -60,19 +61,29 @@ const endpoints = [
   api + "hotel/etages/",
 ];
 onMounted(() => {
-  axios.all(endpoints.map((endpoint) => axios.get(endpoint))).then(
-    axios.spread((chambres, types, floors) => {
-      types_chambre.value = types.data;
-      etages.value = floors.data;
-      items.value = chambres.data;
-      items.value.forEach((el) => {
-        el.etage = etages.value.filter((etage) => (etage.id = el.floor))[0];
-        el.type_chambre = types_chambre.value.filter(
-          (type) => (type.id = el.type)
-        )[0];
-      });
-    })
-  );
+  axios
+    .all(
+      endpoints.map((endpoint) =>
+        axios.get(endpoint, {
+          headers: {
+            Authorization: "Bearer " + token,
+          },
+        })
+      )
+    )
+    .then(
+      axios.spread((chambres, types, floors) => {
+        types_chambre.value = types.data;
+        etages.value = floors.data;
+        items.value = chambres.data;
+        items.value.forEach((el) => {
+          el.etage = etages.value.filter((etage) => (etage.id = el.floor))[0];
+          el.type_chambre = types_chambre.value.filter(
+            (type) => (type.id = el.type)
+          )[0];
+        });
+      })
+    );
 });
 const add = ref(false);
 const columns = [

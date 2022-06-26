@@ -11,6 +11,7 @@ import { ref, onMounted, inject } from "vue";
 import axios from "axios";
 import { useQuasar } from "quasar";
 
+const token = inject("token");
 const api = inject("api");
 const $q = useQuasar();
 const props = defineProps({
@@ -25,7 +26,11 @@ let userOptions = ref([]);
 
 onMounted(() => {
   axios
-    .get(api + "accounts/users/")
+    .get(api + "accounts/users/", {
+      headers: {
+        Authorization: "Bearer " + token,
+      },
+    })
     .then((res) => {
       users = res.data;
       console.log(users.value);
@@ -136,11 +141,15 @@ function getFormContent(data) {
   loading.value = true;
   console.log(data);
   axios
-    .post(api + "accounts/profiles/", data)
+    .post(api + "accounts/profiles/", data, {
+      headers: {
+        Authorization: "Bearer " + token,
+      },
+    })
     .then((res) => {
       console.log(res);
       loading.value = false;
-      emits('saved')
+      emits("saved");
       $q.notify("Client crée avec succès");
     })
     .catch((err) => {

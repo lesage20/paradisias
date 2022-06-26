@@ -13,6 +13,7 @@ import axios from "axios";
 import { useQuasar } from "quasar";
 import { useLoginStore as store } from "src/stores/login";
 
+const token = inject("token");
 const api = inject("api");
 console.dir(store().profile);
 const $q = useQuasar();
@@ -60,7 +61,11 @@ function getFormContent(data) {
   console.log(data);
   data.spent_by = store().user.profil;
   axios
-    .post(api + "hotel/depenses/", data)
+    .post(api + "hotel/depenses/", data, {
+      headers: {
+        Authorization: "Bearer " + token,
+      },
+    })
     .then((res) => {
       console.log(res);
       loading.value = false;

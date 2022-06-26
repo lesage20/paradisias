@@ -19,33 +19,46 @@ import RoomValidity from "src/components/RoomValidity.vue";
 import { inject, onMounted, ref } from "vue";
 
 const $q = useQuasar();
+const token = inject("token");
 const api = inject("api");
 const rooms = ref([]);
 const bookings = ref([]);
 const endpoints = [api + "hotel/chambres", api + "hotel/locations/"];
 const bgcolors = ["orange", "teal", "purple", "blue", "red"];
 onMounted(() => {
-  axios.all(endpoints.map((endpoint) => axios.get(endpoint))).then(
-    axios.spread((roomsData, bookingsData) => {
-      rooms.value = roomsData.data;
-      bookings.value = bookingsData.data;
-      bookings.value.forEach((el) => {
-        const evt = {};
-        evt.id = el.id;
-        evt.title = rooms.value.filter((room) => room.id == el.room)[0].number;
-        evt.start = el.checkIn.split("T")[0];
-        evt.time = el.checkIn.split("T")[1].replace("Z", "");
-        evt.end = el.checkOut.split("T")[0];
-        evt.bgcolor = bgcolors[getRandomInt(bgcolors.length - 1)];
-        evt.details = `${evt.title} sera occupé du ${new Date(
-          evt.start
-        ).toLocaleDateString()} à ${evt.time} jusqu'au ${new Date(
-          evt.end
-        ).toLocaleDateString()}`;
-        events.value.push(evt);
-      });
-    })
-  );
+  axios
+    .all(
+      endpoints.map((endpoint) =>
+        axios.get(endpoint, {
+          headers: {
+            Authorization: "Bearer " + token,
+          },
+        })
+      )
+    )
+    .then(
+      axios.spread((roomsData, bookingsData) => {
+        rooms.value = roomsData.data;
+        bookings.value = bookingsData.data;
+        bookings.value.forEach((el) => {
+          const evt = {};
+          evt.id = el.id;
+          evt.title = rooms.value.filter(
+            (room) => room.id == el.room
+          )[0].number;
+          evt.start = el.checkIn.split("T")[0];
+          evt.time = el.checkIn.split("T")[1].replace("Z", "");
+          evt.end = el.checkOut.split("T")[0];
+          evt.bgcolor = bgcolors[getRandomInt(bgcolors.length - 1)];
+          evt.details = `${evt.title} sera occupé du ${new Date(
+            evt.start
+          ).toLocaleDateString()} à ${evt.time} jusqu'au ${new Date(
+            evt.end
+          ).toLocaleDateString()}`;
+          events.value.push(evt);
+        });
+      })
+    );
 });
 function getRandomInt(max) {
   return Math.floor(Math.random() * max);
