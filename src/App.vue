@@ -10,6 +10,5 @@
 <script setup>
 import { provide } from "vue";
 
-// provide("api", "https://paradisias-api.herokuapp.com/");
-provide("api", "http://127.0.0.1:8000/");
+provide("api", "https://paradisias-api.herokuapp.com/");
 </script>
