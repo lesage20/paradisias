@@ -1,7 +1,7 @@
 <template>
   <form-generator
     :fields="fields"
-    title="Ajouter un coupon"
+    title="Ajouter une dépense"
     :dense="false"
     @save="getFormContent"
     @close="cancel"
@@ -11,9 +11,11 @@
 import { ref, inject } from "vue";
 import axios from "axios";
 import { useQuasar } from "quasar";
+import { useLoginStore as store } from "src/stores/login";
 
 const token = inject("token");
 const api = inject("api");
+console.dir(store().profile);
 const $q = useQuasar();
 
 const loading = ref(false);
@@ -27,38 +29,39 @@ const fields = ref([
     name: "title",
     required: true,
     model: "title",
-    label: "Titre du coupon",
+    label: "Titre de la depense",
   },
   {
     autogrow: true,
     required: true,
     name: "description",
     model: "description",
-    label: "Description du coupon",
+    label: "Description de  la dépense",
     type: "text",
   },
   {
-    name: "discount",
+    name: "amount",
     type: "number",
-    model: "discount",
+    model: "amount",
     required: true,
-    label: "Le pourcentage de réduction",
-    prefix: "-",
-    suffix: "%",
+    label: "Le montant de la dépense",
+    prefix: "FCFA",
   },
   {
-    type: "text",
-    label: "code",
-    model: "code",
-    name: "code",
-    hint: "Ce code sera utilisé pour identifier le coupon",
+    name: "date",
+    type: "date",
+    model: "date",
+    required: true,
+    label: "La date ",
+    prefix: "FCFA",
   },
 ]);
 function getFormContent(data) {
   loading.value = true;
   console.log(data);
+  data.spent_by = store().user.profil;
   axios
-    .post(api + "hotel/coupons/", data, {
+    .post(api + "hotel/depenses/", data, {
       headers: {
         Authorization: "Bearer " + token,
       },
@@ -66,7 +69,7 @@ function getFormContent(data) {
     .then((res) => {
       console.log(res);
       loading.value = false;
-      $q.notify("Coupon crée avec succès");
+      $q.notify("Dépense crée avec succès");
       emits("saved");
     })
     .catch((err) => {

@@ -12,6 +12,7 @@ import { ref, onMounted, inject } from "vue";
 import axios from "axios";
 import { useQuasar } from "quasar";
 
+const token = inject("token");
 const api = inject("api");
 const $q = useQuasar();
 const loading = ref(false);
@@ -19,29 +20,39 @@ const emits = defineEmits(["close", "saved"]);
 function cancel() {
   emits("close");
 }
-const endpoints = [api + "types_chambre/", api + "etages/"];
+const endpoints = [api + "hotel/types_chambre/", api + "hotel/etages/"];
 let typeOptions = ref([]);
 let floorOptions = ref([]);
 onMounted(() => {
-  axios.all(endpoints.map((endpoint) => axios.get(endpoint))).then(
-    axios.spread((types, floors) => {
-      console.log(types, floors);
-      types.data.forEach((el) => {
-        let opt = {
-          label: el.name,
-          value: el.id,
-        };
-        typeOptions.value.push(opt);
-      });
-      floors.data.forEach((el) => {
-        let opt = {
-          label: el.name,
-          value: el.id,
-        };
-        floorOptions.value.push(opt);
-      });
-    })
-  );
+  axios
+    .all(
+      endpoints.map((endpoint) =>
+        axios.get(endpoint, {
+          headers: {
+            Authorization: "Bearer " + token,
+          },
+        })
+      )
+    )
+    .then(
+      axios.spread((types, floors) => {
+        console.log(types, floors);
+        types.data.forEach((el) => {
+          let opt = {
+            label: el.name,
+            value: el.id,
+          };
+          typeOptions.value.push(opt);
+        });
+        floors.data.forEach((el) => {
+          let opt = {
+            label: el.name,
+            value: el.id,
+          };
+          floorOptions.value.push(opt);
+        });
+      })
+    );
 });
 
 const fields = ref([
@@ -74,11 +85,15 @@ function getFormContent(data) {
   loading.value = true;
   console.log(data);
   axios
-    .post(api + "chambres/", data)
+    .post(api + "hotel/chambres/", data, {
+      headers: {
+        Authorization: "Bearer " + token,
+      },
+    })
     .then((res) => {
       console.log(res);
       loading.value = false;
-      $q.notify("Client crée avec succès");
+      $q.notify("Chambre crée avec succès");
     })
     .catch((err) => {
       console.dir(err);

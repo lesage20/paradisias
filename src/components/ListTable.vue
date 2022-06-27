@@ -1,5 +1,5 @@
 <template>
-  <q-card bordered flat>
+  <q-card>
     <q-toolbar class="row justify-between no-wrap">
       <div class="col-auto q-py-md">
         <div class="doc-card-title text-subtitle1">{{ title }}</div>
@@ -50,6 +50,7 @@
             color="red-9"
             size="sm"
             icon="fa-solid fa-trash"
+            @click="deleteItem(attr.row)"
           >
             <q-tooltip>Supprimer</q-tooltip>
           </q-btn>
@@ -92,9 +93,15 @@ const props = defineProps({
 
 const search = ref("");
 
-const emits = defineEmits(["add"]);
+const emits = defineEmits(["add", "delete", "update"]);
 function addItem() {
   emits("add");
+}
+function updateItem(item) {
+  emits("update", item);
+}
+function deleteItem(item) {
+  emits("delete", item);
 }
 </script>
 

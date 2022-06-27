@@ -1,12 +1,17 @@
 <template>
-  <q-item v-if="!children.length" clickable :to="link" exact>
+  <q-item
+    v-if="!children.length"
+    active-class="active-class"
+    clickable
+    :to="link"
+    exact
+  >
     <q-item-section v-if="icon" avatar>
       <q-icon color="" :name="icon" aria-hidden="true" />
     </q-item-section>
 
     <q-item-section>
       <q-item-label>{{ title }}</q-item-label>
-      <q-item-label class="text-grey-8" caption>{{ caption }}</q-item-label>
     </q-item-section>
     <q-item-section v-if="children.length" side>
       <q-icon name="expand_less"></q-icon>
@@ -22,10 +27,9 @@
           class="q-py-xs"
           clickable
           :to="child.link"
+          active-class="active-class"
           exact
         >
-          <span class="q-pr-md" style="font-size: x-large"> &bullet; </span>
-
           <q-item-section>
             <q-item-label> {{ child.title }}</q-item-label>
           </q-item-section>
@@ -64,3 +68,11 @@ const props = defineProps({
   },
 });
 </script>
+<style>
+.active-class {
+  background: linear-gradient(to right, teal 20%, rgb(47, 163, 163));
+  color: white;
+  border-radius: 10px;
+  margin: 0 10px
+}
+</style>

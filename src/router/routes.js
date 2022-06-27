@@ -1,3 +1,4 @@
+import { useLoginStore as store } from "src/stores/login";
 const routes = [
   {
     path: "/",
@@ -8,11 +9,21 @@ const routes = [
         path: "",
         component: () => import("pages/IndexPage.vue"),
         name: "Dashboard",
+        beforeEnter: (to, from) => {
+          if (!Boolean(store().user.groups[0].name == "admin")) {
+            return { name: "Locations" };
+          }
+        },
       },
       {
         path: "/structure",
         component: () => import("pages/HotelStructurePage.vue"),
         name: "HotelStructure",
+        beforeEnter: (to, from) => {
+          if (!Boolean(store().user.groups[0].name == "admin")) {
+            return { name: "Locations" };
+          }
+        },
         children: [
           {
             path: "floors",
@@ -48,7 +59,7 @@ const routes = [
       },
       {
         path: "/bookings",
-        name: "Reservations",
+        name: "Locations",
         component: () => import("pages/BookingPage.vue"),
       },
       {
@@ -70,6 +81,11 @@ const routes = [
         path: "/administration",
         name: "Admin",
         component: () => import("pages/AdminPage.vue"),
+        beforeEnter: (to, from) => {
+          if (!Boolean(store().user.groups[0].name == "admin")) {
+            return { name: "Locations" };
+          }
+        },
         children: [
           {
             path: "compta",
@@ -81,12 +97,27 @@ const routes = [
             name: "Employees",
             component: () => import("pages/EmployePage.vue"),
           },
+          {
+            path: "statistics",
+            name: "Statistics",
+            component: () => import("pages/StatisticPage.vue"),
+          },
         ],
       },
       {
         path: "/reports",
         component: () => import("pages/ReportPage.vue"),
         name: "Reports",
+        beforeEnter: (to, from) => {
+          if (!Boolean(store().user.groups[0].name == "admin")) {
+            return { name: "Locations" };
+          }
+        },
+      },
+      {
+        path: "/test",
+        component: () => import("pages/TestPage.vue"),
+        name: "Tests",
       },
     ],
   },

@@ -2,6 +2,7 @@
   <form-generator
     :fields="fields"
     title="Ajouter une reservation"
+    :dense="$q.platform.is.desktop"
     @save="getFormContent"
     @close="cancel"
   />
@@ -12,6 +13,7 @@ import axios from "axios";
 import { useQuasar } from "quasar";
 import { useLoginStore } from "src/stores/login";
 
+const token = inject("token");
 const api = inject("api");
 const $q = useQuasar();
 const loading = ref(false);
@@ -20,40 +22,51 @@ function cancel() {
   emits("close");
 }
 const endpoints = [
-  api + "types_chambre/",
-  api + "auth/accounts/clients/",
-  api + "chambres/",
+  api + "hotel/types_chambre/",
+  api + "accounts/clients/",
+  api + "hotel/chambres/",
 ];
 let typeOptions = ref([]);
 let clientOptions = ref([]);
 let roomOptions = ref([]);
-onMounted(() => {
-  axios.all(endpoints.map((endpoint) => axios.get(endpoint))).then(
-    axios.spread((types, clients, rooms) => {
-      types.data.forEach((el) => {
-        let opt = {
-          label: el.name,
-          value: el.id,
-        };
-        typeOptions.value.push(opt);
-      });
-      clients.data.forEach((el) => {
-        let opt = {
-          label: el.name,
-          value: el.id,
-        };
-        clientOptions.value.push(opt);
-      });
-      rooms.data.forEach((el) => {
-        let opt = {
-          label: el.number,
-          value: el.id,
-        };
-        roomOptions.value.push(opt);
-      });
-    })
-  );
-});
+function getDatas() {
+  axios
+    .all(
+      endpoints.map((endpoint) =>
+        axios.get(endpoint, {
+          headers: {
+            Authorization: "Bearer " + token,
+          },
+        })
+      )
+    )
+    .then(
+      axios.spread((types, clients, rooms) => {
+        types.data.forEach((el) => {
+          let opt = {
+            label: el.name,
+            value: el.id,
+          };
+          typeOptions.value.push(opt);
+        });
+        clients.data.forEach((el) => {
+          let opt = {
+            label: el.name,
+            value: el.id,
+          };
+          clientOptions.value.push(opt);
+        });
+        rooms.data.forEach((el) => {
+          let opt = {
+            label: el.number,
+            value: el.id,
+          };
+          roomOptions.value.push(opt);
+        });
+      })
+    );
+}
+onMounted(getDatas);
 
 const fields = ref([
   {
@@ -81,14 +94,14 @@ const fields = ref([
   },
   {
     name: "checkIn",
-    type: "date",
+    type: "datetime",
     model: "checkIn",
     required: true,
     label: "Date d'entrée",
   },
   {
     name: "checkOut",
-    type: "date",
+    type: "datetime",
     model: "checkOut",
     required: true,
     label: "Date de sorti",
@@ -104,13 +117,18 @@ const fields = ref([
 
 function getFormContent(data) {
   loading.value = true;
+
   data.recorded_by = useLoginStore().user.profil;
   axios
-    .post(api + "locations/", data)
+    .post(api + "hotel/locations/", data, {
+      headers: {
+        Authorization: "Bearer " + token,
+      },
+    })
     .then((res) => {
-      console.log(res);
       loading.value = false;
-      $q.notify("Client crée avec succès");
+      emits("saved");
+      $q.notify("Location crée avec succès");
     })
     .catch((err) => {
       console.dir(err);

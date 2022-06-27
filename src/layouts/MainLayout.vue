@@ -13,44 +13,6 @@
 
         <q-toolbar-title> Paradisias Hotel </q-toolbar-title>
 
-        <q-btn-dropdown flat dropdown-icon="fa fa-bell" @click="onMainClick">
-          <q-list>
-            <q-item>
-              <q-item-section>
-                <q-item-label class="text-grey-8"> Notifications </q-item-label>
-              </q-item-section>
-            </q-item>
-            <q-item v-close-popup clickable @click="onItemClick">
-              <q-item-section avatar>
-                <q-avatar icon="folder" color="primary" text-color="white" />
-              </q-item-section>
-              <q-item-section>
-                <q-item-label>Photos</q-item-label>
-                <q-item-label caption>February 22, 2016</q-item-label>
-              </q-item-section>
-              <q-item-section side>
-                <q-icon name="info" color="amber" />
-              </q-item-section>
-            </q-item>
-
-            <q-item v-close-popup clickable @click="onItemClick">
-              <q-item-section avatar>
-                <q-avatar
-                  icon="assignment"
-                  color="secondary"
-                  text-color="white"
-                />
-              </q-item-section>
-              <q-item-section>
-                <q-item-label>Vacation</q-item-label>
-                <q-item-label caption>February 22, 2016</q-item-label>
-              </q-item-section>
-              <q-item-section side>
-                <q-icon name="info" color="amber" />
-              </q-item-section>
-            </q-item>
-          </q-list>
-        </q-btn-dropdown>
         <q-btn-dropdown flat color="teal-" dense rounded>
           <template #label>
             <div class="row items-center no-wrap">
@@ -130,11 +92,8 @@
     </q-drawer>
 
     <q-page-container class="bg-grey-2">
-      <div class="row justify-between q-py-sm q-px-lg">
-        <div class="col">
-          <p class="text-h6 text-teal-8">{{ items[items.length - 1].name }}</p>
-        </div>
-        <div class="col justify-end items-end">
+      <div class="row justify-center q-py-sm q-px-lg">
+        <div class="col-xs-12 text-center">
           <BreadCrumb :items="items" />
         </div>
       </div>
@@ -151,104 +110,138 @@
 </template>
 
 <script setup>
-import { defineComponent, watch, ref } from "vue";
+import { computed, watch, ref } from "vue";
 import EssentialLink from "components/EssentialLink.vue";
 import { useLoginStore as store } from "src/stores/login";
 import BreadCrumb from "src/components/BreadCrumb.vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
+import { useQuasar } from "quasar";
+import { provide } from "vue";
 
+provide("token", store().token);
+const $q = useQuasar();
 const night = ref(true);
-const linksList = [
-  {
-    title: "Tableau de bord",
-    caption: "Tableau de bord",
-    icon: "fas fa-tachometer-alt",
-    link: { name: "Dashboard" },
-    children: [],
-  },
-  {
-    title: "Structure Hotel",
-    caption: "etages,chambres,salles...",
-    icon: "fa fa-cog",
-    link: "/structure",
-    children: [
-      {
-        link: { name: "Floors" },
-        title: "Etages",
-      },
-      {
-        link: { name: "RoomTypes" },
-        title: "Type de Chambres",
-      },
-      {
-        link: { name: "Rooms" },
-        title: "Chambres",
-      },
-      // {
-      //   link: { name: "PriceManager" },
-      //   title: "Gestion de Prix",
-      // },
-      {
-        link: { name: "Coupon" },
-        title: "Coupon de Reduction",
-      },
-      {
-        link: { name: "Housekeep" },
-        title: "Nettoyage",
-      },
-    ],
-  },
-  {
-    title: "Reservations",
-    caption: "Commandes ou enregistrement",
-    icon: "fas fa-book",
-    link: { name: "Reservations" },
-  },
-  {
-    title: "Pièces reservées",
-    caption: "chambres et salles reservées",
-    icon: "fa fa-home",
-    link: { name: "Reserved" },
-  },
-  {
-    title: "Calendrier",
-    caption: "disponibilité des pièces",
-    icon: "fa fa-calendar",
-    link: { name: "Calendar" },
-  },
-  {
-    title: "Invités",
-    caption: "gestion des invités",
-    icon: "fa fa-user",
-    link: { name: "Guests" },
-  },
-  {
-    title: "Administration",
-    caption: "gestion des employés",
-    icon: "fa fa-users",
-    link: "/hr-mgt",
-    children: [
-      {
-        link: { name: "Employees" },
-        title: "Employés",
-      },
-      {
-        link: { name: "Comptabilite" },
-        title: "Comptabilite",
-      },
-    ],
-  },
-  {
-    title: "Rapports",
-    caption: "rapports quotidiens, hebdo...",
-    icon: "fas fa-file",
-    link: { name: "Reports" },
-  },
-];
+const linksList = computed(() => {
+  const adminLinks = [
+    {
+      title: "Tableau de bord",
+      caption: "Tableau de bord",
+      icon: "fas fa-tachometer-alt",
+      link: { name: "Dashboard" },
+      children: [],
+    },
+    {
+      title: "Structure Hotel",
+      caption: "etages,chambres,salles...",
+      icon: "fa fa-cog",
+      link: "/structure",
+      children: [
+        {
+          link: { name: "Floors" },
+          title: "Etages",
+        },
+        {
+          link: { name: "RoomTypes" },
+          title: "Type de Chambres",
+        },
+        {
+          link: { name: "Rooms" },
+          title: "Chambres",
+        },
+        {
+          link: { name: "Coupon" },
+          title: "Coupon de Reduction",
+        },
+        {
+          link: { name: "Housekeep" },
+          title: "Nettoyage",
+        },
+      ],
+    },
+    {
+      title: "Locations",
+      caption: "Commandes ou enregistrement",
+      icon: "fas fa-book",
+      link: { name: "Locations" },
+    },
+    {
+      title: "Pièces reservées",
+      caption: "chambres et salles reservées",
+      icon: "fa fa-home",
+      link: { name: "Reserved" },
+    },
+    {
+      title: "Calendrier",
+      caption: "disponibilité des pièces",
+      icon: "fa fa-calendar",
+      link: { name: "Calendar" },
+    },
+    {
+      title: "Invités",
+      caption: "gestion des invités",
+      icon: "fa fa-user",
+      link: { name: "Guests" },
+    },
+    {
+      title: "Administration",
+      caption: "gestion des employés",
+      icon: "fa fa-users",
+      link: "/hr-mgt",
+      children: [
+        {
+          link: { name: "Employees" },
+          title: "Employés",
+        },
+        {
+          link: { name: "Comptabilite" },
+          title: "Comptabilite",
+        },
+        {
+          link: { name: "Statistics" },
+          title: "Statistiques",
+        },
+      ],
+    },
+    {
+      title: "Rapports",
+      caption: "rapports quotidiens, hebdo...",
+      icon: "fas fa-file",
+      link: { name: "Reports" },
+    },
+  ];
+  const links = [
+    {
+      title: "Locations",
+      caption: "Commandes ou enregistrement",
+      icon: "fas fa-book",
+      link: { name: "Locations" },
+    },
+    {
+      title: "Pièces reservées",
+      caption: "chambres et salles reservées",
+      icon: "fa fa-home",
+      link: { name: "Reserved" },
+    },
+    {
+      title: "Calendrier",
+      caption: "disponibilité des pièces",
+      icon: "fa fa-calendar",
+      link: { name: "Calendar" },
+    },
+    {
+      title: "Clients",
+      caption: "gestion des clients",
+      icon: "fa fa-user",
+      link: { name: "Guests" },
+    },
+  ];
+
+  return Boolean(store().user.groups[0].name == "admin") ? adminLinks : links;
+});
 
 let items = ref([]);
 const route = useRoute();
-
+const router = useRouter();
 items.value = route.matched;
 const user = store().user;
 watch(route, () => {
@@ -256,9 +249,10 @@ watch(route, () => {
 });
 function logout() {
   store().logout();
+  router.push({ name: "Login" });
 }
 
-const leftDrawerOpen = ref(true);
+const leftDrawerOpen = ref($q.platform.is.desktop);
 
 function toggleLeftDrawer() {
   leftDrawerOpen.value = !leftDrawerOpen.value;
@@ -270,7 +264,6 @@ function toggleLeftDrawer() {
   --animate-delay: 0.9s;
 }
 .gradian {
-  background: teal;
-  background-size: 40px 40px;
+  background: linear-gradient(to top, teal 20%, rgb(47, 163, 163));
 }
 </style>

@@ -53,7 +53,7 @@ module.exports = configure(function (/* ctx */) {
         node: "node16",
       },
 
-      vueRouterMode: "hash", // available values: 'hash', 'history'
+      vueRouterMode: "history", // available values: 'hash', 'history'
       // vueRouterBase,
       // vueDevtools,
       // vueOptionsAPI: false,
@@ -90,11 +90,13 @@ module.exports = configure(function (/* ctx */) {
           color: "teal",
           position: "bottom",
         },
+        Notify: {
+          position: "bottom center",
+        },
       },
 
       iconSet: "fontawesome-v6", // Quasar icon set
-      // lang: 'en-US', // Quasar language pack
-
+      lang: "fr",
       // For special cases outside of where the auto-import strategy can have an impact
       // (like functional components as one of the examples),
       // you can manually specify Quasar components/directives to be available everywhere:
@@ -103,7 +105,7 @@ module.exports = configure(function (/* ctx */) {
       // directives: [],
 
       // Quasar plugins
-      plugins: ["Loading", "Notify", "Dialog"],
+      plugins: ["Loading", "Notify", "Dialog", "Platform"],
     },
 
     // animations: 'all', // --- includes all animations

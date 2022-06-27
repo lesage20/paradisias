@@ -1,8 +1,8 @@
 <template>
-  <q-card class="my-card">
+  <q-card :class="'text-white bg-' + color">
     <q-card-section horizontal>
       <div class="row full-width">
-        <div :class="'flex flex-center rounded q-pa-md col-xs-4 bg-' + color">
+        <div :class="'flex flex-center rounded-borders q-pa-md col-xs-4 bg-' + color">
           <q-icon
             size="lg"
             style="--fa-animation-iteration-count: 4"
@@ -10,10 +10,10 @@
             :name="icon"
           ></q-icon>
         </div>
-        <div class="col-xs-8 q-pa-md">
+        <div class="col-xs-8 q-pa-md text-center">
           <p class="col-xs-12">
+            <b class="text-h4"> {{ number }}</b> <br />
             {{ title }} <br />
-            <b> {{ number }}</b>
           </p>
         </div>
       </div>

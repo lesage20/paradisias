@@ -1,11 +1,10 @@
 <template>
-  <q-page padding>
+  <q-page :padding="$q.platform.is.desktop">
     <router-view />
   </q-page>
 </template>
 
-<script>
-export default {
-  // name: 'PageName',
-};
+<script setup>
+import { useQuasar } from "quasar";
+const $q = useQuasar();
 </script>
