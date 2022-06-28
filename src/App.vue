@@ -10,6 +10,9 @@
 <script setup>
 import { provide } from "vue";
 
-// provide("api", "https://paradisias-api.herokuapp.com/");
-provide("api", "http://127.0.0.1:8000/");
+if (process.env.DEV) {
+  provide("api", "http://127.0.0.1:8000/");
+} else {
+  provide("api", "https://paradisias-api.herokuapp.com/");
+}
 </script>
