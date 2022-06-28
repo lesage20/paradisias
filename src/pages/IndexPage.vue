@@ -2,12 +2,7 @@
   <q-page :padding="true">
     <div class="row justify-between desktop-only">
       <div class="col-xs-12 col-sm-6 col-md-12 q-pa-xs">
-        <ImportantCard
-          title="Revenue"
-          color="teal"
-          icon="fa fa-dollar-sign fa-bounce"
-          :number="revenue"
-        />
+        <ImportantCard title="Revenue" color="teal" :number="revenue" />
       </div>
 
       <div class="col-xs-12 col-sm-6 col-md-4 q-pa-xs">
@@ -50,7 +45,7 @@
           <div class="col-xs-4 text-center">
             <div>
               <q-chip square class="text-h6 text-white" color="transparent">
-                600000F
+                {{ revenue }}
               </q-chip>
             </div>
             Revenue
@@ -577,7 +572,7 @@ import ImportantCard from "src/components/ImportantCard.vue";
 import ReportChart from "src/components/ReportChart.vue";
 import { QSpinnerIos, useQuasar } from "quasar";
 import axios from "axios";
-
+import { useRouter } from "vue-router";
 import {
   isThisWeek,
   isThisMonth,
@@ -590,10 +585,11 @@ import {
   isSaturday,
   isSunday,
 } from "date-fns";
+import { useLoginStore as store } from "src/stores/login";
 
 const token = inject("token");
 const api = inject("api");
-
+const router = useRouter();
 const $q = useQuasar();
 const series = ref([
   { name: "Revenues", data: [0, 0, 0, 0, 0, 0, 0], color: "#30BFBF" },
@@ -775,7 +771,45 @@ function getAllData() {
           dialog.hide();
         }
       )
-    );
+    )
+    .catch((err) => {
+      if (!Boolean(err.response)) {
+        dialog
+          .update({
+            title: "Erreur de réseau",
+            message:
+              "Impossible de se connecter au server. Veuillez vous connecter à internet et actualiser",
+            ok: "actualiser",
+            progress: false,
+          })
+          .onOk(() => {
+            window.location.reload();
+          });
+      } else {
+        if (err.response.status == "401") {
+          dialog
+            .update({
+              title: "Erreur",
+              message:
+                "Votre delai de connexion est passé veuillez vous reconnecter",
+              ok: "se connecter",
+              progress: false,
+            })
+            .onOk(() => {
+              store().logout();
+              router.push({ name: "Login" });
+            });
+        } else {
+          dialog.update({
+            title: "Erreur",
+            message: `Une erreur s'est produite. <br/> code d'erreur: <b> ${err.response.status} </b> <br/> message: ${err.response.message}`,
+            persistent: false,
+            ok: true,
+            progress: false,
+          });
+        }
+      }
+    });
 }
 onMounted(() => {
   getAllData();

@@ -205,6 +205,7 @@ import { ref, onMounted, inject, computed, watchEffect } from "vue";
 import { isToday, isThisWeek, isThisMonth } from "date-fns";
 
 const emits = defineEmits(["back"]);
+const token = inject("token");
 const api = inject("api");
 const $q = useQuasar();
 
@@ -261,7 +262,47 @@ onMounted(() => {
           isThisMonth(new Date(dep.date))
         );
       })
-    );
+    )
+    .catch((err) => {
+      let dialog = $q.dialog({});
+      if (!Boolean(err.response)) {
+        dialog
+          .update({
+            title: "Erreur de réseau",
+            message:
+              "Impossible de se connecter au server. Veuillez vous connecter à internet et actualiser",
+            ok: "actualiser",
+            progress: false,
+            persistent: true,
+          })
+          .onOk(() => {
+            window.location.reload();
+          });
+      } else {
+        if (err.response.status == "401") {
+          dialog
+            .update({
+              title: "Erreur",
+              message:
+                "Votre delai de connexion est passé veuillez vous reconnecter",
+              ok: "se connecter",
+              progress: false,
+            })
+            .onOk(() => {
+              store().logout();
+              router.push({ name: "Login" });
+            });
+        } else {
+          dialog.update({
+            title: "Erreur",
+            message: `Une erreur s'est produite. <br/> code d'erreur: <b> ${err.response.status} </b> <br/> message: ${err.response.message}`,
+            persistent: false,
+            ok: true,
+            progress: false,
+          });
+        }
+      }
+    });
 });
 
 // fonctionalites

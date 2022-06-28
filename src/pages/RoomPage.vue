@@ -14,6 +14,7 @@
           :items="items"
           title="Chambres"
           @add="add = true"
+          @delete="deleteRoom"
         />
       </div>
       <div class="col-12 mobile-only">
@@ -60,7 +61,7 @@ const endpoints = [
   api + "hotel/types_chambre/",
   api + "hotel/etages/",
 ];
-onMounted(() => {
+function getData() {
   axios
     .all(
       endpoints.map((endpoint) =>
@@ -83,8 +84,50 @@ onMounted(() => {
           )[0];
         });
       })
-    );
-});
+    )
+    .catch((err) => {
+      let dialog = $q.dialog({});
+      if (!Boolean(err.response)) {
+        dialog
+          .update({
+            title: "Erreur de réseau",
+            message:
+              "Impossible de se connecter au server. Veuillez vous connecter à internet et actualiser",
+            ok: "actualiser",
+            progress: false,
+            persistent: true,
+          })
+          .onOk(() => {
+            window.location.reload();
+          });
+      } else {
+        if (err.response.status == "401") {
+          dialog
+            .update({
+              title: "Erreur",
+              message:
+                "Votre delai de connexion est passé veuillez vous reconnecter",
+              ok: "se connecter",
+              progress: false,
+            })
+            .onOk(() => {
+              store().logout();
+              router.push({ name: "Login" });
+            });
+        } else {
+          dialog.update({
+            title: "Erreur",
+            message: `Une erreur s'est produite. <br/> code d'erreur: <b> ${err.response.status} </b> <br/> message: ${err.response.message}`,
+            persistent: false,
+            ok: true,
+            progress: false,
+            html: true,
+          });
+        }
+      }
+    });
+}
+onMounted(getData);
 const add = ref(false);
 const columns = [
   {
@@ -130,4 +173,46 @@ const columns = [
     label: "Actions",
   },
 ];
+const roomToDelete = ref("");
+function deleteRoom(room) {
+  $q.dialog({
+    title: "Suppression d'élément",
+    message: `Voulez vous vraiment supprimer <b> la chambre de numéro ${room.number} </b> de la liste de chambre ? <br/>  <strong class="text-negative"> Toutes les locations liées a cette chambre seront supprimées. </strong> <br/>
+    Veuillez entrer chambre suivi du numero de la chambre pour supprimer la chambre`,
+    ok: { label: "supprimer", color: "red", flat: true },
+    cancel: "annuler",
+    html: true,
+    prompt: {
+      placeholder: "supprimer chambre " + room.number,
+      hint:
+        "copier " +
+        "'chambre " +
+        room.number +
+        "' dans ce champs pour supprimer",
+      model: roomToDelete,
+      outlined: true,
+      dense: false,
+    },
+  }).onOk(() => {
+    if (roomToDelete.value !== "chambre " + room.number) {
+      $q.notify(
+        "Vous ne pouvez pas supprimer cette chambre tant que vous n'avez pas entrer la phrase correcte"
+      );
+    } else {
+      del(room.id);
+    }
+  });
+}
+function del(id) {
+  axios
+    .delete(api + "hotel/chambres/" + id, {
+      headers: {
+        Authorization: "Bearer " + token,
+      },
+    })
+    .then(() => {
+      $q.notify("Chambre supprimé avec suuccès");
+      getData();
+    });
+}
 </script>

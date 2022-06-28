@@ -188,25 +188,12 @@ const login = () => {
       loading.value = false;
       useLoginStore().setPrerms(res.data.user.groups[0].permissions);
 
-      // const endpoints = [
-      //   `${api}accounts/profiles/${res.data.user.profil}`,
-      //   `${api}accounts/groups/${res.data.user.groups[0]}`,
-      // ];
       axios
         .get(`${api}accounts/profiles/${res.data.user.profil}`)
         .then((resp) => {
           useLoginStore().setProfile(resp.data);
         });
-      // axios.all(
-      //   endpoints
-      //     .map((endpoint) => axios.get(endpoint))
-      //     .then(
-      //       axios.spread((profile, permissions) => {
-      //         useLoginStore().setProfile(profile.data);
-      //         useLoginStore().setPrerms(permissions.data);
-      //       })
-      //     )
-      // );
+
       $q.notify("Compte vérifié. Bienvenue à paradisias.");
     })
     .catch((err) => {
@@ -220,13 +207,3 @@ const login = () => {
     });
 };
 </script>
-<style>
-.column {
-  display: flex !important;
-  justify-content: end !important;
-  align-items: flex-end !important;
-  align-content: flex-end !important;
-  justify-items: end !important;
-  flex-direction: column !important;
-}
-</style>

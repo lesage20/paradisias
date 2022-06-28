@@ -5,6 +5,7 @@
     clickable
     :to="link"
     exact
+    class="q-ma-sm rounded-borders"
   >
     <q-item-section v-if="icon" avatar>
       <q-icon color="" :name="icon" aria-hidden="true" />
@@ -17,14 +18,18 @@
       <q-icon name="expand_less"></q-icon>
     </q-item-section>
   </q-item>
-  <q-item v-else class="q-pa-none">
-    <q-expansion-item :label="title" class="q-pa-none" :icon="icon ? icon : ''">
+  <q-item v-else class="q-pa-none q-ma-sm">
+    <q-expansion-item
+      :label="title"
+      class="q-pa-none full-width"
+      :icon="icon ? icon : ''"
+    >
       <q-list class="q-pl-xl">
         <q-item
           v-for="child in children"
           :key="child.title"
           v-close-popup
-          class="q-py-xs"
+          class="q-py-xs rounded-borders q-my-sm"
           clickable
           :to="child.link"
           active-class="active-class"
@@ -72,7 +77,6 @@ const props = defineProps({
 .active-class {
   background: linear-gradient(to right, teal 20%, rgb(47, 163, 163));
   color: white;
-  border-radius: 10px;
-  margin: 0 10px
+  margin: 0 10px;
 }
 </style>

@@ -15,6 +15,7 @@
           :items="items"
           title="Reservations"
           @add="add = true"
+          @delete="deleteLocation"
         />
       </div>
       <div class="col-12 mobile-only">
@@ -97,7 +98,44 @@ function getDatas() {
       })
     )
     .catch((err) => {
-      console.dir(err);
+      let dialog = $q.dialog({});
+      if (!Boolean(err.response)) {
+        dialog
+          .update({
+            title: "Erreur de réseau",
+            message:
+              "Impossible de se connecter au server. Veuillez vous connecter à internet et actualiser",
+            ok: "actualiser",
+            progress: false,
+            persistent: true,
+          })
+          .onOk(() => {
+            window.location.reload();
+          });
+      } else {
+        if (err.response.status == "401") {
+          dialog
+            .update({
+              title: "Erreur",
+              message:
+                "Votre delai de connexion est passé veuillez vous reconnecter",
+              ok: "se connecter",
+              progress: false,
+            })
+            .onOk(() => {
+              store().logout();
+              router.push({ name: "Login" });
+            });
+        } else {
+          dialog.update({
+            title: "Erreur",
+            message: `Une erreur s'est produite. <br/> code d'erreur: <b> ${err.response.status} </b> <br/> message: ${err.response.message}`,
+            persistent: false,
+            ok: true,
+            progress: false,
+          });
+        }
+      }
     });
 }
 onMounted(getDatas);
@@ -116,15 +154,25 @@ const columns = [
   {
     name: "reference",
     align: "center",
-    label: "Numéro",
+    label: "Reference",
     field: "reference",
+    format: (val) => `${val.toUpperCase()}`,
+    sortable: true,
+  },
+  {
+    name: "client",
+    align: "center",
+    label: "Client",
+    field: (row) => row.client,
+    format: (val) => `${val.name.toUpperCase()} ${val.firstname}`,
     sortable: true,
   },
   {
     name: "roomType",
     align: "center",
-    label: "Type de Chambre",
+    label: "Type Chambre",
     field: (row) => row.type_chambre.name,
+    format: (val) => `${val.toUpperCase()}`,
     sortable: true,
   },
   {
@@ -149,6 +197,14 @@ const columns = [
     sortable: true,
   },
   {
+    name: "Prix",
+    align: "center",
+    label: "Prix",
+    field: (row) => row.totalPrice,
+    format: (val) => `${val}F`,
+    sortable: true,
+  },
+  {
     name: "actions",
     align: "center",
     label: "Actions",
@@ -157,5 +213,30 @@ const columns = [
 function created() {
   getDatas();
   add.value = false;
+}
+function deleteLocation(location) {
+  $q.dialog({
+    title: "Suppression d'élément",
+    message: `Voulez vous vraiment supprimer la location de la  <b> chambre ${
+      location.chambre.number + " qui a couté " + location.totalPrice
+    }FCFA </b> de la liste de locations?`,
+    ok: { label: "supprimer", color: "red", flat: true },
+    cancel: "annuler",
+    html: true,
+  }).onOk(() => {
+    del(location.id);
+  });
+}
+function del(id) {
+  axios
+    .delete(api + "hotel/locations/" + id, {
+      headers: {
+        Authorization: "Bearer " + token,
+      },
+    })
+    .then(() => {
+      getDatas();
+      $q.notify("Location supprimée avec suuccès");
+    });
 }
 </script>

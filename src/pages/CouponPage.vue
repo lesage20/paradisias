@@ -14,6 +14,7 @@
           :items="items"
           title="Coupons"
           @add="add = true"
+          @delete="deleteCoupon"
         />
       </div>
       <div class="col-12 mobile-only">
@@ -52,7 +53,7 @@ const token = inject("token");
 const api = inject("api");
 const $q = useQuasar();
 const items = ref([]);
-onMounted(() => {
+function getData() {
   axios
     .get(api + "hotel/coupons/", {
       headers: {
@@ -61,10 +62,47 @@ onMounted(() => {
     })
     .then((res) => (items.value = [...res.data]))
     .catch((err) => {
-      console.dir(err);
-      $q.notify("Une erreur s'est produite durant la recuperation des données");
+      let dialog = $q.dialog({});
+      if (!Boolean(err.response)) {
+        dialog
+          .update({
+            title: "Erreur de réseau",
+            message:
+              "Impossible de se connecter au server. Veuillez vous connecter à internet et actualiser",
+            ok: "actualiser",
+            progress: false,
+            persistent: true,
+          })
+          .onOk(() => {
+            window.location.reload();
+          });
+      } else {
+        if (err.response.status == "401") {
+          dialog
+            .update({
+              title: "Erreur",
+              message:
+                "Votre delai de connexion est passé veuillez vous reconnecter",
+              ok: "se connecter",
+              progress: false,
+            })
+            .onOk(() => {
+              store().logout();
+              router.push({ name: "Login" });
+            });
+        } else {
+          dialog.update({
+            title: "Erreur",
+            message: `Une erreur s'est produite. <br/> code d'erreur: <b> ${err.response.status} </b> <br/> message: ${err.response.message}`,
+            persistent: false,
+            ok: true,
+            progress: false,
+          });
+        }
+      }
     });
-});
+}
+onMounted(getData);
 const add = ref(false);
 const columns = [
   {
@@ -103,4 +141,27 @@ const columns = [
     align: "center",
   },
 ];
+function deleteCoupon(coupon) {
+  $q.dialog({
+    title: "Suppression d'élément",
+    message: `Voulez vous vraiment supprimer <b> ${coupon.title} </b> de la liste de coupons?`,
+    ok: { label: "supprimer", color: "red", flat: true },
+    cancel: "annuler",
+    html: true,
+  }).onOk(() => {
+    del(coupon.id);
+  });
+}
+function del(id) {
+  axios
+    .delete(api + "hotel/coupons/" + id, {
+      headers: {
+        Authorization: "Bearer " + token,
+      },
+    })
+    .then(() => {
+      $q.notify("Coupon supprimé avec suuccès");
+      getData();
+    });
+}
 </script>

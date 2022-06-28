@@ -12,7 +12,6 @@
         />
 
         <q-toolbar-title> Paradisias Hotel </q-toolbar-title>
-
         <q-btn-dropdown flat color="teal-" dense rounded>
           <template #label>
             <div class="row items-center no-wrap">

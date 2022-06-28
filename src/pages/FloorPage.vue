@@ -14,6 +14,7 @@
           :items="items"
           title="Etage"
           @add="add = true"
+          @delete="deleteFloor"
         />
       </div>
       <div class="col-12 mobile-only">
@@ -53,7 +54,7 @@ const token = inject("token");
 const api = inject("api");
 const $q = useQuasar();
 const items = ref([]);
-onMounted(() => {
+function getData() {
   axios
     .get(api + "hotel/etages/", {
       headers: {
@@ -62,10 +63,48 @@ onMounted(() => {
     })
     .then((res) => (items.value = [...res.data]))
     .catch((err) => {
-      console.dir(err);
-      $q.notify("Une erreur s'est produite durant la recuperation des données");
+      let dialog = $q.dialog({});
+      if (!Boolean(err.response)) {
+        dialog
+          .update({
+            title: "Erreur de réseau",
+            message:
+              "Impossible de se connecter au server. Veuillez vous connecter à internet et actualiser",
+            ok: "actualiser",
+            progress: false,
+            persistent: true,
+          })
+          .onOk(() => {
+            window.location.reload();
+          });
+      } else {
+        if (err.response.status == "401") {
+          dialog
+            .update({
+              title: "Erreur",
+              message:
+                "Votre delai de connexion est passé veuillez vous reconnecter",
+              ok: "se connecter",
+              progress: false,
+            })
+            .onOk(() => {
+              store().logout();
+              router.push({ name: "Login" });
+            });
+        } else {
+          dialog.update({
+            title: "Erreur",
+            message: `Une erreur s'est produite. <br/> code d'erreur: <b> ${err.response.status} </b> <br/> message: ${err.response.message}`,
+            persistent: false,
+            ok: true,
+            progress: false,
+            html: true,
+          });
+        }
+      }
     });
-});
+}
+onMounted(getData);
 const add = ref(false);
 const columns = [
   {
@@ -105,4 +144,47 @@ const columns = [
     label: "Actions",
   },
 ];
+const floorToDelete = ref("");
+function deleteFloor(floor) {
+  $q.dialog({
+    title: "Suppression d'élément",
+    message: `Voulez vous vraiment supprimer <b> ${floor.name} </b> de la liste d'étage?
+    <br/>  <strong class="text-negative"> Toutes les chambres et  locations liées aux chambres de cet étage seront supprimées. </strong> <br/>
+    Veuillez entrer étage suivi du numero d'étage  pour supprimer l'étage`,
+    ok: { label: "supprimer", color: "red", flat: true },
+    cancel: "annuler",
+    html: true,
+    prompt: {
+      placeholder: "supprimer étage " + floor.number,
+      hint:
+        "copier " +
+        "'étage " +
+        floor.number +
+        "' dans ce champs pour supprimer",
+      model: floorToDelete,
+      outlined: true,
+      dense: false,
+    },
+  }).onOk(() => {
+    if (floorToDelete.value !== "étage " + floor.number) {
+      $q.notify(
+        "Vous ne pouvez pas supprimer cet étage tant que vous n'avez pas entrer la phrase correcte"
+      );
+    } else {
+      del(floor.id);
+    }
+  });
+}
+function del(id) {
+  axios
+    .delete(api + "hotel/etages/" + id, {
+      headers: {
+        Authorization: "Bearer " + token,
+      },
+    })
+    .then(() => {
+      $q.notify("Etage supprimé avec suuccès");
+      getData();
+    });
+}
 </script>

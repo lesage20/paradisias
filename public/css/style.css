@@ -88,9 +88,6 @@
 }
 .scale {
   color: teal;
-  transition: "transform";
-  animation: grow 2.5s ease-in-out infinite both;
-  transform: scale(1);
   padding: 20px;
   margin: 40px;
 }

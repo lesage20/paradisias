@@ -1,7 +1,7 @@
 <template>
   <q-page padding>
     <div v-show="menu" class="row q-py-md">
-      <div class="col-sm-6 col-md-6 q-pa-sm text-center text-teal">
+      <!-- <div class="col-sm-6 col-md-6 q-pa-sm text-center text-teal">
         <div class="q-py-sm">
           <q-btn
             :class="$q.platform.is.desktop ? '' : 'full-width'"
@@ -43,6 +43,33 @@
             Télécharger Liste
           </q-btn>
         </div>
+      </div> -->
+      <div class="col-12">
+        <q-card :flat="$q.platform.is.desktop">
+          <q-list padding separator>
+            <q-toolbar>
+              <q-item-label class="text-h4"> Liste des rapports </q-item-label>
+            </q-toolbar>
+            <q-separator
+              :class="{ 'q-mb-lg': $q.platform.is.mobile }"
+            ></q-separator>
+
+            <q-item
+              v-for="rap in listRapport"
+              :key="rap.label"
+              v-ripple="{ color: 'teal' }"
+              clickable
+              @click="rap.callBack"
+            >
+              <q-item-section side>
+                <q-icon :name="rap.icon"> </q-icon>
+              </q-item-section>
+              <q-item-label class="text-h5">
+                {{ rap.label }}
+              </q-item-label>
+            </q-item>
+          </q-list>
+        </q-card>
       </div>
     </div>
     <div v-show="!menu" class="row justify-center">
@@ -69,6 +96,32 @@ export default defineComponent({
     comp: "",
     menu: true,
   }),
+  computed: {
+    listRapport() {
+      return [
+        { label: "Fiche de réservations", icon: "fa fa-list" },
+        { label: "Feuille de situation des chambres", icon: "fa fa-list" },
+        { label: "Recapitulatif point réceptionniste", icon: "fa fa-list" },
+        { label: "Rapport de passation", icon: "fa fa-file" },
+        {
+          label: "Rapport global",
+          icon: "fa fa-file",
+          callBack: () => {
+            this.comp = "ReportGenerator";
+            this.menu = false;
+          },
+        },
+        {
+          label: "Téléchargeur de liste",
+          icon: "fa fa-download",
+          callBack: () => {
+            this.comp = "ListDownloader";
+            this.menu = false;
+          },
+        },
+      ];
+    },
+  },
   watch: {
     comp() {
       console.log(this.comp);

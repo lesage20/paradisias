@@ -124,8 +124,44 @@ function getClients() {
       items.value = [...res.data];
     })
     .catch((err) => {
-      console.dir(err);
-      $q.notify("Une erreur s'est produite durant la recuperation des données");
+      let dialog = $q.dialog({});
+      if (!Boolean(err.response)) {
+        dialog
+          .update({
+            title: "Erreur de réseau",
+            message:
+              "Impossible de se connecter au server. Veuillez vous connecter à internet et actualiser",
+            ok: "actualiser",
+            progress: false,
+            persistent: true,
+          })
+          .onOk(() => {
+            window.location.reload();
+          });
+      } else {
+        if (err.response.status == "401") {
+          dialog
+            .update({
+              title: "Erreur",
+              message:
+                "Votre delai de connexion est passé veuillez vous reconnecter",
+              ok: "se connecter",
+              progress: false,
+            })
+            .onOk(() => {
+              store().logout();
+              router.push({ name: "Login" });
+            });
+        } else {
+          dialog.update({
+            title: "Erreur",
+            message: `Une erreur s'est produite. <br/> code d'erreur: <b> ${err.response.status} </b> <br/> message: ${err.response.message}`,
+            persistent: false,
+            ok: true,
+            progress: false,
+          });
+        }
+      }
     });
 }
 function guestCreated() {
@@ -135,13 +171,39 @@ function guestCreated() {
 function deleteGuest(guest) {
   $q.dialog({
     title: "Suppression d'élément",
-    message: `Voulez vous vraiment supprimer ${
+    message: `Voulez vous vraiment supprimer <b> ${
       guest.name + " " + guest.firstname
-    } de la liste de clients?`,
-    ok: "supprimer",
+    } </b> de la liste de clients?`,
+    ok: { label: "supprimer", color: "red", flat: true },
     cancel: "annuler",
+    html: true,
+  }).onOk(() => {
+    del(guest.id);
   });
 }
+function del(id) {
+  axios
+    .delete(api + "accounts/clients/" + id, {
+      headers: {
+        Authorization: "Bearer " + token,
+      },
+    })
+    .then(() => {
+      $q.notify("Client supprimé avec suuccès");
+    });
+}
+function updateGuest(guest) {
+  $q.dialog({
+    title: "Suppression d'élément",
+    message: `Voulez vous vraiment supprimer <b> ${
+      guest.name + " " + guest.firstname
+    } </b> de la liste de clients?`,
+    ok: { label: "supprimer", color: "red", flat: true },
+    cancel: "annuler",
+    html: true,
+  });
+}
+
 onMounted(getClients);
 
 const columns = [

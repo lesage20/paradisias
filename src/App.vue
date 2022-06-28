@@ -1,6 +1,6 @@
 <template>
   <div>
-    <q-ajax-bar color="orange-8"></q-ajax-bar>
+    <q-ajax-bar color="red" style="height: 4px"></q-ajax-bar>
     <keep-alive>
       <router-view />
     </keep-alive>
@@ -10,5 +10,6 @@
 <script setup>
 import { provide } from "vue";
 
-provide("api", "https://paradisias-api.herokuapp.com/");
+// provide("api", "https://paradisias-api.herokuapp.com/");
+provide("api", "http://127.0.0.1:8000/");
 </script>
