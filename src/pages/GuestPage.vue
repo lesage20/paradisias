@@ -82,12 +82,21 @@
 </template>
 
 <script setup>
-import AddProfil from "src/components/AddProfil.vue";
-import ListTable from "src/components/ListTable.vue";
-import AddUser from "src/components/AddUser.vue";
 import { useQuasar } from "quasar";
-import { ref, onMounted, inject } from "vue";
+import { ref, onMounted, inject, defineAsyncComponent } from "vue";
 import axios from "axios";
+const ListTable = defineAsyncComponent(() =>
+  import("src/components/ListTable.vue")
+);
+const AddProfil = defineAsyncComponent(() =>
+  import("src/components/AddProfil.vue")
+);
+const AddUser = defineAsyncComponent(() =>
+  import("src/components/AddUser.vue")
+);
+const QStepper = defineAsyncComponent(() =>
+  import("src/components/AddUser.vue")
+);
 
 const token = inject("token");
 const api = inject("api");

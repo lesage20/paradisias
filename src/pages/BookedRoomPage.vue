@@ -31,12 +31,14 @@
 </template>
 
 <script setup>
-import { ref, onMounted, inject } from "vue";
+import { ref, onMounted, inject, defineAsyncComponent } from "vue";
 import { useQuasar } from "quasar";
 import axios from "axios";
 import { isWithinInterval, formatDistanceToNow } from "date-fns";
-import CountDown from "../components/CountDown.vue";
 
+const CountDown = defineAsyncComponent(() =>
+  import("src/components/CountDown.vue")
+);
 const api = inject("api");
 const token = inject("token");
 

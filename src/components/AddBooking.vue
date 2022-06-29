@@ -12,6 +12,7 @@ import { ref, onMounted, inject } from "vue";
 import axios from "axios";
 import { useQuasar } from "quasar";
 import { useLoginStore } from "src/stores/login";
+import { isBefore, isAfter } from "date-fns";
 
 const token = inject("token");
 const api = inject("api");
@@ -25,10 +26,12 @@ const endpoints = [
   api + "hotel/types_chambre/",
   api + "accounts/clients/",
   api + "hotel/chambres/",
+  api + "hotel/locations/",
 ];
-let typeOptions = ref([]);
-let clientOptions = ref([]);
-let roomOptions = ref([]);
+const typeOptions = ref([]);
+const clientOptions = ref([]);
+const roomOptions = ref([]);
+const locations = ref([]);
 function getDatas() {
   axios
     .all(
@@ -41,7 +44,8 @@ function getDatas() {
       )
     )
     .then(
-      axios.spread((types, clients, rooms) => {
+      axios.spread((types, clients, rooms, locationList) => {
+        locations.value = locationList.data;
         types.data.forEach((el) => {
           let opt = {
             label: el.name,
@@ -154,11 +158,55 @@ const fields = ref([
     options: ["en attente", "payée", "archivée"],
   },
 ]);
-
+function validLocation(data, list) {
+  let validation = { isValid: true, message: "" };
+  if (Object.keys(data).length < 6) {
+    validation = {
+      isValid: false,
+      message: "Tous les champs sont obligatoire",
+    };
+    return validation;
+  } else if (
+    isBefore(new Date(data.checkIn), new Date()) ||
+    isBefore(new Date(data.checkOut), new Date())
+  ) {
+    validation = {
+      isValid: false,
+      message:
+        "La date d'entrée ou de sortie ne peut pas être avant maintenant",
+    };
+    return validation;
+  } else if (isBefore(new Date(data.checkOut), new Date(data.checkIn))) {
+    validation = {
+      isValid: false,
+      message: "La date d'entrée ne peut pas être après la date de sortie",
+    };
+    return validation;
+  }
+  for (let el of list) {
+    if (
+      el.room == data.room &&
+      isAfter(new Date(data.checkIn), new Date(el.checkIn)) &&
+      isBefore(new Date(data.checkIn), new Date(el.checkOut))
+    ) {
+      validation = {
+        isValid: false,
+        message: "La chambre selectionnée est occupée",
+      };
+      break;
+    }
+  }
+  return validation;
+}
 function getFormContent(data) {
   loading.value = true;
-
+  const validation = validLocation(data, locations.value);
   data.recorded_by = useLoginStore().user.profil;
+  console.log(validLocation(data, locations.value));
+  if (!validation.isValid) {
+    $q.notify(validation.message);
+    return;
+  }
   axios
     .post(api + "hotel/locations/", data, {
       headers: {

@@ -35,6 +35,8 @@
       </div>
     </q-toolbar>
     <q-table
+      separator="cell"
+      bordered
       :filter="search"
       flat
       :grid="grid"

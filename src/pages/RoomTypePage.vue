@@ -136,7 +136,13 @@ const columns = [
     sortable: true,
   },
 
-  { name: "price", label: "Prix (FCFA)", field: "price", sortable: true },
+  {
+    name: "price",
+    label: "Prix (FCFA)",
+    field: "price",
+    sortable: true,
+    align: "center",
+  },
   {
     name: "actions",
     align: "center",

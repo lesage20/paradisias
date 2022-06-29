@@ -46,11 +46,14 @@
 </template>
 
 <script setup>
-import ListTable from "../components/ListTable.vue";
-import AddDepense from "../components/AddDepense.vue";
 import axios from "axios";
-import { inject, onMounted, ref } from "vue";
-
+import { inject, onMounted, ref, defineAsyncComponent } from "vue";
+const AddDepense = defineAsyncComponent(() =>
+  import("src/components/AddDepense.vue")
+);
+const ListTable = defineAsyncComponent(() =>
+  import("src/components/ListTable.vue")
+);
 const token = inject("token");
 const api = inject("api");
 const add = ref(false);

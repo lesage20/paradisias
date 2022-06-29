@@ -43,13 +43,15 @@
 </template>
 
 <script setup>
-import { ref, onMounted, inject } from "vue";
-import AddFloor from "src/components/AddFloor.vue";
-import BreadCrumb from "src/components/BreadCrumb.vue";
-import ListTable from "src/components/ListTable.vue";
+import { ref, onMounted, inject, defineAsyncComponent } from "vue";
 import { useQuasar } from "quasar";
 import axios from "axios";
-
+const ListTable = defineAsyncComponent(() =>
+  import("src/components/ListTable.vue")
+);
+const AddFloor = defineAsyncComponent(() =>
+  import("src/components/AddFloor.vue")
+);
 const token = inject("token");
 const api = inject("api");
 const $q = useQuasar();
@@ -130,7 +132,13 @@ const columns = [
     align: "center",
     sortable: true,
   },
-  { name: "number", label: "Numéro", field: "number", sortable: true },
+  {
+    name: "number",
+    label: "Numéro",
+    field: "number",
+    sortable: true,
+    align: "center",
+  },
   {
     align: "center",
     name: "status",

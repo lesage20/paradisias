@@ -43,12 +43,15 @@
 </template>
 
 <script setup>
-import AddCoupon from "src/components/AddCoupon.vue";
-import ListTable from "src/components/ListTable.vue";
-import { ref, onMounted, inject } from "vue";
+import { ref, onMounted, inject, defineAsyncComponent } from "vue";
 import { useQuasar } from "quasar";
 import axios from "axios";
-
+const ListTable = defineAsyncComponent(() =>
+  import("src/components/ListTable.vue")
+);
+const AddCoupon = defineAsyncComponent(() =>
+  import("src/components/AddCoupon.vue")
+);
 const token = inject("token");
 const api = inject("api");
 const $q = useQuasar();
