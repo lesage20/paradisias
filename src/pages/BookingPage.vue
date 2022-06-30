@@ -7,6 +7,11 @@
           {{ $q.platform.is.desktop }}
         </q-dialog>
       </div>
+      <div class="col">
+        <q-dialog v-model="addingTime">
+          <AddTime v-if="selected.length" :location="selected[0]" />
+        </q-dialog>
+      </div>
     </div>
     <div class="row">
       <div class="col-12 desktop-only">
@@ -14,8 +19,14 @@
           :columns="columns"
           :items="items"
           title="Reservations"
+          :dense="true"
+          tools="true"
           @add="add = true"
           @delete="deleteLocation"
+          @selected="showSelected"
+          @add-time="addingTime = true"
+          @archive="archive"
+          @paid="paid"
         />
       </div>
       <div class="col-12 mobile-only">
@@ -46,14 +57,18 @@
 </template>
 
 <script setup>
-import { defineAsyncComponent, ref, onMounted, inject } from "vue";
+import { defineAsyncComponent, ref, onMounted, inject, provide } from "vue";
 import { useQuasar } from "quasar";
+import { useLoginStore as store } from "src/stores/login";
 import axios from "axios";
 const AddBooking = defineAsyncComponent(() =>
   import("src/components/AddBooking.vue")
 );
 const ListTable = defineAsyncComponent(() =>
   import("src/components/ListTable.vue")
+);
+const AddTime = defineAsyncComponent(() =>
+  import("src/components/AddTime.vue")
 );
 const token = inject("token");
 const api = inject("api");
@@ -208,6 +223,13 @@ const columns = [
     sortable: true,
   },
   {
+    name: "status",
+    align: "center",
+    label: "Status",
+    field: (row) => row.status,
+    sortable: true,
+  },
+  {
     name: "actions",
     align: "center",
     label: "Actions",
@@ -241,5 +263,54 @@ function del(id) {
       getDatas();
       $q.notify("Location supprimée avec suuccès");
     });
+}
+const selected = ref([]);
+provide("selected", selected);
+
+function showSelected() {
+  console.log("emited");
+  console.log(selected.value);
+}
+const addingTime = ref(false);
+
+function archive() {
+  if (selected.value.length) {
+    let archived = 0;
+    selected.value.forEach((el) => {
+      el.status = "archivée";
+      axios
+        .put(el.url, el, {
+          headers: {
+            Authorization: "Bearer " + token,
+          },
+        })
+        .then(() => {
+          archived += 1;
+          $q.notify("location archivée avec succès");
+        })
+        .catch((err) => {
+          console.dir(err);
+        });
+    });
+  }
+}
+function paid() {
+  if (selected.value.length) {
+    selected.value.forEach((el) => {
+      el.status = "payée";
+      axios
+        .put(el.url, el, {
+          headers: {
+            Authorization: "Bearer " + token,
+          },
+        })
+        .then(() => {
+          $q.notify("location marquée comme payée avec succès");
+        })
+        .catch((err) => {
+          console.dir(err);
+        });
+    });
+  }
 }
 </script>

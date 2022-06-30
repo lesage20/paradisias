@@ -14,14 +14,28 @@
           </q-card-section>
           <q-card-section>
             <div class="text-body2 text-center">
-              Occupée par <br />
+              Cette chambre est/sera occupée par
               <span class="text-green">
                 {{ item.client.name }} {{ item.client.firstname }}
               </span>
+
+              du
+              <span class="text-">
+                {{ new Date(item.checkIn).toLocaleDateString() }}
+                au {{ new Date(item.checkOut).toLocaleDateString() }} à
+                {{ new Date(item.checkOut).toLocaleTimeString() }}
+              </span>
             </div>
-            <div class="q-pt-md text-center">
+            <div
+              v-if="isAfter(new Date(), new Date(item.checkIn))"
+              class="q-pt-md text-center"
+            >
               Cette chambre sera libre dans: <br />
               <CountDown :date="item.checkOut" />
+            </div>
+            <div v-else class="q-pt-md text-center">
+              Cette location n'a pas encore débutée <br />
+              <p class="text-h4 text-red q-pa-none q-ma-none">Réservation</p>
             </div>
           </q-card-section>
         </q-card>
@@ -34,7 +48,7 @@
 import { ref, onMounted, inject, defineAsyncComponent } from "vue";
 import { useQuasar } from "quasar";
 import axios from "axios";
-import { isWithinInterval, formatDistanceToNow } from "date-fns";
+import { isWithinInterval, isAfter } from "date-fns";
 
 const CountDown = defineAsyncComponent(() =>
   import("src/components/CountDown.vue")
@@ -64,15 +78,11 @@ onMounted(() => {
       axios.spread((getBookings, getRooms, getClients) => {
         console.log(getBookings);
         getBookings.data.forEach((el) => {
-          if (
-            isWithinInterval(new Date(), {
-              start: new Date(el.checkIn),
-              end: new Date(el.checkOut),
-            })
-          ) {
+          if (isAfter(new Date(el.checkOut), new Date())) {
             bookings.value.push(el);
           }
         });
+
         bookings.value.forEach((el) => {
           el.room_ = getRooms.data.filter((room) => room.id === el.room)[0];
           el.client = getClients.data.filter(
@@ -83,7 +93,7 @@ onMounted(() => {
     )
     .catch((err) => {
       let dialog = $q.dialog({});
-      if (!Boolean(err.response)) {
+      if (!Boolean(err.response) && err.message == "Network error") {
         dialog
           .update({
             title: "Erreur de réseau",

@@ -149,6 +149,7 @@ const fields = ref([
     model: "checkOut",
     required: true,
     label: "Date de sorti",
+    timeOption: (hr, min, sec) => hr <= 12,
   },
   {
     type: "select",
@@ -219,7 +220,6 @@ function getFormContent(data) {
       $q.notify("Location crée avec succès");
     })
     .catch((err) => {
-      console.dir(err);
       loading.value = false;
       if (err.message && err.message == "Network Error") {
         $q.notify("Impossible de se connecter au server");
