@@ -142,6 +142,8 @@ const fields = ref([
     model: "checkIn",
     required: true,
     label: "Date d'entrée",
+    dateOptions: (date) =>
+      isAfter(new Date(date), new Date().setDate(new Date().getDate() - 1)),
   },
   {
     name: "checkOut",
@@ -150,6 +152,8 @@ const fields = ref([
     required: true,
     label: "Date de sorti",
     timeOption: (hr, min, sec) => hr <= 12,
+    dateOptions: (date) =>
+      isAfter(new Date(date), new Date().setDate(new Date().getDate() - 1)),
   },
   {
     type: "select",

@@ -91,11 +91,11 @@
     </q-drawer>
 
     <q-page-container class="bg-grey-2">
-      <div class="row justify-center q-py-sm q-px-lg">
+      <!-- <div class="row justify-center q-py-sm q-px-lg">
         <div class="col-xs-12 text-center">
           <BreadCrumb :items="items" />
         </div>
-      </div>
+      </div> -->
       <transition
         appear
         enter-active-class="animated fadeIn"

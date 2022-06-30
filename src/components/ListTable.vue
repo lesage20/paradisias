@@ -111,11 +111,24 @@
             color="primary"
             name="verified"
           >
-            <q-tooltip> Location déja payée </q-tooltip>
+            <q-tooltip class="text-body2"> Payée </q-tooltip>
           </q-icon>
-          <span v-else>
-            {{ attr.row.status }}
-          </span>
+          <q-icon
+            v-if="attr.row.status == 'archivée'"
+            size="sm"
+            color="blue-7"
+            name="archive"
+          >
+            <q-tooltip class="text-body2"> Archivée </q-tooltip>
+          </q-icon>
+          <q-icon
+            v-if="attr.row.status == 'en attente'"
+            size="sm"
+            color="orange-8"
+            name="pending_actions"
+          >
+            <q-tooltip class="text-body2"> En attente </q-tooltip>
+          </q-icon>
         </q-td>
       </template>
       <template #body-cell-actions="attr">
@@ -129,7 +142,7 @@
             icon="fa-solid fa-trash"
             @click="deleteItem(attr.row)"
           >
-            <q-tooltip>Supprimer</q-tooltip>
+            <q-tooltip class="text-body2">Supprimer</q-tooltip>
           </q-btn>
           <q-btn
             flat
@@ -139,7 +152,7 @@
             color="blue-5"
             icon="fa fa-edit"
           >
-            <q-tooltip>Modifier</q-tooltip>
+            <q-tooltip class="text-body2">Modifier</q-tooltip>
           </q-btn>
         </q-td>
       </template>
@@ -204,7 +217,6 @@ const selectable = ref("none");
 
 function singleSelect() {
   selected.value = [];
-
   if (selectable.value == "single") {
     selectable.value = "none";
   } else {

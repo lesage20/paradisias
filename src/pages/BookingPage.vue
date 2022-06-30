@@ -14,7 +14,7 @@
       </div>
     </div>
     <div class="row">
-      <div class="col-12 desktop-only">
+      <div v-if="$q.platform.is.desktop" class="col-12 desktop-only">
         <ListTable
           :columns="columns"
           :items="items"
@@ -29,17 +29,121 @@
           @paid="paid"
         />
       </div>
-      <div class="col-12 mobile-only">
+      <div v-if="$q.platform.is.mobile" class="col-12 mobile-only">
         <q-toolbar>
           <q-toolbar-title> Liste de locations </q-toolbar-title>
-          <q-btn label="ajouter" outline color="teal-8" @click="add = true" />
+        </q-toolbar>
+
+        <q-toolbar v-if="selected.length" class="bg-grey-4 text-grey-9">
+          <q-btn
+            size="md"
+            outlined
+            round
+            flat
+            icon="arrow_back"
+            @click="selected = []"
+          >
+            {{ selected.length }}
+          </q-btn>
+
+          <q-space></q-space>
+
+          <q-btn
+            size="md"
+            outlined
+            round
+            flat
+            icon="done_all"
+            @click="multipleSelect"
+          >
+          </q-btn>
+
+          <q-btn
+            v-if="selected.length == 1"
+            size="md"
+            outlined
+            round
+            flat
+            icon="more_time"
+            @click="addingTime = true"
+          >
+          </q-btn>
+
+          <q-btn
+            v-if="selected.length"
+            size="md"
+            outlined
+            round
+            flat
+            icon="verified"
+            @click="paid"
+          >
+            <q-tooltip class="text-body2">
+              Marquée la/les selections payées
+            </q-tooltip>
+          </q-btn>
+
+          <q-btn
+            v-if="selected.length"
+            size="md"
+            outlined
+            round
+            flat
+            icon="archive"
+            @click="archive"
+          >
+          </q-btn>
         </q-toolbar>
         <q-list separator>
-          <q-item v-for="item in items" :key="item.reference">
+          <q-item
+            v-for="item in items"
+            :key="item.reference"
+            class="q-py-md"
+            @contextmenu="toggleSelection(item)"
+          >
+            <q-item-section v-if="selected.length" side>
+              <q-icon
+                v-if="selected.indexOf(item) != -1"
+                color="primary"
+                name="check_box"
+                @click="toggleSelection(item)"
+              >
+              </q-icon>
+              <q-icon
+                v-else
+                name="check_box_outline_blank"
+                @click="toggleSelection(item)"
+              >
+              </q-icon>
+            </q-item-section>
             <q-item-section>
               <q-item-label>
-                {{ item.chambre.number }} loué par
+                {{ item.chambre.number }} par
                 {{ item.client.name + " " + item.client.firstname }}
+                <q-icon
+                  v-if="item.status == 'payée'"
+                  size="xs"
+                  color="primary"
+                  name="verified"
+                >
+                  <q-tooltip class="text-body2"> Payée </q-tooltip>
+                </q-icon>
+                <q-icon
+                  v-if="item.status == 'archivée'"
+                  size="xs"
+                  color="blue-7"
+                  name="archive"
+                >
+                  <q-tooltip class="text-body2"> Archivée </q-tooltip>
+                </q-icon>
+                <q-icon
+                  v-if="item.status == 'en attente'"
+                  size="xs"
+                  color="orange-8"
+                  name="pending_actions"
+                >
+                  <q-tooltip class="text-body2"> En attente </q-tooltip>
+                </q-icon>
               </q-item-label>
               <q-item-section caption class="text-grey">
                 du {{ new Date(item.checkIn).toLocaleDateString() }} au
@@ -53,6 +157,9 @@
         </q-list>
       </div>
     </div>
+    <q-page-sticky v-if="$q.platform.is.mobile" :offset="[18, 18]">
+      <q-btn fab icon="add" color="teal-8" @click="add = true" />
+    </q-page-sticky>
   </q-page>
 </template>
 
@@ -266,7 +373,13 @@ function del(id) {
 }
 const selected = ref([]);
 provide("selected", selected);
-
+function toggleSelection(item) {
+  if (selected.value.indexOf(item) < 0) {
+    selected.value.push(item);
+  } else {
+    selected.value = selected.value.filter((it) => it.id != item.id);
+  }
+}
 function showSelected() {
   console.log("emited");
   console.log(selected.value);

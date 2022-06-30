@@ -11,7 +11,7 @@
 import { provide } from "vue";
 
 if (process.env.DEV) {
-  provide("api", "http://127.0.0.1:8000/");
+  provide("api", "http://192.168.43.108:8000/");
 } else {
   provide("api", "https://paradisias-api.herokuapp.com/");
 }
