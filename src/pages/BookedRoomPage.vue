@@ -75,9 +75,9 @@ onMounted(() => {
       )
     )
     .then(
-      axios.spread((getBookings, getRooms, getClients) => {
-        console.log(getBookings);
-        getBookings.data.forEach((el) => {
+      axios.spread((getLocations, getRooms, getClients) => {
+        console.log(getLocations);
+        getLocations.data.forEach((el) => {
           if (isAfter(new Date(el.checkOut), new Date())) {
             bookings.value.push(el);
           }

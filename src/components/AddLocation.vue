@@ -28,7 +28,6 @@ const endpoints = [
   api + "hotel/chambres/",
   api + "hotel/locations/",
 ];
-const typeOptions = ref([]);
 const clientOptions = ref([]);
 const roomOptions = ref([]);
 const locations = ref([]);
@@ -44,15 +43,9 @@ function getDatas() {
       )
     )
     .then(
-      axios.spread((types, clients, rooms, locationList) => {
+      axios.spread((clients, rooms, locationList) => {
         locations.value = locationList.data;
-        types.data.forEach((el) => {
-          let opt = {
-            label: el.name,
-            value: el.id,
-          };
-          typeOptions.value.push(opt);
-        });
+
         clients.data.forEach((el) => {
           let opt = {
             label: el.name,
@@ -120,14 +113,7 @@ const fields = ref([
     hint: "Le client qui reserve la chambre",
     options: clientOptions,
   },
-  {
-    type: "select",
-    name: "roomType",
-    required: true,
-    model: "roomType",
-    label: "Type de chambre",
-    options: typeOptions,
-  },
+
   {
     required: true,
     name: "room",

@@ -164,6 +164,12 @@ const linksList = computed(() => {
       link: { name: "Locations" },
     },
     {
+      title: "Reservations",
+      caption: "Commandes ou enregistrement",
+      icon: "fas fa-book",
+      link: { name: "Reservations" },
+    },
+    {
       title: "Pièces reservées",
       caption: "chambres et salles reservées",
       icon: "fa fa-home",
@@ -192,8 +198,8 @@ const linksList = computed(() => {
           title: "Employés",
         },
         {
-          link: { name: "Comptabilite" },
-          title: "Comptabilite",
+          link: { name: "Depenses" },
+          title: "Depenses",
         },
         {
           link: { name: "Statistics" },

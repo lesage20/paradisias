@@ -91,9 +91,7 @@ function getFormContent(data) {
       },
     })
     .then((res) => {
-      loading.value = false;
-      emits("saved");
-      $q.notify("Location crée avec succès");
+      $q.notify("Temps ajouté avec succès");
     })
     .catch((err) => {
       if (err.message && err.message == "Network Error") {

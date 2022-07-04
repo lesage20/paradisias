@@ -54,31 +54,61 @@
           multiple
         </q-tooltip>
       </q-btn>
-      <q-btn
-        v-if="selected.length == 1"
-        size="md"
-        outlined
-        round
-        flat
-        icon="more_time"
-        @click="emits('addTime')"
-      >
-        <q-tooltip class="text-body2"> Ajouter temps supplémentaire </q-tooltip>
-      </q-btn>
+      <template v-if="locationTools">
+        <q-btn
+          v-if="selected.length == 1"
+          size="md"
+          outlined
+          round
+          flat
+          icon="more_time"
+          @click="emits('addTime')"
+        >
+          <q-tooltip class="text-body2">
+            Ajouter temps supplémentaire
+          </q-tooltip>
+        </q-btn>
 
-      <q-btn
-        v-if="selected.length"
-        size="md"
-        outlined
-        round
-        flat
-        icon="verified"
-        @click="emits('paid')"
-      >
-        <q-tooltip class="text-body2">
-          Marquée la/les selections payées
-        </q-tooltip>
-      </q-btn>
+        <q-btn
+          v-if="selected.length"
+          size="md"
+          outlined
+          round
+          flat
+          icon="paid"
+          @click="emits('paid')"
+        >
+          <q-tooltip class="text-body2">
+            Marquée la/les selections payées
+          </q-tooltip>
+        </q-btn>
+      </template>
+      <template v-if="reservationTools">
+        <q-btn
+          v-if="selected.length == 1"
+          size="md"
+          outlined
+          round
+          flat
+          icon="close"
+          @click="emits('canceled')"
+        >
+          <q-tooltip class="text-body2"> Annuler la réservation </q-tooltip>
+        </q-btn>
+
+        <q-btn
+          v-if="selected.length"
+          size="md"
+          outlined
+          round
+          flat
+          icon="verified"
+          @click="emits('verified')"
+        >
+          <q-tooltip class="text-body2"> Confirmée la réservation </q-tooltip>
+        </q-btn>
+      </template>
+
       <q-btn
         v-if="selected.length"
         size="md"
@@ -89,6 +119,19 @@
         @click="emits('archive')"
       >
         <q-tooltip class="text-body2"> Archivée la selection </q-tooltip>
+      </q-btn>
+      <q-btn
+        v-if="selected.length"
+        size="md"
+        outlined
+        round
+        flat
+        icon="schedule"
+        @click="emits('pending')"
+      >
+        <q-tooltip class="text-body2">
+          Mettre la selection en attente
+        </q-tooltip>
       </q-btn>
     </q-toolbar>
     <q-table
@@ -104,32 +147,34 @@
       :dense="dense"
     >
       <template #body-cell-status="attr">
-        <q-td class="text-center" :attr="attr">
-          <q-icon
-            v-if="attr.row.status == 'payée'"
-            size="sm"
-            color="primary"
-            name="verified"
-          >
-            <q-tooltip class="text-body2"> Payée </q-tooltip>
-          </q-icon>
-          <q-icon
-            v-if="attr.row.status == 'archivée'"
-            size="sm"
-            color="blue-7"
-            name="archive"
-          >
-            <q-tooltip class="text-body2"> Archivée </q-tooltip>
-          </q-icon>
-          <q-icon
-            v-if="attr.row.status == 'en attente'"
-            size="sm"
-            color="orange-8"
-            name="pending_actions"
-          >
-            <q-tooltip class="text-body2"> En attente </q-tooltip>
-          </q-icon>
-        </q-td>
+        <slot name="status" :status="attr.row.status">
+          <q-td class="text-center" :attr="attr">
+            <q-icon
+              v-if="attr.row.status == 'payée'"
+              size="sm"
+              color="primary"
+              name="paid"
+            >
+              <q-tooltip class="text-body2"> Payée </q-tooltip>
+            </q-icon>
+            <q-icon
+              v-if="attr.row.status == 'archivée'"
+              size="sm"
+              color="blue-7"
+              name="archive"
+            >
+              <q-tooltip class="text-body2"> Archivée </q-tooltip>
+            </q-icon>
+            <q-icon
+              v-if="attr.row.status == 'en attente'"
+              size="sm"
+              color="orange-8"
+              name="schedule"
+            >
+              <q-tooltip class="text-body2"> En attente </q-tooltip>
+            </q-icon>
+          </q-td>
+        </slot>
       </template>
       <template #body-cell-actions="attr">
         <q-td class="text-center" :attr="attr">
@@ -187,6 +232,8 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  locationTools: { type: Boolean, default: false },
+  reservationTools: { type: Boolean, default: false },
 });
 
 const search = ref("");
@@ -200,6 +247,8 @@ const emits = defineEmits([
   "addTime",
   "archive",
   "paid",
+  "canceled",
+  "verified",
 ]);
 watch(selected, () => {
   emits("selected");

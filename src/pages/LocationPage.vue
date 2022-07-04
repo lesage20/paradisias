@@ -3,7 +3,7 @@
     <div class="row">
       <div class="col">
         <q-dialog v-model="add" :maximized="$q.platform.is.mobile" persistent>
-          <AddBooking @saved="created" @close="add = false" />
+          <AddLocation @saved="created" @close="add = false" />
           {{ $q.platform.is.desktop }}
         </q-dialog>
       </div>
@@ -20,13 +20,15 @@
           :items="items"
           title="Reservations"
           :dense="true"
-          tools="true"
+          :tools="true"
+          :location-tools="true"
           @add="add = true"
           @delete="deleteLocation"
           @selected="showSelected"
           @add-time="addingTime = true"
           @archive="archive"
           @paid="paid"
+          @pending="pending"
         />
       </div>
       <div v-if="$q.platform.is.mobile" class="col-12 mobile-only">
@@ -168,8 +170,8 @@ import { defineAsyncComponent, ref, onMounted, inject, provide } from "vue";
 import { useQuasar } from "quasar";
 import { useLoginStore as store } from "src/stores/login";
 import axios from "axios";
-const AddBooking = defineAsyncComponent(() =>
-  import("src/components/AddBooking.vue")
+const AddLocation = defineAsyncComponent(() =>
+  import("src/components/AddLocation.vue")
 );
 const ListTable = defineAsyncComponent(() =>
   import("src/components/ListTable.vue")
@@ -382,13 +384,11 @@ function toggleSelection(item) {
 }
 function showSelected() {
   console.log("emited");
-  console.log(selected.value);
 }
 const addingTime = ref(false);
 
 function archive() {
   if (selected.value.length) {
-    let archived = 0;
     selected.value.forEach((el) => {
       el.status = "archivée";
       axios
@@ -398,7 +398,6 @@ function archive() {
           },
         })
         .then(() => {
-          archived += 1;
           $q.notify("location archivée avec succès");
         })
         .catch((err) => {
@@ -421,7 +420,26 @@ function paid() {
           $q.notify("location marquée comme payée avec succès");
         })
         .catch((err) => {
-          console.dir(err);
+          $q.notify("Une erreur est survenue");
+        });
+    });
+  }
+}
+function pending() {
+  if (selected.value.length) {
+    selected.value.forEach((el) => {
+      el.status = "en attente";
+      axios
+        .put(el.url, el, {
+          headers: {
+            Authorization: "Bearer " + token,
+          },
+        })
+        .then(() => {
+          $q.notify("Location  mise en attente avec succès");
+        })
+        .catch((err) => {
+          $q.notify("Une erreur est survenue");
         });
     });
   }
