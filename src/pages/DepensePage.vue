@@ -46,11 +46,14 @@
 </template>
 
 <script setup>
-import ListTable from "../components/ListTable.vue";
-import AddDepense from "../components/AddDepense.vue";
 import axios from "axios";
-import { inject, onMounted, ref } from "vue";
-
+import { inject, onMounted, ref, defineAsyncComponent } from "vue";
+const AddDepense = defineAsyncComponent(() =>
+  import("src/components/AddDepense.vue")
+);
+const ListTable = defineAsyncComponent(() =>
+  import("src/components/ListTable.vue")
+);
 const token = inject("token");
 const api = inject("api");
 const add = ref(false);
@@ -78,7 +81,47 @@ function getDatas() {
           )[0];
         });
       })
-    );
+    )
+    .catch((err) => {
+      let dialog = $q.dialog({});
+      if (!Boolean(err.response)) {
+        dialog
+          .update({
+            title: "Erreur de réseau",
+            message:
+              "Impossible de se connecter au server. Veuillez vous connecter à internet et actualiser",
+            ok: "actualiser",
+            progress: false,
+            persistent: true,
+          })
+          .onOk(() => {
+            window.location.reload();
+          });
+      } else {
+        if (err.response.status == "401") {
+          dialog
+            .update({
+              title: "Erreur",
+              message:
+                "Votre delai de connexion est passé veuillez vous reconnecter",
+              ok: "se connecter",
+              progress: false,
+            })
+            .onOk(() => {
+              store().logout();
+              router.push({ name: "Login" });
+            });
+        } else {
+          dialog.update({
+            title: "Erreur",
+            message: `Une erreur s'est produite. <br/> code d'erreur: <b> ${err.response.status} </b> <br/> message: ${err.response.message}`,
+            persistent: false,
+            ok: true,
+            progress: false,
+          });
+        }
+      }
+    });
 }
 onMounted(getDatas);
 

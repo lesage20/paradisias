@@ -58,9 +58,14 @@ const routes = [
         ],
       },
       {
-        path: "/bookings",
+        path: "/locations",
         name: "Locations",
-        component: () => import("pages/BookingPage.vue"),
+        component: () => import("pages/LocationPage.vue"),
+      },
+      {
+        path: "/reservations",
+        name: "Reservations",
+        component: () => import("pages/ReservationPage.vue"),
       },
       {
         path: "/reserved",
@@ -88,9 +93,9 @@ const routes = [
         },
         children: [
           {
-            path: "compta",
-            name: "Comptabilite",
-            component: () => import("pages/ComptabilitePage.vue"),
+            path: "depenses",
+            name: "Depenses",
+            component: () => import("pages/DepensePage.vue"),
           },
           {
             path: "employees",

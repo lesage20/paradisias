@@ -101,7 +101,9 @@
                 :items="employes"
                 :columns="columns"
                 title="Employés"
+                :flat="true"
                 @add="startAdd"
+                @delete="deleteEmploye"
               />
               <div class="col-12 mobile-only">
                 <q-toolbar>
@@ -146,13 +148,18 @@
 </template>
 
 <script setup>
-import AddProfil from "src/components/AddProfil.vue";
-import ListTable from "src/components/ListTable.vue";
-import AddUser from "src/components/AddUser.vue";
 import { useQuasar } from "quasar";
-import { ref, onMounted, inject } from "vue";
+import { ref, onMounted, inject, defineAsyncComponent } from "vue";
 import axios from "axios";
-
+const ListTable = defineAsyncComponent(() =>
+  import("src/components/ListTable.vue")
+);
+const AddProfil = defineAsyncComponent(() =>
+  import("src/components/AddProfil.vue")
+);
+const AddUser = defineAsyncComponent(() =>
+  import("src/components/AddUser.vue")
+);
 const token = inject("token");
 const api = inject("api");
 const $q = useQuasar();
@@ -188,8 +195,7 @@ function startAdd() {
     "Pour Ajouter un employé il faut d'abord ajouter son compte utilisateur. L'employé a t'il un compte enregistré?"
   );
 }
-
-onMounted(() => {
+function getDatas() {
   axios
     .all(
       endpoints.map((endpoint) =>
@@ -208,8 +214,50 @@ onMounted(() => {
           el.group = groups.value.filter((group) => group.id == el.role)[0];
         });
       })
-    );
-});
+    )
+    .catch((err) => {
+      let dialog = $q.dialog({});
+      if (!Boolean(err.response)) {
+        dialog
+          .update({
+            title: "Erreur de réseau",
+            message:
+              "Impossible de se connecter au server. Veuillez vous connecter à internet et actualiser",
+            ok: "actualiser",
+            progress: false,
+            persistent: true,
+          })
+          .onOk(() => {
+            window.location.reload();
+          });
+      } else {
+        if (err.response.status == "401") {
+          dialog
+            .update({
+              title: "Erreur",
+              message:
+                "Votre delai de connexion est passé veuillez vous reconnecter",
+              ok: "se connecter",
+              progress: false,
+            })
+            .onOk(() => {
+              store().logout();
+              router.push({ name: "Login" });
+            });
+        } else {
+          dialog.update({
+            title: "Erreur",
+            message: `Une erreur s'est produite. <br/> code d'erreur: <b> ${err.response.status} </b> <br/> message: ${err.response.message}`,
+            persistent: false,
+            ok: true,
+            progress: false,
+            html: true,
+          });
+        }
+      }
+    });
+}
+onMounted(getDatas);
 
 const columns = [
   {
@@ -286,6 +334,31 @@ function createRole() {
         textColor: "red-8",
         color: "red-2",
       });
+    });
+}
+function deleteEmploye(employe) {
+  $q.dialog({
+    title: "Suppression d'élément",
+    message: `Voulez vous vraiment supprimer l'employe de la  <b>  ${
+      employe.name + " " + employe.firstname
+    } </b> de la liste de employes?`,
+    ok: { label: "supprimer", color: "red", flat: true },
+    cancel: "annuler",
+    html: true,
+  }).onOk(() => {
+    del(employe.id);
+  });
+}
+function del(id) {
+  axios
+    .delete(api + "accounts/employes/" + id, {
+      headers: {
+        Authorization: "Bearer " + token,
+      },
+    })
+    .then(() => {
+      getDatas();
+      $q.notify("Employé supprimée avec suuccès");
     });
 }
 </script>

@@ -34,13 +34,148 @@
         </div>
       </div>
     </q-toolbar>
+    <q-toolbar v-if="tools" class="text-grey-9">
+      <q-btn size="md" round flat icon="done" @click="singleSelect">
+        <q-tooltip class="text-body2">
+          {{ selectable == "single" ? "Désactiver" : "Activer" }} la selection
+          unique
+        </q-tooltip>
+      </q-btn>
+      <q-btn
+        size="md"
+        outlined
+        round
+        flat
+        icon="done_all"
+        @click="multipleSelect"
+      >
+        <q-tooltip class="text-body2">
+          {{ selectable == "multiple" ? "Désactiver" : "Activer" }} la selection
+          multiple
+        </q-tooltip>
+      </q-btn>
+      <template v-if="locationTools">
+        <q-btn
+          v-if="selected.length == 1"
+          size="md"
+          outlined
+          round
+          flat
+          icon="more_time"
+          @click="emits('addTime')"
+        >
+          <q-tooltip class="text-body2">
+            Ajouter temps supplémentaire
+          </q-tooltip>
+        </q-btn>
+
+        <q-btn
+          v-if="selected.length"
+          size="md"
+          outlined
+          round
+          flat
+          icon="paid"
+          @click="emits('paid')"
+        >
+          <q-tooltip class="text-body2">
+            Marquée la/les selections payées
+          </q-tooltip>
+        </q-btn>
+      </template>
+      <template v-if="reservationTools">
+        <q-btn
+          v-if="selected.length == 1"
+          size="md"
+          outlined
+          round
+          flat
+          icon="close"
+          @click="emits('canceled')"
+        >
+          <q-tooltip class="text-body2"> Annuler la réservation </q-tooltip>
+        </q-btn>
+
+        <q-btn
+          v-if="selected.length"
+          size="md"
+          outlined
+          round
+          flat
+          icon="verified"
+          @click="emits('verified')"
+        >
+          <q-tooltip class="text-body2"> Confirmée la réservation </q-tooltip>
+        </q-btn>
+      </template>
+
+      <q-btn
+        v-if="selected.length"
+        size="md"
+        outlined
+        round
+        flat
+        icon="archive"
+        @click="emits('archive')"
+      >
+        <q-tooltip class="text-body2"> Archivée la selection </q-tooltip>
+      </q-btn>
+      <q-btn
+        v-if="selected.length"
+        size="md"
+        outlined
+        round
+        flat
+        icon="schedule"
+        @click="emits('pending')"
+      >
+        <q-tooltip class="text-body2">
+          Mettre la selection en attente
+        </q-tooltip>
+      </q-btn>
+    </q-toolbar>
     <q-table
+      v-model:selected="selected"
+      separator="cell"
+      bordered
       :filter="search"
       flat
+      :selection="selectable"
       :grid="grid"
       :columns="columns"
       :rows="items"
+      :dense="dense"
     >
+      <template #body-cell-status="attr">
+        <slot name="status" :status="attr.row.status">
+          <q-td class="text-center" :attr="attr">
+            <q-icon
+              v-if="attr.row.status == 'payée'"
+              size="sm"
+              color="primary"
+              name="paid"
+            >
+              <q-tooltip class="text-body2"> Payée </q-tooltip>
+            </q-icon>
+            <q-icon
+              v-if="attr.row.status == 'archivée'"
+              size="sm"
+              color="blue-7"
+              name="archive"
+            >
+              <q-tooltip class="text-body2"> Archivée </q-tooltip>
+            </q-icon>
+            <q-icon
+              v-if="attr.row.status == 'en attente'"
+              size="sm"
+              color="orange-8"
+              name="schedule"
+            >
+              <q-tooltip class="text-body2"> En attente </q-tooltip>
+            </q-icon>
+          </q-td>
+        </slot>
+      </template>
       <template #body-cell-actions="attr">
         <q-td class="text-center" :attr="attr">
           <q-btn
@@ -52,7 +187,7 @@
             icon="fa-solid fa-trash"
             @click="deleteItem(attr.row)"
           >
-            <q-tooltip>Supprimer</q-tooltip>
+            <q-tooltip class="text-body2">Supprimer</q-tooltip>
           </q-btn>
           <q-btn
             flat
@@ -62,7 +197,7 @@
             color="blue-5"
             icon="fa fa-edit"
           >
-            <q-tooltip>Modifier</q-tooltip>
+            <q-tooltip class="text-body2">Modifier</q-tooltip>
           </q-btn>
         </q-td>
       </template>
@@ -70,7 +205,7 @@
   </q-card>
 </template>
 <script setup>
-import { ref } from "vue";
+import { ref, inject, watch } from "vue";
 
 const props = defineProps({
   columns: {
@@ -89,11 +224,35 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  dense: {
+    type: Boolean,
+    default: false,
+  },
+  tools: {
+    type: Boolean,
+    default: false,
+  },
+  locationTools: { type: Boolean, default: false },
+  reservationTools: { type: Boolean, default: false },
 });
 
 const search = ref("");
+const selected = ref(inject("selected"));
 
-const emits = defineEmits(["add", "delete", "update"]);
+const emits = defineEmits([
+  "add",
+  "delete",
+  "update",
+  "selected",
+  "addTime",
+  "archive",
+  "paid",
+  "canceled",
+  "verified",
+]);
+watch(selected, () => {
+  emits("selected");
+});
 function addItem() {
   emits("add");
 }
@@ -102,6 +261,24 @@ function updateItem(item) {
 }
 function deleteItem(item) {
   emits("delete", item);
+}
+const selectable = ref("none");
+
+function singleSelect() {
+  selected.value = [];
+  if (selectable.value == "single") {
+    selectable.value = "none";
+  } else {
+    selectable.value = "single";
+  }
+}
+function multipleSelect() {
+  if (selectable.value == "multiple") {
+    selected.value = [];
+    selectable.value = "none";
+  } else {
+    selectable.value = "multiple";
+  }
 }
 </script>
 

@@ -12,7 +12,6 @@
         />
 
         <q-toolbar-title> Paradisias Hotel </q-toolbar-title>
-
         <q-btn-dropdown flat color="teal-" dense rounded>
           <template #label>
             <div class="row items-center no-wrap">
@@ -92,11 +91,11 @@
     </q-drawer>
 
     <q-page-container class="bg-grey-2">
-      <div class="row justify-center q-py-sm q-px-lg">
+      <!-- <div class="row justify-center q-py-sm q-px-lg">
         <div class="col-xs-12 text-center">
           <BreadCrumb :items="items" />
         </div>
-      </div>
+      </div> -->
       <transition
         appear
         enter-active-class="animated fadeIn"
@@ -165,6 +164,12 @@ const linksList = computed(() => {
       link: { name: "Locations" },
     },
     {
+      title: "Reservations",
+      caption: "Commandes ou enregistrement",
+      icon: "fas fa-book",
+      link: { name: "Reservations" },
+    },
+    {
       title: "Pièces reservées",
       caption: "chambres et salles reservées",
       icon: "fa fa-home",
@@ -193,8 +198,8 @@ const linksList = computed(() => {
           title: "Employés",
         },
         {
-          link: { name: "Comptabilite" },
-          title: "Comptabilite",
+          link: { name: "Depenses" },
+          title: "Depenses",
         },
         {
           link: { name: "Statistics" },

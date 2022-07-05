@@ -153,6 +153,7 @@ import { ref, onMounted, inject, computed, watchEffect } from "vue";
 import { isToday, isThisWeek, isThisMonth } from "date-fns";
 
 const emits = defineEmits(["back"]);
+const token = inject("token");
 const selectedList = ref("location");
 const api = inject("api");
 const $q = useQuasar();
@@ -174,32 +175,82 @@ const thisMonthLocations = ref([]);
 const thisMonthDepenses = ref([]);
 
 onMounted(() => {
-  axios.all(endpoints.map((endpoint) => axios.get(endpoint))).then(
-    axios.spread((locationList, depenseList, chambreList, clientList) => {
-      locations.value = locationList.data;
-      depenses.value = depenseList.data;
-      chambres.value = chambreList.data;
-      clients.value = clientList.data;
-      todayLocations.value = locations.value.filter((loc) =>
-        isToday(new Date(loc.checkIn))
-      );
-      thisWeekLocations.value = locations.value.filter((loc) =>
-        isThisWeek(new Date(loc.checkIn))
-      );
-      thisMonthLocations.value = locations.value.filter((loc) =>
-        isThisMonth(new Date(loc.checkIn))
-      );
-      todayDepenses.value = depenses.value.filter((dep) =>
-        isToday(new Date(dep.date))
-      );
-      thisWeekDepenses.value = depenses.value.filter((dep) =>
-        isThisWeek(new Date(dep.date))
-      );
-      thisMonthDepenses.value = depenses.value.filter((dep) =>
-        isThisMonth(new Date(dep.date))
-      );
-    })
-  );
+  axios
+    .all(
+      endpoints.map((endpoint) =>
+        axios.get(endpoint, {
+          headers: {
+            Authorization: "Bearer " + token,
+          },
+        })
+      )
+    )
+    .then(
+      axios.spread((locationList, depenseList, chambreList, clientList) => {
+        locations.value = locationList.data;
+        depenses.value = depenseList.data;
+        chambres.value = chambreList.data;
+        clients.value = clientList.data;
+        todayLocations.value = locations.value.filter((loc) =>
+          isToday(new Date(loc.checkIn))
+        );
+        thisWeekLocations.value = locations.value.filter((loc) =>
+          isThisWeek(new Date(loc.checkIn))
+        );
+        thisMonthLocations.value = locations.value.filter((loc) =>
+          isThisMonth(new Date(loc.checkIn))
+        );
+        todayDepenses.value = depenses.value.filter((dep) =>
+          isToday(new Date(dep.date))
+        );
+        thisWeekDepenses.value = depenses.value.filter((dep) =>
+          isThisWeek(new Date(dep.date))
+        );
+        thisMonthDepenses.value = depenses.value.filter((dep) =>
+          isThisMonth(new Date(dep.date))
+        );
+      })
+    )
+    .catch((err) => {
+      let dialog = $q.dialog({});
+      if (!Boolean(err.response)) {
+        dialog
+          .update({
+            title: "Erreur de réseau",
+            message:
+              "Impossible de se connecter au server. Veuillez vous connecter à internet et actualiser",
+            ok: "actualiser",
+            progress: false,
+            persistent: true,
+          })
+          .onOk(() => {
+            window.location.reload();
+          });
+      } else {
+        if (err.response.status == "401") {
+          dialog
+            .update({
+              title: "Erreur",
+              message:
+                "Votre delai de connexion est passé veuillez vous reconnecter",
+              ok: "se connecter",
+              progress: false,
+            })
+            .onOk(() => {
+              store().logout();
+              router.push({ name: "Login" });
+            });
+        } else {
+          dialog.update({
+            title: "Erreur",
+            message: `Une erreur s'est produite. <br/> code d'erreur: <b> ${err.response.status} </b> <br/> message: ${err.response.message}`,
+            persistent: false,
+            ok: true,
+            progress: false,
+          });
+        }
+      }
+    });
 });
 
 // fonctionalites

@@ -88,23 +88,27 @@
 }
 .scale {
   color: teal;
-  transition: "transform";
-  animation: grow 2.5s ease-in-out infinite both;
-  transform: scale(1);
   padding: 20px;
   margin: 40px;
+  /* border-bottom: 3px solid teal; */
+  transition: "border" 1s;
+  animation: grow 2s ease infinite;
 }
-@keyframes grow {
+.scale::before {
+  content: "";
+  width: 100%;
+}
+/* @keyframes grow {
   0% {
-    transform: scale(1);
-    transition: "transform";
+    transition: "border";
+    border-bottom: 3px solid teal;
   }
   50% {
-    transform: scale(1.5);
-    transition: "transform";
+    transition: "border";
+    border-bottom: 1.5px solid grey;
   }
   100% {
-    transform: scale(1);
-    transition: "transform";
+    transition: "border";
+    border-bottom: 0px solid black;
   }
-}
+} */

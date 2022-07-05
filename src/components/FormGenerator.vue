@@ -44,6 +44,7 @@
             :suffix="field.suffix ? field.suffix : ''"
             :dense="dense"
             :autogrow="field.autogrow"
+            :min="field.min"
           />
           <template v-else-if="field.type == 'date'">
             <q-input
@@ -66,6 +67,7 @@
               >
                 <q-date
                   v-model="formContent[field.model]"
+                  :options="field.dateOptions"
                   :title="field.label"
                   years-in-month-view
                   today-btn
@@ -95,14 +97,16 @@
               >
                 <q-date
                   v-model="formContent[field.model]"
+                  :options="field.dateOptions"
                   :title="field.label"
                   years-in-month-view
                   today-btn
                   mask="YYYY-MM-DD HH:mm"
                 ></q-date>
                 <q-time
-                  now-btn
                   v-model="formContent[field.model]"
+                  now-btn
+                  :options="field.timeOption"
                   class="q-mx-md"
                   mask="YYYY-MM-DD HH:mm"
                 />

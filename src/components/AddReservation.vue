@@ -1,8 +1,8 @@
 <template>
   <form-generator
     :fields="fields"
-    title="Ajouter un étage"
-    :loading="loading"
+    title="Ajouter une réservation"
+    :dense="$q.platform.is.desktop"
     @save="getFormContent"
     @close="cancel"
   />
@@ -11,6 +11,8 @@
 import { ref, onMounted, inject } from "vue";
 import axios from "axios";
 import { useQuasar } from "quasar";
+import { useLoginStore } from "src/stores/login";
+import { isBefore, isAfter } from "date-fns";
 
 const token = inject("token");
 const api = inject("api");
@@ -20,10 +22,15 @@ const emits = defineEmits(["close", "saved"]);
 function cancel() {
   emits("close");
 }
-const endpoints = [api + "hotel/types_chambre/", api + "hotel/etages/"];
-let typeOptions = ref([]);
-let floorOptions = ref([]);
-onMounted(() => {
+const endpoints = [
+  api + "accounts/clients/",
+  api + "hotel/chambres/",
+  api + "hotel/reservations/",
+];
+const clientOptions = ref([]);
+const roomOptions = ref([]);
+const reservations = ref([]);
+function getDatas() {
   axios
     .all(
       endpoints.map((endpoint) =>
@@ -35,21 +42,22 @@ onMounted(() => {
       )
     )
     .then(
-      axios.spread((types, floors) => {
-        console.log(types, floors);
-        types.data.forEach((el) => {
+      axios.spread((clients, rooms, reservationList) => {
+        reservations.value = reservationList.data;
+
+        clients.data.forEach((el) => {
           let opt = {
             label: el.name,
             value: el.id,
           };
-          typeOptions.value.push(opt);
+          clientOptions.value.push(opt);
         });
-        floors.data.forEach((el) => {
+        rooms.data.forEach((el) => {
           let opt = {
-            label: el.name,
+            label: el.number,
             value: el.id,
           };
-          floorOptions.value.push(opt);
+          roomOptions.value.push(opt);
         });
       })
     )
@@ -66,7 +74,7 @@ onMounted(() => {
             persistent: true,
           })
           .onOk(() => {
-            window.location.reload();
+            location.reload();
           });
       } else {
         if (err.response.status == "401") {
@@ -93,50 +101,114 @@ onMounted(() => {
         }
       }
     });
-});
+}
+onMounted(getDatas);
 
 const fields = ref([
   {
-    type: "text",
-    name: "number",
+    type: "select",
+    label: "Client",
+    model: "guest",
+    hint: "Le client qui reserve la chambre",
+    options: clientOptions,
+  },
+
+  {
     required: true,
-    model: "number",
-    label: "Numéro de la chambre",
+    name: "room",
+    model: "room",
+    label: "Numéro de chambre",
+    type: "select",
+    options: roomOptions,
   },
   {
-    autogrow: true,
+    name: "checkIn",
+    type: "datetime",
+    model: "checkIn",
     required: true,
-    name: "type",
-    model: "type",
-    label: "Type de chambre",
-    type: "select",
-    options: typeOptions,
+    label: "Date d'entrée",
+    dateOptions: (date) =>
+      isAfter(new Date(date), new Date().setDate(new Date().getDate() - 1)),
   },
   {
-    name: "floor",
-    type: "select",
-    model: "floor",
-    options: floorOptions,
+    name: "checkOut",
+    type: "datetime",
+    model: "checkOut",
     required: true,
-    label: "le niveau d'étage de la chambre",
+    label: "Date de sorti",
+    timeOption: (hr, min, sec) => hr <= 12,
+    dateOptions: (date) =>
+      isAfter(new Date(date), new Date().setDate(new Date().getDate() - 1)),
+  },
+  {
+    type: "select",
+    label: "status de la commande",
+    model: "status",
+    hint: "Le status de la commande",
+    options: ["en attente", "annulée", "confirmée"],
   },
 ]);
+function validReservation(data, list) {
+  let validation = { isValid: true, message: "" };
+  if (Object.keys(data).length < 5) {
+    validation = {
+      isValid: false,
+      message: "Tous les champs sont obligatoire",
+    };
+    return validation;
+  } else if (
+    isBefore(new Date(data.checkIn), new Date()) ||
+    isBefore(new Date(data.checkOut), new Date())
+  ) {
+    validation = {
+      isValid: false,
+      message:
+        "La date d'entrée ou de sortie ne peut pas être avant maintenant",
+    };
+    return validation;
+  } else if (isBefore(new Date(data.checkOut), new Date(data.checkIn))) {
+    validation = {
+      isValid: false,
+      message: "La date d'entrée ne peut pas être après la date de sortie",
+    };
+    return validation;
+  }
+  for (let el of list) {
+    if (
+      el.room == data.room &&
+      isAfter(new Date(data.checkIn), new Date(el.checkIn)) &&
+      isBefore(new Date(data.checkIn), new Date(el.checkOut))
+    ) {
+      validation = {
+        isValid: false,
+        message: "La chambre selectionnée est occupée",
+      };
+      break;
+    }
+  }
+  return validation;
+}
 function getFormContent(data) {
   loading.value = true;
-  console.log(data);
+  const validation = validReservation(data, reservations.value);
+  data.recorded_by = useLoginStore().user.profil;
+  console.log(validReservation(data, reservations.value));
+  if (!validation.isValid) {
+    $q.notify(validation.message);
+    return;
+  }
   axios
-    .post(api + "hotel/chambres/", data, {
+    .post(api + "hotel/reservations/", data, {
       headers: {
         Authorization: "Bearer " + token,
       },
     })
     .then((res) => {
-      console.log(res);
       loading.value = false;
-      $q.notify("Chambre crée avec succès");
+      emits("saved");
+      $q.notify("Location crée avec succès");
     })
     .catch((err) => {
-      console.dir(err);
       loading.value = false;
       if (err.message && err.message == "Network Error") {
         $q.notify("Impossible de se connecter au server");

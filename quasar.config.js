@@ -95,7 +95,7 @@ module.exports = configure(function (/* ctx */) {
         },
       },
 
-      iconSet: "fontawesome-v6", // Quasar icon set
+      iconSet: "material-icons", // Quasar icon set
       lang: "fr",
       // For special cases outside of where the auto-import strategy can have an impact
       // (like functional components as one of the examples),
@@ -110,7 +110,7 @@ module.exports = configure(function (/* ctx */) {
 
     // animations: 'all', // --- includes all animations
     // https://v2.quasar.dev/options/animations
-    animations: "all",
+    animations: ["fadeIn", "fadeOut"],
 
     // https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#property-sourcefiles
     // sourceFiles: {

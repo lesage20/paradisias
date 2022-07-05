@@ -2,7 +2,12 @@
   <q-card :class="'text-white bg-' + color">
     <q-card-section horizontal>
       <div class="row full-width">
-        <div :class="'flex flex-center rounded-borders q-pa-md col-xs-4 bg-' + color">
+        <div
+          v-if="icon"
+          :class="
+            'flex flex-center rounded-borders q-pa-md col-xs-4 bg-' + color
+          "
+        >
           <q-icon
             size="lg"
             style="--fa-animation-iteration-count: 4"
@@ -10,10 +15,21 @@
             :name="icon"
           ></q-icon>
         </div>
-        <div class="col-xs-8 q-pa-md text-center">
-          <p class="col-xs-12">
-            <b class="text-h4"> {{ number }}</b> <br />
-            {{ title }} <br />
+        <div
+          class="q-pa-md text-center"
+          :class="{ 'col-xs-8': icon, 'col-xs-12': !icon }"
+        >
+          <p
+            :class="{
+              'col-xs-12': true,
+              'column reverse q-pa-none q-ma-none ': !icon,
+            }"
+          >
+            <b :class="icon ? 'text-h4' : 'text-h1'">
+              {{ number }} <span v-if="!icon">F</span></b
+            >
+            <br />
+            <span>{{ title }}</span> <br />
           </p>
         </div>
       </div>
