@@ -1,7 +1,7 @@
 <template>
   <form-generator
     :fields="fields"
-    title="Ajouter une location"
+    title="Ajouter une réservation"
     :dense="$q.platform.is.desktop"
     @save="getFormContent"
     @close="cancel"
@@ -25,11 +25,11 @@ function cancel() {
 const endpoints = [
   api + "accounts/clients/",
   api + "hotel/chambres/",
-  api + "hotel/locations/",
+  api + "hotel/reservations/",
 ];
 const clientOptions = ref([]);
 const roomOptions = ref([]);
-const locations = ref([]);
+const reservations = ref([]);
 function getDatas() {
   axios
     .all(
@@ -42,8 +42,8 @@ function getDatas() {
       )
     )
     .then(
-      axios.spread((clients, rooms, locationList) => {
-        locations.value = locationList.data;
+      axios.spread((clients, rooms, reservationList) => {
+        reservations.value = reservationList.data;
 
         clients.data.forEach((el) => {
           let opt = {
@@ -74,7 +74,7 @@ function getDatas() {
             persistent: true,
           })
           .onOk(() => {
-            window.location.reload();
+            location.reload();
           });
       } else {
         if (err.response.status == "401") {
@@ -145,10 +145,10 @@ const fields = ref([
     label: "status de la commande",
     model: "status",
     hint: "Le status de la commande",
-    options: ["en attente", "payée", "archivée"],
+    options: ["en attente", "annulée", "confirmée"],
   },
 ]);
-function validLocation(data, list) {
+function validReservation(data, list) {
   let validation = { isValid: true, message: "" };
   if (Object.keys(data).length < 5) {
     validation = {
@@ -190,15 +190,15 @@ function validLocation(data, list) {
 }
 function getFormContent(data) {
   loading.value = true;
-  const validation = validLocation(data, locations.value);
+  const validation = validReservation(data, reservations.value);
   data.recorded_by = useLoginStore().user.profil;
-  console.log(validLocation(data, locations.value));
+  console.log(validReservation(data, reservations.value));
   if (!validation.isValid) {
     $q.notify(validation.message);
     return;
   }
   axios
-    .post(api + "hotel/locations/", data, {
+    .post(api + "hotel/reservations/", data, {
       headers: {
         Authorization: "Bearer " + token,
       },

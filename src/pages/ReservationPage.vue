@@ -3,7 +3,7 @@
     <div class="row">
       <div class="col">
         <q-dialog v-model="add" :maximized="$q.platform.is.mobile" persistent>
-          <AddLocation @saved="created" @close="add = false" />
+          <AddReservation @saved="created" @close="add = false" />
           {{ $q.platform.is.desktop }}
         </q-dialog>
       </div>
@@ -198,15 +198,13 @@ import { defineAsyncComponent, ref, onMounted, inject, provide } from "vue";
 import { useQuasar } from "quasar";
 import { useLoginStore as store } from "src/stores/login";
 import axios from "axios";
-const AddLocation = defineAsyncComponent(() =>
-  import("src/components/AddLocation.vue")
+const AddReservation = defineAsyncComponent(() =>
+  import("src/components/AddReservation.vue")
 );
 const ListTable = defineAsyncComponent(() =>
   import("src/components/ListTable.vue")
 );
-const AddTime = defineAsyncComponent(() =>
-  import("src/components/AddTime.vue")
-);
+
 const token = inject("token");
 const api = inject("api");
 
