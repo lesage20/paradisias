@@ -332,6 +332,14 @@ const columns = [
     sortable: true,
   },
   {
+    name: "payment",
+    align: "center",
+    label: "Payement",
+    field: (row) => row.payment,
+    format: (val) => `${val}`,
+    sortable: true,
+  },
+  {
     name: "status",
     align: "center",
     label: "Status",

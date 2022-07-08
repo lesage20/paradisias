@@ -58,10 +58,5 @@ export default route(function (/* { store, ssrContext } */) {
     }
   });
 
-  Router.afterEach((to, from) => {
-    if (from.name == "Login") {
-      location.reload();
-    }
-  });
   return Router;
 });

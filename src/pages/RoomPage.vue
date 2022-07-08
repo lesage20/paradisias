@@ -78,9 +78,9 @@ function getData() {
         etages.value = floors.data;
         items.value = chambres.data;
         items.value.forEach((el) => {
-          el.etage = etages.value.filter((etage) => (etage.id = el.floor))[0];
+          el.etage = etages.value.filter((etage) => etage.id == el.floor)[0];
           el.type_chambre = types_chambre.value.filter(
-            (type) => (type.id = el.type)
+            (type) => type.id == el.type
           )[0];
         });
       })

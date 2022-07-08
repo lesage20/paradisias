@@ -31,17 +31,13 @@
       <!-- <q-btn class="q-mx-sm" unelevated><q-tooltip class="text-subtitle2">Type de </q-tooltip></q-btn> -->
       <q-btn class="q-mx-sm" color="teal-6" @click="selectedRange = 'day'">
         <q-icon left size="xs" name="fa fa-calendar-day" />
-        jour
+        Aujourd'hui
         <q-tooltip class="text-subtitle2"> Rapport d'aujourdui </q-tooltip>
       </q-btn>
-      <q-btn class="q-mx-sm" color="orange-8" @click="selectedRange = 'week'">
-        <q-icon left size="xs" name="fa fa-calendar-week" />
-        semaine
-        <q-tooltip class="text-subtitle2"> Rapport de cette semaine </q-tooltip>
-      </q-btn>
-      <q-btn class="q-mx-sm" color="purple" @click="selectedRange = 'month'">
+
+      <q-btn class="q-mx-sm" color="orange-8" @click="selectedRange = 'month'">
         <q-icon left size="xs" name="fa fa-calendar-days" />
-        mois
+        Ce Mois
         <q-tooltip class="text-subtitle2"> Rapport de ce mois </q-tooltip>
       </q-btn>
     </q-toolbar>
@@ -90,7 +86,9 @@
           >
             <q-icon left size="xs" name="fa fa-calendar-day" />
             jour
-            <q-tooltip class="text-subtitle2"> Rapport d'aujourdui </q-tooltip>
+            <q-tooltip class="text-subtitle2">
+              Rapport Journalier de reservation
+            </q-tooltip>
           </q-btn>
         </div>
         <div class="col-xs-12 q-pa-sm">
@@ -120,7 +118,9 @@
       </div>
     </q-toolbar>
 
-    <PdfGenerator :title="`rapport_global_${new Date().toLocaleDateString()}`">
+    <PdfGenerator
+      :title="`reservation_journalière_du_${new Date().toLocaleDateString()}`"
+    >
       <template #content>
         <div>
           <q-toolbar class="q-ma-none q-pb-none q-px-lg">
@@ -134,59 +134,33 @@
           </q-toolbar>
           <q-separator inset></q-separator>
           <q-toolbar class="q-mt-lg">
-            <q-toolbar-title class="text-center">
-              Rapport {{ selectedRange == "day" ? "d'" : "de" }}
-              {{ currentSelectionText }}
+            <q-toolbar-title class="text-center text-uppercase">
+              Planning d'occupation Journalière des chambres
             </q-toolbar-title>
           </q-toolbar>
+          <q-toolbar class="q-pr-xl q-pa-none q-ma-none">
+            <q-space></q-space>
+            Journée du
+            {{
+              selectedRange == "day"
+                ? new Date().toLocaleDateString()
+                : new Date(selectedRange).toLocaleDateString()
+            }}
+          </q-toolbar>
+
           <q-card flat>
-            <q-card-section horizontal>
-              <q-card-section id="chart">
-                <apexchart
-                  type="pie"
-                  width="300"
-                  :options="chartOptions"
-                  :series="series"
-                ></apexchart>
-              </q-card-section>
-              <q-card-section>
-                <p>
-                  {{ currentSelectionText }} nous avons eu
-                  {{ currentSelectionCount }} locations qui ont généré
-                  {{ currentSelectionRevenue }} FCFA de revenue brut, avec
-                  {{ currentSelectionDepenseCount }} dépense{{
-                    currentSelectionDepenseCount > 1 ? "s" : ""
-                  }}
-                  qui a couté {{ currentSelectionDepenseAmount }} FCFA <br />
-                  Ci dessous les tableaux de locations et de depenses
-                  {{ selectedRange == "day" ? "d'" : "de" }}
-                  {{ currentSelectionText.toLowerCase() }}.
-                </p>
-              </q-card-section>
-            </q-card-section>
-          </q-card>
-          <q-card flat>
-            <div class="q-py-md">
+            <div class="q-py-sm">
               <q-table
                 v-model:pagination="pagination"
                 :rows-per-page-options="[0]"
                 flat
                 bordered
-                title="hhhhh"
-                :rows="currentSelectionRows"
+                :rows="chambres"
                 :columns="columns"
+                separator="cell"
                 :hide-pagination="true"
                 hide-bottom
               >
-                <template #top>
-                  <div class="row justify-center text-center">
-                    <div class="col">
-                      <p class="text-center text-subtitle1">
-                        Tableau récapitulatif des locations de ce jour
-                      </p>
-                    </div>
-                  </div>
-                </template>
               </q-table>
             </div>
           </q-card>
@@ -200,7 +174,6 @@
 import { useQuasar } from "quasar";
 import axios from "axios";
 import PdfGenerator from "src/components/PdfGenerator.vue";
-import TitleComponent from "src/components/TitleComponent.vue";
 import { ref, onMounted, inject, computed, watchEffect } from "vue";
 import { isToday, isThisWeek, isThisMonth } from "date-fns";
 
@@ -210,21 +183,15 @@ const api = inject("api");
 const $q = useQuasar();
 
 const endpoints = [
-  api + "hotel/locations/",
-  api + "hotel/depenses/",
+  api + "hotel/reservations/",
   api + "hotel/chambres/",
   api + "accounts/clients/",
 ];
-const locations = ref([]);
-const depenses = ref([]);
+const reservations = ref([]);
 const chambres = ref([]);
 const clients = ref([]);
-const todayLocations = ref([]);
-const todayDepenses = ref([]);
-const thisWeekLocations = ref([]);
-const thisWeekDepenses = ref([]);
+const todayReservations = ref([]);
 const thisMonthLocations = ref([]);
-const thisMonthDepenses = ref([]);
 
 onMounted(() => {
   axios
@@ -238,28 +205,21 @@ onMounted(() => {
       )
     )
     .then(
-      axios.spread((locationList, depenseList, chambreList, clientList) => {
-        locations.value = locationList.data;
-        depenses.value = depenseList.data;
+      axios.spread((reservationList, chambreList, clientList) => {
+        reservations.value = reservationList.data;
         chambres.value = chambreList.data;
         clients.value = clientList.data;
-        todayLocations.value = locations.value.filter((loc) =>
+        chambres.value.forEach((el) => {
+          el.reservations = reservations.value.filter(
+            (res) => el.id == res.room
+          );
+        });
+        todayReservations.value = reservations.value.filter((loc) =>
           isToday(new Date(loc.checkIn))
         );
-        thisWeekLocations.value = locations.value.filter((loc) =>
-          isThisWeek(new Date(loc.checkIn))
-        );
-        thisMonthLocations.value = locations.value.filter((loc) =>
+
+        thisMonthLocations.value = reservations.value.filter((loc) =>
           isThisMonth(new Date(loc.checkIn))
-        );
-        todayDepenses.value = depenses.value.filter((dep) =>
-          isToday(new Date(dep.date))
-        );
-        thisWeekDepenses.value = depenses.value.filter((dep) =>
-          isThisWeek(new Date(dep.date))
-        );
-        thisMonthDepenses.value = depenses.value.filter((dep) =>
-          isThisMonth(new Date(dep.date))
         );
       })
     )
@@ -308,7 +268,7 @@ onMounted(() => {
 // fonctionalites
 function guestName(id) {
   let client = clients.value.filter((client) => client.id == id)[0];
-  return client.name + " " + client.firstname;
+  return Boolean(client) ? client.name + " " + client.firstname : "";
 }
 
 function roomNumber(id) {
@@ -319,21 +279,16 @@ const selectedRange = ref("day");
 
 // after selection
 const currentSelectionText = ref("Aujourd'hui");
-const currentSelectionRevenue = ref(0);
-const currentSelectionCount = ref(0);
-const currentSelectionDepenseCount = ref(0);
-const currentSelectionDepenseAmount = ref(0);
-const currentSelectionRows = ref([]);
 
 // tableau
 const columns = [
   {
-    name: "reference",
+    name: "room",
     required: true,
-    label: "reference",
-    align: "left",
-    field: (row) => row.reference,
-    format: (val) => `${val.toUpperCase()}`,
+    label: "Chambre",
+    align: "center",
+    field: (row) => row.number,
+    format: (val) => `${val}`,
     sortable: true,
   },
   {
@@ -341,26 +296,30 @@ const columns = [
     required: true,
     label: "Client",
     align: "center",
-    field: (row) => guestName(row.guest),
+    field: (row) =>
+      row.reservations.length ? guestName(row.reservations[0].guest) : "",
     format: (val) => `${val}`,
     sortable: true,
   },
+
   {
-    name: "room",
+    name: "checkIn",
     required: true,
-    label: "Chambre",
+    label: "Date ent.",
     align: "center",
-    field: (row) => roomNumber(row.room),
-    format: (val) => `${val}`,
+    field: (row) =>
+      row.reservations.length ? row.reservations[0].checkIn : "",
+    format: (val) => (val ? new Date(val).toLocaleDateString() : ""),
     sortable: true,
   },
   {
-    name: "amount",
+    name: "checkOut",
     required: true,
-    label: "Montant",
+    label: "Date sort.",
     align: "center",
-    field: (row) => row.totalPrice,
-    format: (val) => `${val} FCFA`,
+    field: (row) =>
+      row.reservations.length ? row.reservations[0].checkOut : "",
+    format: (val) => (val ? new Date(val).toLocaleDateString() : ""),
     sortable: true,
   },
   {
@@ -368,7 +327,7 @@ const columns = [
     required: true,
     label: "status",
     align: "center",
-    field: (row) => row.status,
+    field: (row) => (row.reservations.length ? row.reservations[0].status : ""),
     format: (val) => `${val}`,
     sortable: true,
   },
@@ -378,79 +337,30 @@ const pagination = {
   rowsPerPage: 0, // 0 means all rows
 };
 
-// graphique
-const series = ref([
-  currentSelectionDepenseAmount.value,
-  currentSelectionRevenue.value,
-]);
-
 watchEffect(() => {
-  currentSelectionDepenseAmount.value = 0;
-  currentSelectionRevenue.value = 0;
-
   if (selectedRange.value == "day") {
     currentSelectionText.value = "Aujourd'hui";
-    currentSelectionCount.value = todayLocations.value.length;
-    currentSelectionDepenseCount.value = todayDepenses.value.length;
-    todayDepenses.value.forEach((el) => {
-      currentSelectionDepenseAmount.value += el.amount;
+    chambres.value.forEach((el) => {
+      el.reservations = todayReservations.value.filter(
+        (res) => el.id == res.room
+      );
     });
-    todayLocations.value.forEach((el) => {
-      currentSelectionRevenue.value += el.totalPrice;
-    });
-    currentSelectionRows.value = todayLocations.value;
   } else if (selectedRange.value == "week") {
     currentSelectionText.value = "Cette Semaine";
-    currentSelectionCount.value = thisWeekLocations.value.length;
-    currentSelectionDepenseCount.value = thisWeekDepenses.value.length;
-    thisWeekDepenses.value.forEach((el) => {
-      currentSelectionDepenseAmount.value += el.amount;
-    });
-    thisWeekLocations.value.forEach((el) => {
-      currentSelectionRevenue.value += el.totalPrice;
-    });
-    currentSelectionRows.value = thisWeekLocations.value;
   } else if (selectedRange.value == "month") {
     currentSelectionText.value = "Ce mois";
-    currentSelectionCount.value = thisMonthLocations.value.length;
-    currentSelectionDepenseCount.value = thisMonthDepenses.value.length;
-
-    thisMonthDepenses.value.forEach((el) => {
-      currentSelectionDepenseAmount.value += el.amount;
-    });
-    thisMonthLocations.value.forEach((el) => {
-      currentSelectionRevenue.value += el.totalPrice;
-    });
-    currentSelectionRows.value = thisMonthLocations.value;
   } else {
     currentSelectionText.value = `Le ${new Date(
       selectedRange.value
     ).toLocaleDateString()}`;
-    currentSelectionRows.value = thisMonthLocations.value;
+    chambres.value.forEach((el) => {
+      el.reservations = reservations.value.filter(
+        (res) =>
+          el.id == res.room &&
+          new Date(selectedRange.value).toLocaleDateString() ==
+            new Date(res.checkIn).toLocaleDateString()
+      );
+    });
   }
-  series.value = [
-    currentSelectionDepenseAmount.value,
-    currentSelectionRevenue.value,
-  ];
 });
-const chartOptions = {
-  chart: {
-    width: 380,
-    type: "pie",
-  },
-  labels: ["Depenses", "Revenue"],
-  responsive: [
-    {
-      breakpoint: 450,
-      options: {
-        chart: {
-          width: 200,
-        },
-        legend: {
-          position: "bottom",
-        },
-      },
-    },
-  ],
-};
 </script>
