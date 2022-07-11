@@ -96,7 +96,7 @@
           >
           </q-btn>
         </q-toolbar>
-        <q-list separator>
+        <q-list>
           <q-item
             v-for="item in items"
             :key="item.reference"
@@ -119,8 +119,8 @@
               </q-icon>
             </q-item-section>
             <q-item-section>
-              <q-item-label>
-                {{ item.chambre.number }} par
+              <q-item-label class="text-uppercase">
+                {{ item.chambre.number }}
                 {{ item.client.name + " " + item.client.firstname }}
                 <q-icon
                   v-if="item.status == 'payée'"
@@ -148,7 +148,7 @@
                 </q-icon>
               </q-item-label>
               <q-item-section caption class="text-grey">
-                du {{ new Date(item.checkIn).toLocaleDateString() }} au
+                {{ new Date(item.checkIn).toLocaleDateString() }} -
                 {{ new Date(item.checkOut).toLocaleDateString() }}
               </q-item-section>
             </q-item-section>
@@ -171,13 +171,13 @@ import { useQuasar } from "quasar";
 import { useLoginStore as store } from "src/stores/login";
 import axios from "axios";
 const AddLocation = defineAsyncComponent(() =>
-  import("src/components/AddLocation.vue")
+  import("src/components/forms/AddLocation.vue")
 );
 const ListTable = defineAsyncComponent(() =>
   import("src/components/ListTable.vue")
 );
 const AddTime = defineAsyncComponent(() =>
-  import("src/components/AddTime.vue")
+  import("src/components/forms/AddTime.vue")
 );
 const token = inject("token");
 const api = inject("api");

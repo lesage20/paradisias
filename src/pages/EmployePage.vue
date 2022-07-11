@@ -155,10 +155,10 @@ const ListTable = defineAsyncComponent(() =>
   import("src/components/ListTable.vue")
 );
 const AddProfil = defineAsyncComponent(() =>
-  import("src/components/AddProfil.vue")
+  import("src/components/forms/AddProfil.vue")
 );
 const AddUser = defineAsyncComponent(() =>
-  import("src/components/AddUser.vue")
+  import("src/components/forms/AddUser.vue")
 );
 const token = inject("token");
 const api = inject("api");

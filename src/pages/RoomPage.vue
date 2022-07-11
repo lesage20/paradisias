@@ -44,7 +44,7 @@
 </template>
 
 <script setup>
-import AddRoom from "src/components/AddRoom.vue";
+import AddRoom from "src/components/forms/AddRoom.vue";
 import ListTable from "src/components/ListTable.vue";
 import { ref, onMounted, inject } from "vue";
 import { useQuasar } from "quasar";

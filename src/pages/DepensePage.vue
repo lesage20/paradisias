@@ -49,7 +49,7 @@
 import axios from "axios";
 import { inject, onMounted, ref, defineAsyncComponent } from "vue";
 const AddDepense = defineAsyncComponent(() =>
-  import("src/components/AddDepense.vue")
+  import("src/components/forms/AddDepense.vue")
 );
 const ListTable = defineAsyncComponent(() =>
   import("src/components/ListTable.vue")

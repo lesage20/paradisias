@@ -119,17 +119,16 @@ const login = () => {
       config
     )
     .then((res) => {
-      console.log(res.data);
       useLoginStore().login(res.data);
       Boolean(route.redirectedFrom)
         ? router.push(route.redirectedFrom)
         : router.push({ name: "Dashboard" });
-      console.log(res.data);
       loading.value = false;
       useLoginStore().setPrerms(res.data.user.groups[0].permissions);
-
       axios
-        .get(`${api}accounts/profiles/${res.data.user.profil}`)
+        .get(`${api}accounts/profiles/${res.data.user.profil}`, {
+          headers: { Authorization: "Bearer " + useLoginStore().token },
+        })
         .then((resp) => {
           useLoginStore().setProfile(resp.data);
         });

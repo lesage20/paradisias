@@ -50,7 +50,7 @@ const ListTable = defineAsyncComponent(() =>
   import("src/components/ListTable.vue")
 );
 const AddFloor = defineAsyncComponent(() =>
-  import("src/components/AddFloor.vue")
+  import("src/components/forms/AddFloor.vue")
 );
 const token = inject("token");
 const api = inject("api");

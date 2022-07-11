@@ -173,7 +173,7 @@
 <script setup>
 import { useQuasar } from "quasar";
 import axios from "axios";
-import PdfGenerator from "src/components/PdfGenerator.vue";
+import PdfGenerator from "./PdfGenerator.vue";
 import { ref, onMounted, inject, computed, watchEffect } from "vue";
 import { isToday, isThisWeek, isThisMonth } from "date-fns";
 

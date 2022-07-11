@@ -44,7 +44,7 @@
 
 <script setup>
 import { ref, onMounted, inject } from "vue";
-import AddRoomType from "src/components/AddRoomType.vue";
+import AddRoomType from "src/components/forms/AddRoomType.vue";
 import ListTable from "src/components/ListTable.vue";
 import { useQuasar } from "quasar";
 import axios from "axios";

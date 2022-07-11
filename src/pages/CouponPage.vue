@@ -50,7 +50,7 @@ const ListTable = defineAsyncComponent(() =>
   import("src/components/ListTable.vue")
 );
 const AddCoupon = defineAsyncComponent(() =>
-  import("src/components/AddCoupon.vue")
+  import("src/components/forms/AddCoupon.vue")
 );
 const token = inject("token");
 const api = inject("api");

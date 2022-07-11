@@ -82,11 +82,11 @@
 <script>
 import { useQuasar } from "quasar";
 import { ref, computed, watch, defineComponent } from "vue";
-import ListDownloader from "src/components/ListDownloader.vue";
-import ReportGenerator from "src/components/ReportGenerator.vue";
-import ReservationReport from "src/components/ReservationReport.vue";
-import SituationChambre from "src/components/SituationChambre.vue";
-import RecapReception from "src/components/RecapReception.vue";
+import ListDownloader from "src/components/reports/ListDownloader.vue";
+import ReportGenerator from "src/components/reports/ReportGenerator.vue";
+import ReservationReport from "src/components/reports/ReservationReport.vue";
+import SituationChambre from "src/components/reports/SituationChambre.vue";
+import RecapReception from "src/components/reports/RecapReception.vue";
 const $q = useQuasar();
 export default defineComponent({
   components: {

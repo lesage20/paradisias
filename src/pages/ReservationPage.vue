@@ -199,7 +199,7 @@ import { useQuasar } from "quasar";
 import { useLoginStore as store } from "src/stores/login";
 import axios from "axios";
 const AddReservation = defineAsyncComponent(() =>
-  import("src/components/AddReservation.vue")
+  import("src/components/forms/AddReservation.vue")
 );
 const ListTable = defineAsyncComponent(() =>
   import("src/components/ListTable.vue")

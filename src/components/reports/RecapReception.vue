@@ -8,9 +8,7 @@
       <q-btn round flat icon="fa fa-arrow-left" @click="emits('back')"></q-btn>
       <q-space></q-space>
     </q-toolbar>
-    <PdfGenerator
-      :title="`situation_chambre_${new Date().toLocaleDateString()}`"
-    >
+    <PdfGenerator :title="`recap_reception_${new Date().toLocaleDateString()}`">
       <template #content>
         <div>
           <q-toolbar class="q-ma-none q-pb-none q-px-lg">
@@ -25,7 +23,7 @@
           <q-separator inset></q-separator>
           <q-toolbar class="q-mt-lg">
             <q-toolbar-title class="text-center text-uppercase">
-              Feuille de situation des chambres
+              Recapitulatif point des receptionniste
             </q-toolbar-title>
           </q-toolbar>
           <q-toolbar class="q-pr-xl q-pa-none q-ma-none">
@@ -37,6 +35,7 @@
             <div class="q-py-sm">
               <q-table
                 v-model:pagination="pagination"
+                wrap-cells
                 :rows-per-page-options="[0]"
                 flat
                 bordered
@@ -46,6 +45,19 @@
                 :hide-pagination="true"
                 hide-bottom
               >
+                <template #body-cell-observation="attr">
+                  <q-td :attr="attr" cols="1" @click="attr.row.active = true">
+                    <q-input
+                      v-if="attr.row.active"
+                      v-model="attr.row.model"
+                      :autogrow="true"
+                      label="observation"
+                      type="textarea"
+                      @keyup.enter.ctrl="attr.row.active = false"
+                    ></q-input>
+                    <p v-else class="text-wrap">{{ attr.row.model }}</p>
+                  </q-td>
+                </template>
               </q-table>
             </div>
           </q-card>
@@ -58,15 +70,17 @@
 <script setup>
 import { useQuasar } from "quasar";
 import axios from "axios";
-import PdfGenerator from "src/components/PdfGenerator.vue";
+import PdfGenerator from "./PdfGenerator.vue";
 import { ref, onMounted, inject, computed } from "vue";
 import { isToday, isThisWeek, isThisMonth } from "date-fns";
+import { useLoginStore as store } from "src/stores/login";
+import { useRouter } from "vue-router";
 
 const emits = defineEmits(["back"]);
 const token = inject("token");
 const api = inject("api");
 const $q = useQuasar();
-
+const router = useRouter();
 const endpoints = [
   api + "hotel/reservations/",
   api + "hotel/locations/",
@@ -155,66 +169,95 @@ onMounted(() => {
 });
 
 const TotalRooms = computed(() => chambres.value.length);
+
 const BusyRooms = computed(
   () => locations.value.filter((loc) => isToday(new Date(loc.checkIn))).length
 );
-const WaitingCheckIn = computed(
-  () => locations.value.filter((loc) => isToday(new Date(loc.checkIn))).length
-);
-const WaitingCheckOut = computed(
-  () => locations.value.filter((loc) => isToday(new Date(loc.checkOut))).length
-);
+const BusyRoomsObs = ref("");
+
 const FreeLocations = computed(
   () => locations.value.filter((loc) => loc.totalPrice == 0).length
 );
+const FreeLocationsObs = ref("");
+
+const RevenuCash = computed(() => {
+  let revenu = 0;
+  locations.value
+    .filter((loc) => isToday(new Date(loc.checkIn)))
+    .forEach((loc) => {
+      revenu += loc.payment == "espece" ? loc.totalPrice : 0;
+    });
+  return revenu;
+});
+const RevenuCashObs = ref("");
+
+const RevenuVirtual = computed(() => {
+  let revenu = 0;
+  locations.value
+    .filter((loc) => isToday(new Date(loc.checkIn)))
+    .forEach((loc) => {
+      revenu += loc.payment != "espece" ? loc.totalPrice : 0;
+    });
+  return revenu;
+});
+const RevenuVirtualObs = ref("");
+
 const FreeRooms = computed(() => TotalRooms.value - BusyRooms.value);
-const TotalBusyRooms = computed(() => BusyRooms.value + FreeLocations.value);
-const Occupation = computed(
-  () => (TotalBusyRooms.value * 100) / (TotalRooms.value || 1)
-);
+const FreeRoomsObs = ref("");
+
+const TotalRevenu = computed(() => RevenuCash.value + RevenuVirtual.value);
+const TotalRevenuObs = ref("");
 
 const rows = ref([
   {
-    label: "Total Chambre",
-    valeur: TotalRooms,
-  },
-  {
     label: "Chambres Occupées",
     valeur: BusyRooms,
+    prix: false,
+    observation: BusyRoomsObs,
+    model: "",
+    active: false,
   },
-  {
-    label: "Arrivées Prévues",
-    valeur: WaitingCheckIn,
-  },
-  {
-    label: "Depart Preévus",
-    valeur: WaitingCheckOut,
-  },
-
   {
     label: "Chambres Occupées Gratuites",
     valeur: FreeLocations,
-  },
-  {
-    label: "Hors Services",
-    valeur: 3,
-  },
-  {
-    label: "Non Arrivées",
-    valeur: 10,
+    prix: false,
+    observation: FreeLocationsObs,
+    model: "",
   },
   {
     label: "Chambres Libres",
     valeur: FreeRooms,
+    prix: false,
+    observation: FreeRoomsObs,
+    model: "",
   },
   {
-    label: "Total Chambres Occupée",
-    valeur: TotalBusyRooms,
+    label: "Recette en espèce",
+    valeur: RevenuCash,
+    prix: true,
+    observation: RevenuCashObs,
+    model: "",
   },
   {
-    label: "Taux Occupation",
-    valeur: Occupation,
-    pourcent: true,
+    label: "Autres types de recette (cheque, devise, etc)",
+    valeur: RevenuVirtual,
+    prix: true,
+    observation: RevenuVirtualObs,
+    model: "",
+  },
+  {
+    label: "Montant Total Versé",
+    valeur: TotalRevenu,
+    prix: true,
+    observation: TotalRevenuObs,
+    model: "",
+  },
+  {
+    label: "Report",
+    valeur: "Occupation",
+    prix: false,
+    observation: "",
+    model: "",
   },
 ]);
 // tableau
@@ -222,7 +265,7 @@ const columns = [
   {
     name: "Label",
     required: true,
-    label: "Label",
+    label: "Designation",
     align: "start",
     field: (row) => row.label,
     format: (val) => `${val}`,
@@ -230,10 +273,18 @@ const columns = [
   {
     name: "valeur",
     required: true,
-    label: "Valeur",
+    label: "Quantité ou Prix",
     align: "center",
     field: (row) => row,
-    format: (val) => `${val.valeur} ${val.pourcent ? "%" : ""}`,
+    format: (val) => `${val.valeur} ${val.prix ? "FCFA" : ""}`,
+  },
+  {
+    name: "observation",
+    required: true,
+    label: "Observation",
+    align: "center",
+    field: (row) => row.observation,
+    format: (val) => ``,
   },
 ];
 </script>

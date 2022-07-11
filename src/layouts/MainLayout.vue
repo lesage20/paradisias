@@ -1,6 +1,9 @@
 <template>
   <q-layout view="lHh Lpr lFf">
-    <q-header class="bg-grey-2 text-teal-7">
+    <q-header
+      class="text-teal-7"
+      :class="{ 'bg-grey-2': !$q.dark.mode, 'bg-dark': $q.dark.mode }"
+    >
       <q-toolbar>
         <q-btn
           flat
@@ -22,9 +25,15 @@
           </template>
           <div class="row no-wrap q-pa-md">
             <div class="column">
-              <div class="text-h6 q-mb-md">Paramètre du compte</div>
-              <q-toggle v-model="night" label="Mode Nuit" />
-              <q-toggle v-model="bluetooth" label="Bluetooth" />
+              <div class="text-subtitle2 text-grey q-mb-xs">Apparence</div>
+              <q-toggle
+                v-model="$q.dark.mode"
+                label="Mode Nuit"
+                @click="$q.dark.toggle"
+              />
+              <div class="text-subtitle2 text-grey q-mb-xs">Compte</div>
+
+              <q-btn no-caps flat icon="person" label="Mon Profile"> </q-btn>
             </div>
 
             <q-separator vertical inset class="q-mx-lg" />
@@ -90,7 +99,7 @@
       </q-scroll-area>
     </q-drawer>
 
-    <q-page-container class="bg-grey-2">
+    <q-page-container :class="{ 'bg-grey-2': !$q.dark.mode }">
       <!-- <div class="row justify-center q-py-sm q-px-lg">
         <div class="col-xs-12 text-center">
           <BreadCrumb :items="items" />
