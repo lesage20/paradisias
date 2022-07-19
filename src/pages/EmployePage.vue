@@ -120,9 +120,10 @@
                     v-for="item in employes"
                     :key="item.name + item.firstname"
                   >
-                    <q-item-section side>
-                      <q-avatar size="xl" color="teal-7">
-                        <q-icon color="white" name="fa fa-user"> </q-icon>
+                    <q-item-section side avatar>
+                      <q-avatar size="xl" color="teal-1">
+                        <q-icon size="sm" color="teal" name="fa fa-user">
+                        </q-icon>
                       </q-avatar>
                     </q-item-section>
                     <q-item-section>
@@ -134,7 +135,9 @@
                       </q-item-label>
                     </q-item-section>
                     <q-item-section side>
-                      <q-badge>{{ item.group.name }}</q-badge>
+                      <q-badge class="bg-teal-1 text-teal">{{
+                        item.group.name
+                      }}</q-badge>
                     </q-item-section>
                   </q-item>
                 </q-list>
@@ -155,10 +158,10 @@ const ListTable = defineAsyncComponent(() =>
   import("src/components/ListTable.vue")
 );
 const AddProfil = defineAsyncComponent(() =>
-  import("src/components/AddProfil.vue")
+  import("src/components/forms/AddProfil.vue")
 );
 const AddUser = defineAsyncComponent(() =>
-  import("src/components/AddUser.vue")
+  import("src/components/forms/AddUser.vue")
 );
 const token = inject("token");
 const api = inject("api");

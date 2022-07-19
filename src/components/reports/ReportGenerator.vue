@@ -120,7 +120,7 @@
       </div>
     </q-toolbar>
 
-    <PdfGenerator :title="`rapport-${new Date().toLocaleDateString()}`">
+    <PdfGenerator :title="`rapport_global_${new Date().toLocaleDateString()}`">
       <template #content>
         <div>
           <q-toolbar class="q-ma-none q-pb-none q-px-lg">
@@ -199,8 +199,7 @@
 <script setup>
 import { useQuasar } from "quasar";
 import axios from "axios";
-import PdfGenerator from "src/components/PdfGenerator.vue";
-import TitleComponent from "src/components/TitleComponent.vue";
+import PdfGenerator from "./PdfGenerator.vue";
 import { ref, onMounted, inject, computed, watchEffect } from "vue";
 import { isToday, isThisWeek, isThisMonth } from "date-fns";
 

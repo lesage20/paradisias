@@ -11,27 +11,7 @@
           ></q-btn>
         </div>
 
-        <div class="col-5 q-px-sm">
-          <q-btn
-            outline
-            class="q-mx-sm full-width"
-            color="red-8"
-            @click="selectedList = 'depense'"
-          >
-            <q-icon
-              left
-              size="xs"
-              :name="
-                selectedList == 'depense'
-                  ? 'fa fa-check-circle'
-                  : 'fa fa-dollar-sign'
-              "
-            />
-            Depenses
-            <q-tooltip class="text-subtitle2"> Liste des depenses </q-tooltip>
-          </q-btn>
-        </div>
-        <div class="col-5 q-px-sm">
+        <div class="col q-px-sm">
           <q-btn
             outline
             class="q-mx-sm full-width"
@@ -49,6 +29,48 @@
             />
             Locations
             <q-tooltip class="text-subtitle2"> Liste de locations </q-tooltip>
+          </q-btn>
+        </div>
+        <div class="col q-px-sm">
+          <q-btn
+            outline
+            class="q-mx-sm full-width"
+            color="orange-8"
+            @click="selectedList = 'reservation'"
+          >
+            <q-icon
+              left
+              size="xs"
+              :name="
+                selectedList == 'reservation'
+                  ? 'fa fa-check-circle'
+                  : 'pending_actions'
+              "
+            />
+            Réservations
+            <q-tooltip class="text-subtitle2">
+              Liste de Réservations
+            </q-tooltip>
+          </q-btn>
+        </div>
+        <div class="col q-px-sm">
+          <q-btn
+            outline
+            class="q-mx-sm full-width"
+            color="red-8"
+            @click="selectedList = 'depense'"
+          >
+            <q-icon
+              left
+              size="xs"
+              :name="
+                selectedList == 'depense'
+                  ? 'fa fa-check-circle'
+                  : 'fa fa-dollar-sign'
+              "
+            />
+            Depenses
+            <q-tooltip class="text-subtitle2"> Liste des depenses </q-tooltip>
           </q-btn>
         </div>
       </div>
@@ -104,7 +126,7 @@
       </div>
 
       <PdfGenerator
-        :title="`list_${selectedList}_${new Date().toLocaleDateString()}`"
+        :title="`liste_${selectedList}_${new Date().toLocaleDateString()}`"
       >
         <template #content>
           <q-toolbar class="q-ma-none q-pb-none q-px-lg">
@@ -147,8 +169,7 @@
 <script setup>
 import { useQuasar } from "quasar";
 import axios from "axios";
-import PdfGenerator from "src/components/PdfGenerator.vue";
-import TitleComponent from "src/components/TitleComponent.vue";
+import PdfGenerator from "./PdfGenerator.vue";
 import { ref, onMounted, inject, computed, watchEffect } from "vue";
 import { isToday, isThisWeek, isThisMonth } from "date-fns";
 

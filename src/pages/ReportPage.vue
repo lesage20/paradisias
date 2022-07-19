@@ -74,23 +74,27 @@
     </div>
     <div v-show="!menu" class="row justify-center">
       <div class="col">
-        <keep-alive>
-          <component :is="comp" @back="menu = true"></component>
-        </keep-alive>
+        <component :is="comp" @back="menu = true"></component>
       </div>
     </div>
   </q-page>
 </template>
 <script>
 import { useQuasar } from "quasar";
-import ListDownloader from "src/components/ListDownloader.vue";
-import ReportGenerator from "src/components/ReportGenerator.vue";
 import { ref, computed, watch, defineComponent } from "vue";
+import ListDownloader from "src/components/reports/ListDownloader.vue";
+import ReportGenerator from "src/components/reports/ReportGenerator.vue";
+import ReservationReport from "src/components/reports/ReservationReport.vue";
+import SituationChambre from "src/components/reports/SituationChambre.vue";
+import RecapReception from "src/components/reports/RecapReception.vue";
 const $q = useQuasar();
 export default defineComponent({
   components: {
     ListDownloader,
     ReportGenerator,
+    ReservationReport,
+    SituationChambre,
+    RecapReception,
   },
   data: () => ({
     comp: "",
@@ -99,9 +103,39 @@ export default defineComponent({
   computed: {
     listRapport() {
       return [
-        { label: "Fiche de réservations", icon: "fa fa-list" },
-        { label: "Feuille de situation des chambres", icon: "fa fa-list" },
-        { label: "Recapitulatif point réceptionniste", icon: "fa fa-list" },
+        {
+          label: "Fiche de réservations",
+          icon: "fa fa-file",
+          callBack: () => {
+            this.comp = "ReservationReport";
+            this.menu = false;
+          },
+        },
+        {
+          label: "Feuille de situation des chambres",
+          icon: "fa fa-file",
+          callBack: () => {
+            this.comp = "SituationChambre";
+            this.menu = false;
+          },
+        },
+        {
+          label: "Rapport d'occupation des chambres",
+          icon: "fa fa-file",
+          callBack: () => {
+            this.comp = "SituationChambre";
+            this.menu = false;
+          },
+        },
+        {
+          label: "Recapitulatif point réceptionniste",
+          icon: "fa fa-file",
+          callBack: () => {
+            this.comp = "RecapReception";
+            this.menu = false;
+          },
+        },
+
         { label: "Rapport de passation", icon: "fa fa-file" },
         {
           label: "Rapport global",

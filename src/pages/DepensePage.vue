@@ -21,9 +21,8 @@
         <div class="col-12 mobile-only">
           <q-toolbar>
             <q-toolbar-title>Liste de dépenses </q-toolbar-title>
-            <q-btn label="ajouter" outline color="teal-8" @click="add = true" />
           </q-toolbar>
-          <q-list separator>
+          <q-list>
             <q-item v-for="item in items" :key="item.title">
               <q-item-section>
                 <q-item-label>
@@ -35,13 +34,24 @@
                 </q-item-section>
               </q-item-section>
               <q-item-section side>
-                <q-badge>{{ item.amount }} FCFA</q-badge>
+                <q-badge class="bg-teal-1 text-teal"
+                  >{{ item.amount }} F</q-badge
+                >
               </q-item-section>
             </q-item>
           </q-list>
         </div>
       </div>
     </div>
+    <q-page-sticky v-if="$q.platform.is.mobile" :offset="[18, 18]">
+      <q-btn
+        class="shadow-20 bg-teal-2 text-teal-8"
+        round
+        size="md"
+        icon="add"
+        @click="add = true"
+      />
+    </q-page-sticky>
   </q-page>
 </template>
 
@@ -49,7 +59,7 @@
 import axios from "axios";
 import { inject, onMounted, ref, defineAsyncComponent } from "vue";
 const AddDepense = defineAsyncComponent(() =>
-  import("src/components/AddDepense.vue")
+  import("src/components/forms/AddDepense.vue")
 );
 const ListTable = defineAsyncComponent(() =>
   import("src/components/ListTable.vue")

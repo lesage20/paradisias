@@ -96,7 +96,7 @@
           >
           </q-btn>
         </q-toolbar>
-        <q-list separator>
+        <q-list>
           <q-item
             v-for="item in items"
             :key="item.reference"
@@ -119,48 +119,61 @@
               </q-icon>
             </q-item-section>
             <q-item-section>
-              <q-item-label>
-                {{ item.chambre.number }} par
+              <q-item-label class="text-uppercase">
+                {{ item.chambre.number }}
                 {{ item.client.name + " " + item.client.firstname }}
-                <q-icon
-                  v-if="item.status == 'payée'"
-                  size="xs"
-                  color="primary"
-                  name="verified"
-                >
-                  <q-tooltip class="text-body2"> Payée </q-tooltip>
-                </q-icon>
-                <q-icon
-                  v-if="item.status == 'archivée'"
-                  size="xs"
-                  color="blue-7"
-                  name="archive"
-                >
-                  <q-tooltip class="text-body2"> Archivée </q-tooltip>
-                </q-icon>
-                <q-icon
-                  v-if="item.status == 'en attente'"
-                  size="xs"
-                  color="orange-8"
-                  name="pending_actions"
-                >
-                  <q-tooltip class="text-body2"> En attente </q-tooltip>
-                </q-icon>
               </q-item-label>
               <q-item-section caption class="text-grey">
-                du {{ new Date(item.checkIn).toLocaleDateString() }} au
+                {{ new Date(item.checkIn).toLocaleDateString() }} -
                 {{ new Date(item.checkOut).toLocaleDateString() }}
               </q-item-section>
             </q-item-section>
+
             <q-item-section side>
-              <q-badge>{{ item.totalPrice }}FCFA</q-badge>
+              <q-chip
+                :class="{
+                  'bg-teal-1 text-teal': item.status == 'payée',
+                  'bg-pink-1 text-pink': item.status == 'en attente',
+                  'bg-grey-3 text-grey-8': item.status == 'archivée',
+                }"
+              >
+                {{ item.totalPrice }}F
+                <q-icon
+                  v-if="item.status == 'payée'"
+                  size="15px"
+                  right
+                  name="verified"
+                >
+                </q-icon>
+                <q-icon
+                  v-if="item.status == 'en attente'"
+                  size="15px"
+                  right
+                  name="schedule"
+                >
+                </q-icon>
+                <q-icon
+                  v-if="item.status == 'archivée'"
+                  size="15px"
+                  right
+                  name="archive"
+                >
+                </q-icon>
+              </q-chip>
             </q-item-section>
           </q-item>
         </q-list>
       </div>
     </div>
     <q-page-sticky v-if="$q.platform.is.mobile" :offset="[18, 18]">
-      <q-btn fab icon="add" color="teal-8" @click="add = true" />
+      <q-btn
+        class="shadow-20"
+        round
+        size="md"
+        icon="add"
+        color="teal-8"
+        @click="add = true"
+      />
     </q-page-sticky>
   </q-page>
 </template>
@@ -171,13 +184,13 @@ import { useQuasar } from "quasar";
 import { useLoginStore as store } from "src/stores/login";
 import axios from "axios";
 const AddLocation = defineAsyncComponent(() =>
-  import("src/components/AddLocation.vue")
+  import("src/components/forms/AddLocation.vue")
 );
 const ListTable = defineAsyncComponent(() =>
   import("src/components/ListTable.vue")
 );
 const AddTime = defineAsyncComponent(() =>
-  import("src/components/AddTime.vue")
+  import("src/components/forms/AddTime.vue")
 );
 const token = inject("token");
 const api = inject("api");
@@ -329,6 +342,14 @@ const columns = [
     label: "Prix",
     field: (row) => row.totalPrice,
     format: (val) => `${val}F`,
+    sortable: true,
+  },
+  {
+    name: "payment",
+    align: "center",
+    label: "Payement",
+    field: (row) => row.payment,
+    format: (val) => `${val}`,
     sortable: true,
   },
   {

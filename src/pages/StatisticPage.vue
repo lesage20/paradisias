@@ -252,7 +252,7 @@
 <script setup>
 import { ref, onMounted, watchEffect, inject } from "vue";
 import ImportantCard from "src/components/ImportantCard.vue";
-import ReportChart from "src/components/ReportChart.vue";
+import ReportChart from "src/components/reports/ReportChart.vue";
 import { useQuasar, QSpinnerIos } from "quasar";
 import axios from "axios";
 import {

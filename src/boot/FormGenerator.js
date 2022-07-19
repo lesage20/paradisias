@@ -1,5 +1,5 @@
 import { boot } from "quasar/wrappers";
-import FormGenerator from "../components/FormGenerator.vue";
+import FormGenerator from "../components/forms/FormGenerator.vue";
 import QCalendar from "@quasar/quasar-ui-qcalendar/src/QCalendarDay.js";
 
 // "async" is optional;

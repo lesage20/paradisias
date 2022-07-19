@@ -1,36 +1,21 @@
 <template>
-  <q-card :class="'text-white bg-' + color">
-    <q-card-section horizontal>
+  <q-card flat :class="'text-' + color + ' bg-' + color + '-2'">
+    <q-card-section class="q-py-none q-my-none">
+      <q-item>
+        <q-item-section v-if="icon" side>
+          <q-icon :name="icon"></q-icon>
+        </q-item-section>
+        <q-item-section>
+          <q-item-label class="text-center">
+            {{ title }}
+          </q-item-label>
+        </q-item-section>
+      </q-item>
+    </q-card-section>
+    <q-card-section class="text-center q-py-none q-my-none">
       <div class="row full-width">
-        <div
-          v-if="icon"
-          :class="
-            'flex flex-center rounded-borders q-pa-md col-xs-4 bg-' + color
-          "
-        >
-          <q-icon
-            size="lg"
-            style="--fa-animation-iteration-count: 4"
-            color="white"
-            :name="icon"
-          ></q-icon>
-        </div>
-        <div
-          class="q-pa-md text-center"
-          :class="{ 'col-xs-8': icon, 'col-xs-12': !icon }"
-        >
-          <p
-            :class="{
-              'col-xs-12': true,
-              'column reverse q-pa-none q-ma-none ': !icon,
-            }"
-          >
-            <b :class="icon ? 'text-h4' : 'text-h1'">
-              {{ number }} <span v-if="!icon">F</span></b
-            >
-            <br />
-            <span>{{ title }}</span> <br />
-          </p>
+        <div class="col-12">
+          <b class="text-h4"> {{ number }} <span v-if="!icon">F</span></b>
         </div>
       </div>
     </q-card-section>

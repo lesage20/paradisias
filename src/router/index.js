@@ -42,11 +42,7 @@ export default route(function (/* { store, ssrContext } */) {
     if (to.name !== "Login") {
       if (!Boolean(useLoginStore().token)) return { name: "Login" };
       const isVerified = axios
-        .post(
-          api + "auth/token/verify/",
-          { token: useLoginStore().token },
-          { headers: { Authorization: "Bearer " + useLoginStore().token } }
-        )
+        .post(api + "auth/token/verify/", { token: useLoginStore().token })
         .then(() => {
           return true;
         })
@@ -58,10 +54,5 @@ export default route(function (/* { store, ssrContext } */) {
     }
   });
 
-  Router.afterEach((to, from) => {
-    if (from.name == "Login") {
-      location.reload();
-    }
-  });
   return Router;
 });

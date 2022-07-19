@@ -136,7 +136,7 @@
             </q-tooltip>
           </q-btn>
         </q-toolbar>
-        <q-list separator>
+        <q-list>
           <q-item
             v-for="item in items"
             :key="item.reference"
@@ -158,37 +158,51 @@
               >
               </q-icon>
             </q-item-section>
+            <q-item-section v-else side avatar>
+              <q-avatar color="teal-1">
+                <q-icon color="teal" name="king_bed"> </q-icon>
+              </q-avatar>
+            </q-item-section>
             <q-item-section>
               <q-item-label>
-                {{ item.chambre.number }} par
-                {{ item.client.name + " " + item.client.firstname }}
+                {{ item.chambre.number }} -
+                {{
+                  item.client.name.toUpperCase() +
+                  " " +
+                  item.client.firstname.toUpperCase()
+                }}
               </q-item-label>
               <q-item-section caption class="text-grey">
-                du {{ new Date(item.checkIn).toLocaleDateString() }} au
+                {{ new Date(item.checkIn).toLocaleDateString() }} -
                 {{ new Date(item.checkOut).toLocaleDateString() }}
               </q-item-section>
             </q-item-section>
             <q-item-section side>
-              <q-badge v-if="item.status == 'annulée'" color="red">
-                <q-icon left name="close"></q-icon>
-                {{ item.status }}
-              </q-badge>
-              <q-badge v-else-if="item.status == 'en attente'" color="orange">
-                <q-icon left name="schedule"></q-icon>
-
-                {{ item.status }}
-              </q-badge>
-              <q-badge v-else-if="item.status == 'confirmée'">
-                <q-icon left name="check"></q-icon>
-                {{ item.status }}
-              </q-badge>
+              <q-icon
+                v-if="item.status == 'annulée'"
+                color="red"
+                left
+                name="close"
+              ></q-icon>
+              <q-icon
+                v-else-if="item.status == 'en attente'"
+                color="pink"
+                left
+                name="schedule"
+              ></q-icon>
+              <q-icon
+                v-else-if="item.status == 'confirmée'"
+                color="teal"
+                left
+                name="check"
+              ></q-icon>
             </q-item-section>
           </q-item>
         </q-list>
       </div>
     </div>
     <q-page-sticky v-if="$q.platform.is.mobile" :offset="[18, 18]">
-      <q-btn fab icon="add" color="teal-8" @click="add = true" />
+      <q-btn size="md" round icon="add" color="teal-8" @click="add = true" />
     </q-page-sticky>
   </q-page>
 </template>
@@ -199,7 +213,7 @@ import { useQuasar } from "quasar";
 import { useLoginStore as store } from "src/stores/login";
 import axios from "axios";
 const AddReservation = defineAsyncComponent(() =>
-  import("src/components/AddReservation.vue")
+  import("src/components/forms/AddReservation.vue")
 );
 const ListTable = defineAsyncComponent(() =>
   import("src/components/ListTable.vue")

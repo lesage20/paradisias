@@ -1,32 +1,39 @@
 <template>
   <q-page :padding="true">
     <div class="row justify-between desktop-only">
-      <div class="col-xs-12 col-sm-6 col-md-12 q-pa-xs">
-        <ImportantCard title="Revenue" color="teal" :number="revenue" />
+      <div class="col-xs-12 col-sm-6 col-md-6 q-pr-xs q-py-xs q-mb-sm">
+        <ImportantCard title="Revenue Total" color="blue" :number="revenue" />
+      </div>
+      <div class="col-xs-12 col-sm-6 col-md-6 q-pl-xs q-py-xs q-mb-sm">
+        <ImportantCard
+          title="Revenue de ce mois"
+          color="indigo"
+          :number="revenue"
+        />
       </div>
 
-      <div class="col-xs-12 col-sm-6 col-md-4 q-pa-xs">
-        <ImportantCard
-          color="orange-9"
+      <div class="col-xs-12 col-sm-6 col-md-4 q-pr-xs q-py-xs">
+        <transparent-card
+          color="blue"
           title="Chambres"
-          icon="fa fa-bed"
+          icon="king_bed"
           :number="chambres.length"
         />
       </div>
       <div class="col-xs-12 col-sm-6 col-md-4 q-pa-xs">
-        <ImportantCard
+        <transparent-card
           color="teal"
           title="Clients"
-          icon="fa fa-users"
+          icon="people"
           :number="clients.length"
         />
       </div>
-      <div class="col-xs-12 col-sm-6 col-md-4 q-pa-xs">
-        <ImportantCard
-          color="orange-9"
+      <div class="col-xs-12 col-sm-6 col-md-4 q-pl-xs q-py-xs">
+        <transparent-card
+          color="green"
           title="Locations"
           :number="locations.length"
-          icon="fa fa-list"
+          icon="book"
         />
       </div>
     </div>
@@ -64,7 +71,7 @@
 
     <div class="row">
       <div class="col-xs-12">
-        <q-card class="q-my-md">
+        <q-card flat bordered class="q-my-md">
           <q-item>
             <q-item-section>
               <q-item-label>
@@ -105,32 +112,114 @@
             >
               <q-item-section>
                 <q-item-label>
-                  {{ item.client.name + " " + item.client.firstname }}
+                  {{
+                    item.client.name.toUpperCase() +
+                    " " +
+                    item.client.firstname.toUpperCase()
+                  }}
                 </q-item-label>
                 <q-item-section caption class="text-grey">
-                  du {{ new Date(item.checkIn).toLocaleDateString() }} au
+                  {{ new Date(item.checkIn).toLocaleDateString() }} -
                   {{ new Date(item.checkOut).toLocaleDateString() }}
                 </q-item-section>
               </q-item-section>
               <q-item-section side>
-                <q-badge>{{ item.totalPrice }}FCFA</q-badge>
+                <q-badge class="bg-teal-1 text-teal"
+                  >{{ item.totalPrice }}F</q-badge
+                >
               </q-item-section>
             </q-item>
           </q-list>
           <q-table
             flat
+            separator="cell"
+            bordered
             hide-bottom
             class="desktop-only"
             :columns="locationColumns"
             :rows="locations"
           >
+            <template #body-cell-statut="props">
+              <q-td align="center" :props="props.row.staus">
+                <q-chip
+                  v-if="props.row.status == 'en attente'"
+                  style="width: 105px"
+                  class="bg-pink-1 text-pink text-center"
+                >
+                  <q-icon name="schedule" left></q-icon>
+                  {{ props.row.status }}
+                </q-chip>
+                <q-chip
+                  v-else-if="props.row.status == 'payée'"
+                  style="width: 105px"
+                  class="bg-teal-1 text-teal-8 text-center"
+                >
+                  <q-icon left name="verified"></q-icon>
+
+                  {{ props.row.status }}
+                </q-chip>
+                <q-chip
+                  v-else
+                  style="width: 105px"
+                  class="bg-grey-3 text-grey-8 text-center"
+                >
+                  <q-icon name="archive" left></q-icon>
+
+                  {{ props.row.status }}
+                </q-chip>
+              </q-td>
+            </template>
           </q-table>
         </q-card>
       </div>
     </div>
+    <div class="row">
+      <div class="col-12">
+        <q-toolbar>
+          <div class="text-body2 text-grey">Quelques Infos Utiles</div>
+        </q-toolbar>
+      </div>
+      <div class="col-xs-6 col-md-3 q-pa-xs">
+        <transparent-card
+          color="indigo"
+          title="Coupons"
+          icon="local_offer"
+          :number="coupons.length"
+        ></transparent-card>
+      </div>
+      <div class="col-xs-6 col-md-3 q-pa-xs">
+        <transparent-card
+          color="blue"
+          title="Clients"
+          icon="person"
+          :number="clients.length"
+        ></transparent-card>
+      </div>
+      <div class="col-xs-6 col-md-3 q-pa-xs">
+        <transparent-card
+          color="teal"
+          title="Empoyés"
+          icon="people"
+          :number="employes.length"
+        ></transparent-card>
+      </div>
+      <div class="col-xs-6 col-md-3 q-pa-xs">
+        <transparent-card
+          color="green"
+          title="roles"
+          icon="check_circle"
+          :number="roles.length"
+        ></transparent-card>
+      </div>
+    </div>
     <div class="row content-end items-end">
+      <div class="col-12">
+        <q-toolbar>
+          <div class="text-body2 text-grey">Quelques Statistiques</div>
+        </q-toolbar>
+      </div>
       <div class="col-xs-12 col-sm-12 col-md-8 q-py-sm q-pr-sm">
-        <q-card id="chart" class="">
+        <q-card id="chart" flat bordered>
           <q-item>
             <q-item-section
               :class="{
@@ -164,7 +253,11 @@
           'q-pr-sm': $q.platform.is.desktop,
         }"
       >
-        <q-card>
+        <q-card
+          flat
+          bordered
+          :style="$q.platform.is.desktop ? 'height: 317px ' : ''"
+        >
           <q-list separator>
             <q-item>
               <q-item-section>
@@ -204,372 +297,130 @@
         </q-card>
       </div>
     </div>
-    <div class="row items-end">
+
+    <div class="row">
+      <div class="col-12 q-py-sm q-px-none text-grey">
+        <q-toolbar>
+          <div class="text-body2 text-grey">
+            Types de Chambres
+            <q-badge class="bg-blue-1 text-blue-8" align="top">
+              {{ types_chambre.length }} types
+            </q-badge>
+          </div>
+          <q-space></q-space>
+          <q-btn dense flat :to="{ name: 'RoomTypes' }" color="blue" no-caps>
+            Tous les types
+            <q-icon right name="keyboard_arrow_right"></q-icon>
+            <q-tooltip class="text-body2">
+              Voir tous les types de chambres
+            </q-tooltip>
+          </q-btn>
+        </q-toolbar>
+      </div>
+
       <div
-        class="col-xs-12 col-sm-6 col-md-6 q-py-sm"
-        :class="{
-          'q-pa-sm': $q.platform.is.desktop,
-        }"
+        v-for="t in types_chambre.slice(0, 4)"
+        :key="t.name"
+        class="col-xs-12 col-sm-6 col-md-3 q-px-sm"
+        :class="{ 'q-py-sm': $q.platform.is.mobile }"
       >
-        <q-card>
-          <q-list separator>
-            <q-item>
+        <q-card bordered flat style="height: 200px">
+          <q-card-section>
+            <q-toolbar class="q-ma-none q-pa-none">
               <q-item-section>
-                <q-item-label> Type de chambres </q-item-label>
-              </q-item-section>
-              <q-item-section side>
-                <q-btn
-                  dense
-                  flat
-                  :to="{ name: 'RoomTypes' }"
-                  color="primary"
-                  no-caps
-                >
-                  Tous les types
-                  <q-icon right name="keyboard_arrow_right"></q-icon>
-                  <q-tooltip> Voir tous les types </q-tooltip>
-                </q-btn>
-              </q-item-section>
-            </q-item>
-            <q-item v-for="t in types_chambre.slice(0, 4)" :key="t.name">
-              <q-item-section>
-                <q-item-label>
+                <q-item-label class="text-h6 text-capitalize text-grey-7">
                   {{ t.name }}
                 </q-item-label>
-                <q-item-label caption>
-                  {{ t.description }}
-                </q-item-label>
               </q-item-section>
               <q-item-section side>
-                <q-badge> {{ t.price }} F </q-badge>
+                <q-badge class="bg-blue-1 text-blue-8">
+                  Prix: {{ t.price }} F
+                </q-badge>
               </q-item-section>
-            </q-item>
-          </q-list>
-        </q-card>
-      </div>
-      <div
-        class="col-xs-12 col-sm-6 col-md-6 q-py-sm"
-        :class="{
-          'q-pl-sm': $q.platform.is.desktop,
-        }"
-      >
-        <q-card>
-          <q-list separator>
-            <q-item>
-              <q-item-section>
-                <q-item-label> Coupons </q-item-label>
-              </q-item-section>
-              <q-item-section side>
-                <q-btn
-                  dense
-                  flat
-                  :to="{ name: 'Coupon' }"
-                  color="primary"
-                  no-caps
-                >
-                  Tous les coupons
-                  <q-icon right name="keyboard_arrow_right"></q-icon>
-                  <q-tooltip> Voir tous les coupons </q-tooltip>
-                </q-btn>
-              </q-item-section>
-            </q-item>
-            <q-item v-for="t in coupons.slice(0, 5)" :key="t.title">
-              <q-item-section>
-                <q-item-label>
-                  {{ t.title }}
-                </q-item-label>
-                <q-item-label caption>
-                  {{ t.description }}
-                </q-item-label>
-              </q-item-section>
-              <q-item-section side>
-                <q-badge> {{ t.discount }} % </q-badge>
-              </q-item-section>
-            </q-item>
-          </q-list>
-        </q-card>
-      </div>
-    </div>
-    <div class="row items-end">
-      <div
-        :class="{
-          'col-xs-12 col-sm-6 col-md-6 q-py-sm': true,
-          'q-pr-sm': $q.platform.is.desktop,
-        }"
-      >
-        <q-card>
-          <q-list separator>
-            <q-item>
-              <q-item-section>
-                <q-item-label> Etages </q-item-label>
-              </q-item-section>
-              <q-item-section side>
-                <q-btn
-                  dense
-                  :to="{ name: 'Floors' }"
-                  flat
-                  color="primary"
-                  no-caps
-                >
-                  Tous les étages
-                  <q-icon right name="keyboard_arrow_right"></q-icon>
-                  <q-tooltip> Voir tous les étages </q-tooltip>
-                </q-btn>
-              </q-item-section>
-            </q-item>
-            <q-item v-for="etage in etages.slice(0, 5)" :key="etage.name">
-              <q-item-section>
-                <q-item-label>
-                  {{ etage.name }}
-                </q-item-label>
-                <q-item-label caption>
-                  {{ etage.description }}
-                </q-item-label>
-              </q-item-section>
-              <q-item-section side>
-                <q-badge> étage {{ etage.number }} </q-badge>
-              </q-item-section>
-            </q-item>
-          </q-list>
-        </q-card>
-      </div>
-      <div
-        class="col-xs-12 col-sm-6 q-py-sm"
-        :class="{
-          'q-pl-sm': $q.platform.is.desktop,
-        }"
-      >
-        <q-card>
-          <q-list separator>
-            <q-item>
-              <q-item-section>
-                <q-item-label> Dépenses </q-item-label>
-              </q-item-section>
-              <q-item-section side>
-                <q-btn
-                  dense
-                  :to="{ name: 'Comptabilite' }"
-                  flat
-                  color="primary"
-                  no-caps
-                >
-                  Toutes les dépenses
-                  <q-icon right name="keyboard_arrow_right"></q-icon>
-                  <q-tooltip> Voir tous les dépenses </q-tooltip>
-                </q-btn>
-              </q-item-section>
-            </q-item>
-            <q-list separator>
-              <q-item
-                v-for="depense in depenses.slice(0, 5)"
-                :key="depense.title"
-              >
-                <q-item-section>
-                  <q-item-label>
-                    {{ depense.author.name }} {{ depense.author.firstname }}
-                  </q-item-label>
-                  <q-item-section caption class="text-grey">
-                    {{ depense.title }} le
-                    {{ new Date(depense.date).toLocaleDateString() }}
-                  </q-item-section>
-                </q-item-section>
-                <q-item-section side>
-                  <q-badge>{{ depense.amount }} FCFA</q-badge>
-                </q-item-section>
-              </q-item>
-            </q-list>
-          </q-list>
-        </q-card>
-      </div>
-    </div>
-    <div class="row items-end">
-      <div
-        class="col-xs-12 col-sm-8 q-py-sm"
-        :class="{
-          'q-pr-sm': $q.platform.is.desktop,
-        }"
-      >
-        <q-card>
-          <q-list separator>
-            <q-item>
-              <q-item-section>
-                <q-item-label> Employés </q-item-label>
-              </q-item-section>
-              <q-item-section side>
-                <q-btn
-                  dense
-                  :to="{ name: 'Employees' }"
-                  flat
-                  color="primary"
-                  no-caps
-                >
-                  Tous les employés
-                  <q-icon right name="keyboard_arrow_right"></q-icon>
-                  <q-tooltip> Voir tous les employés </q-tooltip>
-                </q-btn>
-              </q-item-section>
-            </q-item>
-            <q-list separator>
-              <q-item
-                v-for="item in employes.slice(0, 5)"
-                :key="item.name + item.firstname"
-              >
-                <q-item-section side>
-                  <q-avatar size="md" color="teal-7">
-                    <q-icon color="white" name="fa fa-user"> </q-icon>
-                  </q-avatar>
-                </q-item-section>
-                <q-item-section>
-                  <q-item-section>
-                    <q-item-label>
-                      {{ item.name + " " + item.firstname }}
-                    </q-item-label>
-                    <q-item-label caption class="text-grey">
-                      Tel: {{ item.phone }} <br />
-                    </q-item-label>
-                  </q-item-section>
-                </q-item-section>
-                <q-item-section side>
-                  <q-badge>{{ item.gender }}</q-badge>
-                </q-item-section>
-              </q-item>
-            </q-list>
-          </q-list>
-        </q-card>
-      </div>
-      <div
-        class="col-xs-12 col-sm-4 q-py-sm"
-        :class="{
-          'q-pl-sm': $q.platform.is.desktop,
-        }"
-      >
-        <q-card>
-          <q-list separator>
-            <q-item>
-              <q-item-section>
-                <q-item-label> Roles </q-item-label>
-              </q-item-section>
-              <q-item-section side>
-                <q-btn
-                  dense
-                  :to="{ name: 'Employees' }"
-                  flat
-                  color="primary"
-                  no-caps
-                >
-                  Tous les rôles
-                  <q-icon right name="keyboard_arrow_right"></q-icon>
-                  <q-tooltip> Voir tous les rôles </q-tooltip>
-                </q-btn>
-              </q-item-section>
-            </q-item>
-            <q-item v-for="(role, index) in roles.slice(0, 5)" :key="role.name">
-              {{ index + 1 }}. {{ role.name }}
-            </q-item>
-          </q-list>
-        </q-card>
-      </div>
-    </div>
-    <div class="row items-end">
-      <div
-        class="col-xs-12 col-sm-4 q-py-sm"
-        :class="{
-          'q-pr-sm': $q.platform.is.desktop,
-        }"
-      >
-        <q-card class="gradient">
-          <q-list separator>
-            <q-item>
-              <q-item-section>
-                <q-item-label> Rapport </q-item-label>
-              </q-item-section>
-            </q-item>
-            <q-separator></q-separator>
-          </q-list>
-          <q-card-section>
-            Vous n'avez pas encore téléchargé le rapport de la journée ? <br />
-            Vous pouvez télécharger le rapport de la journée, de la semaine, du
-            mois ... <br />
-            <br />
-            Vous pouvez aussi télécharger la liste des locations, et des
-            depenses du jour, de la semaine, du mois ...
-            <q-btn
-              unelevated
-              :to="{ name: 'Reports' }"
-              color="primary"
-              class="q-mx-lg q-mt-sm full-width"
-            >
-              <div class="fa-bounce">
-                <q-icon size="sm" name="download" left> </q-icon>
-                <span> Téléchargé Rapport </span>
-              </div>
-            </q-btn>
+            </q-toolbar>
+
+            <div class="text-body2 text-grey-8 q-mb-sm">
+              {{ t.description }}
+            </div>
           </q-card-section>
         </q-card>
       </div>
+    </div>
+    <div class="row">
+      <div class="col-12 q-py-sm q-px-none text-grey">
+        <q-toolbar>
+          <div class="text-body2 text-grey">
+            Dépenses
+            <q-badge class="bg-pink-1 text-pink" align="top">
+              {{ depenses.length }} dépenses
+            </q-badge>
+          </div>
+          <q-space></q-space>
+          <q-btn dense :to="{ name: 'Depenses' }" flat color="pink" no-caps>
+            Toutes les dépenses
+            <q-icon right name="keyboard_arrow_right"></q-icon>
+            <q-tooltip class="text-body2"> Voir toutes les dépenses </q-tooltip>
+          </q-btn>
+        </q-toolbar>
+        <q-card-section class="q-ma-none q-pa-none">
+          <p class="q-px-md q-ma-none q-py-none text-grey-8 text-body2">
+            Les 3 dernieres dépenses effectuées
+          </p>
+        </q-card-section>
+      </div>
+
       <div
-        class="col-xs-12 col-sm-8 q-py-sm"
-        :class="{
-          'q-pl-sm': $q.platform.is.desktop,
-        }"
+        v-for="depense in depenses.slice(0, 3)"
+        :key="depense.title"
+        class="col-xs-12 col-sm-6 col-md-4 q-px-sm"
+        :class="{ 'q-py-sm': $q.platform.is.mobile }"
       >
-        <q-card>
-          <q-list separator>
-            <q-item>
+        <q-card class="text-center" flat style="height: 200px">
+          <q-card-section>
+            <q-toolbar class="q-ma-none q-pa-none">
               <q-item-section>
-                <q-item-label> Clients </q-item-label>
+                <q-item-label class="text-h6 text-capitalize text-grey-7">
+                  {{ depense.title }}
+                </q-item-label>
               </q-item-section>
-              <q-item-section side>
-                <q-btn
-                  dense
-                  :to="{ name: 'Guests' }"
-                  flat
-                  color="primary"
-                  no-caps
-                >
-                  Tous les clients
-                  <q-icon right name="keyboard_arrow_right"></q-icon>
-                  <q-tooltip> Voir tous les clients </q-tooltip>
-                </q-btn>
-              </q-item-section>
-            </q-item>
-            <q-list separator>
-              <q-item
-                v-for="item in clients.slice(0, 5)"
-                :key="item.name + item.firstname"
-              >
-                <q-item-section side>
-                  <q-avatar size="lg" color="teal-7">
-                    <q-icon color="white" name="fa fa-user"> </q-icon>
-                  </q-avatar>
-                </q-item-section>
-                <q-item-section>
-                  <q-item-section>
-                    <q-item-label>
-                      {{ item.name + " " + item.firstname }}
-                    </q-item-label>
-                    <q-item-label caption class="text-grey">
-                      Tel: {{ item.phone }} <br />
-                      id: {{ item.idNumber }}
-                    </q-item-label>
-                  </q-item-section>
-                </q-item-section>
-                <q-item-section side>
-                  <q-badge>{{ item.gender }}</q-badge>
-                </q-item-section>
-              </q-item>
-            </q-list>
-          </q-list>
+            </q-toolbar>
+            <q-separator></q-separator>
+            <div class="text-body2 text-grey-8 q-mb-sm">
+              <q-card-section class="q-mx-none q-px-none">
+                {{ depense.description }}
+              </q-card-section>
+              <q-item-label>
+                <q-badge class="bg-pink-1 text-pink">
+                  Montant: {{ depense.amount }} F
+                </q-badge>
+              </q-item-label>
+            </div>
+          </q-card-section>
         </q-card>
       </div>
     </div>
+
+    <q-page-sticky :offset="[18, 18]">
+      <q-btn
+        :to="{ name: 'Reports' }"
+        color="primary"
+        icon="download"
+        round
+        class="full-width shadow-8"
+      >
+        <q-tooltip position="left" class="text-body2">
+          Télécharger rapport
+        </q-tooltip>
+      </q-btn>
+    </q-page-sticky>
   </q-page>
 </template>
 
 <script setup>
 import { ref, onMounted, watchEffect, inject } from "vue";
 import ImportantCard from "src/components/ImportantCard.vue";
-import ReportChart from "src/components/ReportChart.vue";
+import TransparentCard from "src/components/TransparentCard.vue";
+import ReportChart from "src/components/reports/ReportChart.vue";
 import { QSpinnerIos, useQuasar } from "quasar";
 import axios from "axios";
 import { useRouter } from "vue-router";
@@ -965,18 +816,18 @@ const locationColumns = [
     label: "Prix Total",
     field: (row) => row.totalPrice,
     sortable: true,
-    align: "left",
+    align: "center",
   },
   {
     name: "statut",
     label: "Statut",
     field: (row) => row.status,
     sortable: true,
-    align: "left",
+    align: "center",
   },
 ];
 </script>
-<style>
+<style lang="scss">
 .gradient {
   background: linear-gradient(to right, teal 25%, rgb(47, 163, 163));
   color: white;
@@ -994,5 +845,8 @@ const locationColumns = [
     #00b4db
   ); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
   color: white;
+}
+.border-red {
+  border: 1px solid $pink-2 !important;
 }
 </style>

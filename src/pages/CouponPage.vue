@@ -20,10 +20,14 @@
       <div class="col-12 mobile-only">
         <q-toolbar>
           <q-toolbar-title> Liste de coupons </q-toolbar-title>
-          <q-btn label="ajouter" outline color="teal-8" @click="add = true" />
         </q-toolbar>
-        <q-list separator>
+        <q-list>
           <q-item v-for="item in items" :key="item.name">
+            <q-item-section side avatar>
+              <q-avatar color="teal-1">
+                <q-icon color="teal" name="local_offer"> </q-icon>
+              </q-avatar>
+            </q-item-section>
             <q-item-section>
               <q-item-label>
                 {{ item.title }}
@@ -33,12 +37,24 @@
               </q-item-section>
             </q-item-section>
             <q-item-section side>
-              <q-badge size="xs">{{ item.discount }}%</q-badge>
+              <q-badge class="bg-teal-1 text-teal" size="xs">
+                {{ item.discount }}%
+              </q-badge>
             </q-item-section>
           </q-item>
         </q-list>
       </div>
     </div>
+    <q-page-sticky v-if="$q.platform.is.mobile" :offset="[18, 18]">
+      <q-btn
+        class="shadow-20"
+        round
+        size="md"
+        icon="add"
+        color="teal-8"
+        @click="add = true"
+      />
+    </q-page-sticky>
   </q-page>
 </template>
 
@@ -50,7 +66,7 @@ const ListTable = defineAsyncComponent(() =>
   import("src/components/ListTable.vue")
 );
 const AddCoupon = defineAsyncComponent(() =>
-  import("src/components/AddCoupon.vue")
+  import("src/components/forms/AddCoupon.vue")
 );
 const token = inject("token");
 const api = inject("api");

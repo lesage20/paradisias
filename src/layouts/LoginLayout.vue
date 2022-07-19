@@ -2,7 +2,7 @@
   <q-layout view="hHh Lpr fFf">
     <!-- Be sure to play with the Layout demo on docs -->
 
-    <q-page-container class="bg-grey-3">
+    <q-page-container class="bg-teal-8">
       <!-- This is where pages get injected -->
       <router-view />
     </q-page-container>
