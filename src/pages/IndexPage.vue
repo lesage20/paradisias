@@ -297,92 +297,6 @@
         </q-card>
       </div>
     </div>
-    <!-- <div class="row items-end">
-      <div
-        class="col-xs-12 col-sm-6 col-md-6 q-py-sm"
-        :class="{
-          'q-pa-sm': $q.platform.is.desktop,
-        }"
-      >
-        <q-card>
-          <q-list separator>
-            <q-item>
-              <q-item-section>
-                <q-item-label> Type de chambres </q-item-label>
-              </q-item-section>
-              <q-item-section side>
-                <q-btn
-                  dense
-                  flat
-                  :to="{ name: 'RoomTypes' }"
-                  color="primary"
-                  no-caps
-                >
-                  Tous les types
-                  <q-icon right name="keyboard_arrow_right"></q-icon>
-                  <q-tooltip> Voir tous les types </q-tooltip>
-                </q-btn>
-              </q-item-section>
-            </q-item>
-            <q-item v-for="t in types_chambre.slice(0, 4)" :key="t.name">
-              <q-item-section>
-                <q-item-label>
-                  {{ t.name }}
-                </q-item-label>
-                <q-item-label caption>
-                  {{ t.description }}
-                </q-item-label>
-              </q-item-section>
-              <q-item-section side>
-                <q-badge> {{ t.price }} F </q-badge>
-              </q-item-section>
-            </q-item>
-          </q-list>
-        </q-card>
-      </div>
-      <div
-        class="col-xs-12 col-sm-6 col-md-6 q-py-sm"
-        :class="{
-          'q-pl-sm': $q.platform.is.desktop,
-        }"
-      >
-        <q-card>
-          <q-list separator>
-            <q-item>
-              <q-item-section>
-                <q-item-label> Coupons </q-item-label>
-              </q-item-section>
-              <q-item-section side>
-                <q-btn
-                  dense
-                  flat
-                  :to="{ name: 'Coupon' }"
-                  color="primary"
-                  no-caps
-                >
-                  Tous les coupons
-                  <q-icon right name="keyboard_arrow_right"></q-icon>
-                  <q-tooltip> Voir tous les coupons </q-tooltip>
-                </q-btn>
-              </q-item-section>
-            </q-item>
-            <q-item v-for="t in coupons.slice(0, 5)" :key="t.title">
-              <q-item-section>
-                <q-item-label>
-                  {{ t.title }}
-                </q-item-label>
-                <q-item-label caption>
-                  {{ t.description }}
-                </q-item-label>
-              </q-item-section>
-              <q-item-section side>
-                <q-badge> {{ t.discount }} % </q-badge>
-              </q-item-section>
-            </q-item>
-          </q-list>
-        </q-card>
-      </div>
-    </div> -->
 
     <div class="row">
       <div class="col-12 q-py-sm q-px-none text-grey">
@@ -486,12 +400,17 @@
       </div>
     </div>
 
-    <div class="row justify-center">
-      <div class="col-6 q-pt-lg"></div>
-    </div>
     <q-page-sticky :offset="[18, 18]">
-      <q-btn color="primary" round class="full-width shadow-8">
-        <q-tooltip> Télécharger rapport </q-tooltip>
+      <q-btn
+        :to="{ name: 'Reports' }"
+        color="primary"
+        icon="download"
+        round
+        class="full-width shadow-8"
+      >
+        <q-tooltip position="left" class="text-body2">
+          Télécharger rapport
+        </q-tooltip>
       </q-btn>
     </q-page-sticky>
   </q-page>

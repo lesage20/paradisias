@@ -87,7 +87,7 @@ module.exports = configure(function (/* ctx */) {
     framework: {
       config: {
         loadingBar: {
-          color: "#008080",
+          color: "teal",
           position: "bottom",
         },
         Notify: {

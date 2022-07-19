@@ -100,11 +100,6 @@
     </q-drawer>
 
     <q-page-container :class="{ 'bg-grey-2': !$q.dark.mode }">
-      <!-- <div class="row justify-center q-py-sm q-px-lg">
-        <div class="col-xs-12 text-center">
-          <BreadCrumb :items="items" />
-        </div>
-      </div> -->
       <transition
         appear
         enter-active-class="animated fadeIn"
@@ -114,6 +109,30 @@
         <router-view />
       </transition>
     </q-page-container>
+    <q-footer
+      v-if="$q.platform.is.mobile"
+      bordered
+      class="bg-white text-primary"
+    >
+      <q-tabs
+        v-model="tab"
+        no-caps
+        active-color="primary"
+        indicator-color="transparent"
+        class="text-grey"
+      >
+        <q-tab
+          v-for="link in linksList"
+          :key="link.title"
+          :icon="link.icon"
+          :name="link.title"
+          :label="link.title"
+          style="font-size: 7px !important"
+          size="xs"
+        />
+      </q-tabs>
+      <q-btn-group> q-btn* </q-btn-group>
+    </q-footer>
   </q-layout>
 </template>
 
@@ -134,7 +153,7 @@ const linksList = computed(() => {
     {
       title: "Tableau de bord",
       caption: "Tableau de bord",
-      icon: "fas fa-tachometer-alt",
+      icon: "dashboard",
       link: { name: "Dashboard" },
       children: [],
     },

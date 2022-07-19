@@ -20,26 +20,41 @@
       <div class="col-12 mobile-only">
         <q-toolbar>
           <q-toolbar-title> Liste de chambres </q-toolbar-title>
-          <q-btn label="ajouter" outline color="teal-8" @click="add = true" />
         </q-toolbar>
-        <q-list separator>
+        <q-list>
           <q-item v-for="item in items" :key="item.number">
+            <q-item-section side avatar>
+              <q-avatar color="teal-1">
+                <q-icon color="teal" name="king_bed"> </q-icon>
+              </q-avatar>
+            </q-item-section>
             <q-item-section>
               <q-item-label>
                 {{ item.number }}
               </q-item-label>
               <q-item-section caption class="text-grey">
                 etage: {{ item.etage.number }} &bullet; prix:
-                {{ item.type_chambre.price }} FCFA
+                {{ item.type_chambre.price }} F
               </q-item-section>
             </q-item-section>
             <q-item-section side>
-              <q-badge size="xs">{{ item.type_chambre.name }}</q-badge>
+              <q-badge class="bg-teal-1 text-teal" size="xs">
+                {{ item.type_chambre.name }}
+              </q-badge>
             </q-item-section>
           </q-item>
         </q-list>
       </div>
     </div>
+    <q-page-sticky v-if="$q.platform.is.mobile" :offset="[18, 18]">
+      <q-btn
+        class="shadow-20 bg-teal-3 text-teal"
+        round
+        size="md"
+        icon="add"
+        @click="add = true"
+      />
+    </q-page-sticky>
   </q-page>
 </template>
 

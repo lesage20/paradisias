@@ -20,10 +20,14 @@
       <div class="col-12 mobile-only">
         <q-toolbar>
           <q-toolbar-title> Liste d'étages </q-toolbar-title>
-          <q-btn label="ajouter" outline color="teal-8" @click="add = true" />
         </q-toolbar>
-        <q-list separator>
+        <q-list>
           <q-item v-for="item in items" :key="item.name">
+            <q-item-section side avatar>
+              <q-avatar color="teal-1">
+                <q-icon color="teal" name="apartment"> </q-icon>
+              </q-avatar>
+            </q-item-section>
             <q-item-section>
               <q-item-label>
                 {{ item.name }}
@@ -39,6 +43,16 @@
         </q-list>
       </div>
     </div>
+    <q-page-sticky v-if="$q.platform.is.mobile" :offset="[18, 18]">
+      <q-btn
+        class="shadow-20"
+        round
+        size="md"
+        icon="add"
+        color="teal-8"
+        @click="add = true"
+      />
+    </q-page-sticky>
   </q-page>
 </template>
 

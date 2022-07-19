@@ -52,9 +52,9 @@
         </q-toolbar>
         <q-list>
           <q-item v-for="item in items" :key="item.name + item.firstname">
-            <q-item-section side>
-              <q-avatar size="55px" color="teal-7">
-                <q-icon color="white" name="fa fa-user"> </q-icon>
+            <q-item-section side avatar>
+              <q-avatar size="xl" color="teal-1">
+                <q-icon size="lg" color="teal" name="person"> </q-icon>
               </q-avatar>
             </q-item-section>
             <q-item-section>
@@ -69,12 +69,12 @@
               </q-item-section>
             </q-item-section>
             <q-item-section side>
-              <q-badge>{{ item.gender }}</q-badge>
+              <q-badge class="bg-teal-1 text-teal">{{ item.gender }}</q-badge>
             </q-item-section>
           </q-item>
         </q-list>
         <q-page-sticky :offset="[18, 18]">
-          <q-btn fab icon="fa fa-plus" color="teal-8" @click="startAdd" />
+          <q-btn size="md" round icon="add" color="teal-8" @click="startAdd" />
         </q-page-sticky>
       </div>
     </div>
