@@ -87,6 +87,7 @@ import ReportGenerator from "src/components/reports/ReportGenerator.vue";
 import ReservationReport from "src/components/reports/ReservationReport.vue";
 import SituationChambre from "src/components/reports/SituationChambre.vue";
 import RecapReception from "src/components/reports/RecapReception.vue";
+import RoomOccup from "src/components/reports/RoomOccup.vue";
 const $q = useQuasar();
 export default defineComponent({
   components: {
@@ -95,6 +96,7 @@ export default defineComponent({
     ReservationReport,
     SituationChambre,
     RecapReception,
+    RoomOccup,
   },
   data: () => ({
     comp: "",
@@ -123,7 +125,7 @@ export default defineComponent({
           label: "Rapport d'occupation des chambres",
           icon: "fa fa-file",
           callBack: () => {
-            this.comp = "SituationChambre";
+            this.comp = "RoomOccup";
             this.menu = false;
           },
         },

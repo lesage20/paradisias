@@ -109,7 +109,7 @@
         <router-view />
       </transition>
     </q-page-container>
-    <q-footer
+    <!-- <q-footer
       v-if="$q.platform.is.mobile"
       bordered
       class="bg-white text-primary"
@@ -132,7 +132,7 @@
         />
       </q-tabs>
       <q-btn-group> q-btn* </q-btn-group>
-    </q-footer>
+    </q-footer> -->
   </q-layout>
 </template>
 

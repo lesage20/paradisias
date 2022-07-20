@@ -82,6 +82,20 @@
             Marquée la/les selections payées
           </q-tooltip>
         </q-btn>
+        <q-btn
+          v-if="selected.length"
+          size="md"
+          outlined
+          round
+          flat
+          icon="paid"
+          label="dt"
+          @click="emits('dt')"
+        >
+          <q-tooltip class="text-body2">
+            Marquée la/les selections dt
+          </q-tooltip>
+        </q-btn>
       </template>
       <template v-if="reservationTools">
         <q-btn
@@ -107,6 +121,19 @@
         >
           <q-tooltip class="text-body2"> Confirmée la réservation </q-tooltip>
         </q-btn>
+        <q-btn
+          v-if="selected.length"
+          size="md"
+          outlined
+          round
+          flat
+          icon="schedule"
+          @click="emits('pending')"
+        >
+          <q-tooltip class="text-body2">
+            Mettre la selection en attente
+          </q-tooltip>
+        </q-btn>
       </template>
 
       <q-btn
@@ -119,19 +146,6 @@
         @click="emits('archive')"
       >
         <q-tooltip class="text-body2"> Archivée la selection </q-tooltip>
-      </q-btn>
-      <q-btn
-        v-if="selected.length"
-        size="md"
-        outlined
-        round
-        flat
-        icon="schedule"
-        @click="emits('pending')"
-      >
-        <q-tooltip class="text-body2">
-          Mettre la selection en attente
-        </q-tooltip>
       </q-btn>
     </q-toolbar>
     <q-table
@@ -247,6 +261,15 @@ const emits = defineEmits([
   "addTime",
   "archive",
   "paid",
+  "dt",
+  "dp",
+  "dj",
+  "pj",
+  "ls",
+  "lb",
+  "os",
+  "op",
+  "og",
   "canceled",
   "verified",
 ]);
