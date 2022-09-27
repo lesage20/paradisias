@@ -3,6 +3,24 @@
     <q-toolbar class="q-mb-lg desktop-only">
       <q-btn round flat icon="fa fa-arrow-left" @click="emits('back')"></q-btn>
       <q-space></q-space>
+      <!-- <q-btn class="q-mx-xs">Saisir hors services</q-btn> -->
+      <q-input
+        v-model="roomHS"
+        class="q-mx-xs"
+        dense
+        borderless
+        type="number"
+        label="Chambres Hors service"
+      />
+      <!-- <q-btn class="q-mx-xs">Saisir Non Arrivées</q-btn> -->
+      <q-input
+        v-model="nonArriv"
+        class="q-mx-xs"
+        dense
+        borderless
+        type="number"
+        label="Non Arrivées"
+      />
     </q-toolbar>
     <q-toolbar class="q-ma-none q-pa-none mobile-only">
       <q-btn round flat icon="fa fa-arrow-left" @click="emits('back')"></q-btn>
@@ -46,6 +64,19 @@
                 :hide-pagination="true"
                 hide-bottom
               >
+                <template #body-cell-observation="attr">
+                  <q-td :attr="attr" cols="1" @click="attr.row.active = true">
+                    <q-input
+                      v-if="attr.row.active"
+                      v-model="attr.row.model"
+                      :autogrow="true"
+                      label="observation"
+                      type="textarea"
+                      @keyup.enter.ctrl="attr.row.active = false"
+                    ></q-input>
+                    <p v-else class="text-wrap">{{ attr.row.model }}</p>
+                  </q-td>
+                </template>
               </q-table>
             </div>
           </q-card>
@@ -59,7 +90,7 @@
 import { useQuasar } from "quasar";
 import axios from "axios";
 import PdfGenerator from "./PdfGenerator.vue";
-import { ref, onMounted, inject, computed } from "vue";
+import { ref, onMounted, inject, computed, watch } from "vue";
 import { isToday, isThisWeek, isThisMonth } from "date-fns";
 
 const emits = defineEmits(["back"]);
@@ -161,12 +192,15 @@ const BusyRooms = computed(
 const WaitingCheckIn = computed(
   () => locations.value.filter((loc) => isToday(new Date(loc.checkIn))).length
 );
+
 const WaitingCheckOut = computed(
   () => locations.value.filter((loc) => isToday(new Date(loc.checkOut))).length
 );
 const FreeLocations = computed(
   () => locations.value.filter((loc) => loc.totalPrice == 0).length
 );
+const roomHS = ref(0);
+const nonArriv = ref(0);
 const FreeRooms = computed(() => TotalRooms.value - BusyRooms.value);
 const TotalBusyRooms = computed(() => BusyRooms.value + FreeLocations.value);
 const Occupation = computed(
@@ -197,11 +231,11 @@ const rows = ref([
   },
   {
     label: "Hors Services",
-    valeur: 3,
+    valeur: roomHS.value,
   },
   {
     label: "Non Arrivées",
-    valeur: 10,
+    valeur: nonArriv.value,
   },
   {
     label: "Chambres Libres",
@@ -236,4 +270,50 @@ const columns = [
     format: (val) => `${val.valeur} ${val.pourcent ? "%" : ""}`,
   },
 ];
+watch([roomHS, nonArriv], (value) => {
+  rows.value = [
+    {
+      label: "Total Chambre",
+      valeur: TotalRooms,
+    },
+    {
+      label: "Chambres Occupées",
+      valeur: BusyRooms,
+    },
+    {
+      label: "Arrivées Prévues",
+      valeur: WaitingCheckIn,
+    },
+    {
+      label: "Depart Preévus",
+      valeur: WaitingCheckOut,
+    },
+
+    {
+      label: "Chambres Occupées Gratuites",
+      valeur: FreeLocations,
+    },
+    {
+      label: "Hors Services",
+      valeur: roomHS.value,
+    },
+    {
+      label: "Non Arrivées",
+      valeur: nonArriv.value,
+    },
+    {
+      label: "Chambres Libres",
+      valeur: FreeRooms,
+    },
+    {
+      label: "Total Chambres Occupée",
+      valeur: TotalBusyRooms,
+    },
+    {
+      label: "Taux Occupation",
+      valeur: Occupation,
+      pourcent: true,
+    },
+  ];
+});
 </script>
