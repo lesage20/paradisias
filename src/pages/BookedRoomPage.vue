@@ -2,11 +2,7 @@
   <q-page padding>
     <p class="text-h5">Chambres Occupées</p>
     <div v-if="bookings.length" class="row">
-      <div
-        v-for="item in bookings"
-        :key="item.reference"
-        class="col-xs-12 col-md-4 q-pa-sm"
-      >
+      <div v-for="item in bookings" :key="item.reference" class="col-xs-12 col-md-4 q-pa-sm">
         <q-card dark bordered class="bg-grey-9 my-card">
           <q-card-section class="q-pb-none">
             <div class="text-h6 text-center">{{ item.room_.number }}</div>
@@ -26,10 +22,7 @@
                 {{ new Date(item.checkOut).toLocaleTimeString() }}
               </span>
             </div>
-            <div
-              v-if="isAfter(new Date(), new Date(item.checkIn))"
-              class="q-pt-md text-center"
-            >
+            <div v-if="isAfter(new Date(), new Date(item.checkIn))" class="q-pt-md text-center">
               Cette chambre sera libre dans: <br />
               <CountDown :date="item.checkOut" />
             </div>
@@ -94,18 +87,18 @@ onMounted(() => {
     .catch((err) => {
       let dialog = $q.dialog({});
       if (!Boolean(err.response) && err.message == "Network error") {
-        dialog
-          .update({
-            title: "Erreur de réseau",
-            message:
-              "Impossible de se connecter au server. Veuillez vous connecter à internet et actualiser",
-            ok: "actualiser",
-            progress: false,
-            persistent: true,
-          })
-          .onOk(() => {
-            window.location.reload();
-          });
+         // dialog
+        //   .update({
+        //     title: "Erreur de réseau",
+        //     message:
+        //       "Impossible de se connecter au server. Veuillez vous connecter à internet et actualiser",
+        //     ok: "actualiser",
+        //     progress: false,
+        //     persistent: true,
+        //   })
+        //   .onOk(() => {
+        //     window.location.reload();
+        //   });
       } else {
         if (err.response.status == "401") {
           dialog

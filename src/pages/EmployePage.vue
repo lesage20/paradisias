@@ -7,28 +7,14 @@
           <q-tab name="employe" label="Employés" />
         </q-tabs>
       </q-toolbar>
-      <q-card
-        :flat="$q.platform.is.mobile"
-        :class="$q.platform.is.mobile ? 'full-width bg-grey-2' : 'full-width'"
-      >
-        <q-tab-panels
-          v-model="tab"
-          animated
-          swipeable
-          transition-prev="jump-down"
-          transition-next="jump-up"
-        >
+      <q-card :flat="$q.platform.is.mobile" :class="$q.platform.is.mobile ? 'full-width bg-grey-2' : 'full-width'">
+        <q-tab-panels v-model="tab" animated swipeable transition-prev="jump-down" transition-next="jump-up">
           <q-tab-panel name="role">
             <div class="text-h4 q-mb-md">role</div>
             <div class="col">
               <q-list>
-                <q-expansion-item
-                  v-for="group in groups"
-                  :key="group.name"
-                  expand-separator
-                  icon="perm_identity"
-                  :label="group.name"
-                >
+                <q-expansion-item v-for="group in groups" :key="group.name" expand-separator icon="perm_identity"
+                  :label="group.name">
                   <q-list>
                     <q-item>
                       <span class="text-subtitle1 text-teal">
@@ -52,74 +38,31 @@
             </div>
           </q-tab-panel>
 
-          <q-tab-panel
-            :class="{ 'q-pa-none q-pt-lg': $q.platform.is.mobile }"
-            name="employe"
-          >
-            <div
-              v-if="add"
-              class="col"
-              :class="{ 'q-pa-none': $q.platform.is.mobile }"
-            >
+          <q-tab-panel :class="{ 'q-pa-none q-pt-lg': $q.platform.is.mobile }" name="employe">
+            <div v-if="add" class="col" :class="{ 'q-pa-none': $q.platform.is.mobile }">
               <div>
-                <q-stepper
-                  ref="stepper"
-                  v-model="step"
-                  flat
-                  alternative-labels
-                  color="primary"
-                  animated
-                >
-                  <q-step
-                    class="q-pa-none"
-                    :name="1"
-                    title="Ajouté un nouvel utilisateur"
-                    icon="create_account"
-                    :done="step > 1"
-                  >
+                <q-stepper ref="stepper" v-model="step" flat alternative-labels color="primary" animated>
+                  <q-step class="q-pa-none" :name="1" title="Ajouté un nouvel utilisateur" icon="create_account"
+                    :done="step > 1">
                     <AddUser :client="false" @close="add = false" />
                   </q-step>
 
-                  <q-step
-                    :name="2"
-                    title="Ajouter un nouvel employé"
-                    caption="Optional"
-                    icon="fa fa-user-plus"
-                  >
-                    <AddProfil
-                      title="employé"
-                      @close="$refs.stepper.previous()"
-                      @saved="emplCreated"
-                    />
+                  <q-step :name="2" title="Ajouter un nouvel employé" caption="Optional" icon="fa fa-user-plus">
+                    <AddProfil title="employé" @close="$refs.stepper.previous()" @saved="emplCreated" />
                   </q-step>
                 </q-stepper>
               </div>
             </div>
             <div v-else class="col-12">
-              <ListTable
-                class="desktop-only"
-                :items="employes"
-                :columns="columns"
-                title="Employés"
-                :flat="true"
-                @add="startAdd"
-                @delete="deleteEmploye"
-              />
+              <ListTable class="desktop-only" :items="employes" :columns="columns" title="Employés" :flat="true"
+                @add="startAdd" @delete="deleteEmploye" />
               <div class="col-12 mobile-only">
                 <q-toolbar>
                   <q-toolbar-title> Liste des employés </q-toolbar-title>
-                  <q-btn
-                    label="ajouter"
-                    outline
-                    color="teal-8"
-                    @click="startAdd"
-                  />
+                  <q-btn label="ajouter" outline color="teal-8" @click="startAdd" />
                 </q-toolbar>
                 <q-list>
-                  <q-item
-                    v-for="item in employes"
-                    :key="item.name + item.firstname"
-                  >
+                  <q-item v-for="item in employes" :key="item.name + item.firstname">
                     <q-item-section side avatar>
                       <q-avatar size="xl" color="teal-1">
                         <q-icon size="sm" color="teal" name="fa fa-user">
@@ -136,7 +79,7 @@
                     </q-item-section>
                     <q-item-section side>
                       <q-badge class="bg-teal-1 text-teal">{{
-                        item.group.name
+                      item.group.name
                       }}</q-badge>
                     </q-item-section>
                   </q-item>
@@ -221,18 +164,18 @@ function getDatas() {
     .catch((err) => {
       let dialog = $q.dialog({});
       if (!Boolean(err.response)) {
-        dialog
-          .update({
-            title: "Erreur de réseau",
-            message:
-              "Impossible de se connecter au server. Veuillez vous connecter à internet et actualiser",
-            ok: "actualiser",
-            progress: false,
-            persistent: true,
-          })
-          .onOk(() => {
-            window.location.reload();
-          });
+         // dialog
+        //   .update({
+        //     title: "Erreur de réseau",
+        //     message:
+        //       "Impossible de se connecter au server. Veuillez vous connecter à internet et actualiser",
+        //     ok: "actualiser",
+        //     progress: false,
+        //     persistent: true,
+        //   })
+        //   .onOk(() => {
+        //     window.location.reload();
+        //   });
       } else {
         if (err.response.status == "401") {
           dialog

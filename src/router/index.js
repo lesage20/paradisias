@@ -34,9 +34,11 @@ export default route(function (/* { store, ssrContext } */) {
     // quasar.conf.js -> build -> publicPath
     history: createHistory(process.env.VUE_ROUTER_BASE),
   });
-  const api = process.env.DEV
-    ? "http://192.168.43.108:8000/"
-    : "https://paradisias-api.herokuapp.com/";
+  const api = "https://paradisias-api.herokuapp.com/"
+  // process.env.DEV
+  //   ? "http://192.168.43.108:8000/"
+  //   :
+
 
   Router.beforeEach(async (to, from) => {
     if (to.name !== "Login") {

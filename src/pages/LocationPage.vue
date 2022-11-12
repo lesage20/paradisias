@@ -15,21 +15,9 @@
     </div>
     <div class="row">
       <div v-if="$q.platform.is.desktop" class="col-12 desktop-only">
-        <ListTable
-          :columns="columns"
-          :items="items"
-          title="Reservations"
-          :dense="true"
-          :tools="true"
-          :location-tools="true"
-          @add="add = true"
-          @delete="deleteLocation"
-          @selected="showSelected"
-          @add-time="addingTime = true"
-          @archive="archive"
-          @paid="paid"
-          @pending="pending"
-        />
+        <ListTable :columns="columns" :items="items" title="Reservations" :dense="true" :tools="true"
+          :location-tools="true" @add="add = true" @delete="deleteLocation" @selected="showSelected"
+          @add-time="addingTime = true" @archive="archive" @paid="paid" @pending="pending" />
       </div>
       <div v-if="$q.platform.is.mobile" class="col-12 mobile-only">
         <q-toolbar>
@@ -37,85 +25,34 @@
         </q-toolbar>
 
         <q-toolbar v-if="selected.length" class="bg-grey-4 text-grey-9">
-          <q-btn
-            size="md"
-            outlined
-            round
-            flat
-            icon="arrow_back"
-            @click="selected = []"
-          >
+          <q-btn size="md" outlined round flat icon="arrow_back" @click="selected = []">
             {{ selected.length }}
           </q-btn>
 
           <q-space></q-space>
 
-          <q-btn
-            size="md"
-            outlined
-            round
-            flat
-            icon="done_all"
-            @click="multipleSelect"
-          >
+          <q-btn size="md" outlined round flat icon="done_all" @click="multipleSelect">
           </q-btn>
 
-          <q-btn
-            v-if="selected.length == 1"
-            size="md"
-            outlined
-            round
-            flat
-            icon="more_time"
-            @click="addingTime = true"
-          >
+          <q-btn v-if="selected.length == 1" size="md" outlined round flat icon="more_time" @click="addingTime = true">
           </q-btn>
 
-          <q-btn
-            v-if="selected.length"
-            size="md"
-            outlined
-            round
-            flat
-            icon="verified"
-            @click="paid"
-          >
+          <q-btn v-if="selected.length" size="md" outlined round flat icon="verified" @click="paid">
             <q-tooltip class="text-body2">
               Marquée la/les selections payées
             </q-tooltip>
           </q-btn>
 
-          <q-btn
-            v-if="selected.length"
-            size="md"
-            outlined
-            round
-            flat
-            icon="archive"
-            @click="archive"
-          >
+          <q-btn v-if="selected.length" size="md" outlined round flat icon="archive" @click="archive">
           </q-btn>
         </q-toolbar>
         <q-list>
-          <q-item
-            v-for="item in items"
-            :key="item.reference"
-            class="q-py-md"
-            @contextmenu="toggleSelection(item)"
-          >
+          <q-item v-for="item in items" :key="item.reference" class="q-py-md" @contextmenu="toggleSelection(item)">
             <q-item-section v-if="selected.length" side>
-              <q-icon
-                v-if="selected.indexOf(item) != -1"
-                color="primary"
-                name="check_box"
-                @click="toggleSelection(item)"
-              >
+              <q-icon v-if="selected.indexOf(item) != -1" color="primary" name="check_box"
+                @click="toggleSelection(item)">
               </q-icon>
-              <q-icon
-                v-else
-                name="check_box_outline_blank"
-                @click="toggleSelection(item)"
-              >
+              <q-icon v-else name="check_box_outline_blank" @click="toggleSelection(item)">
               </q-icon>
             </q-item-section>
             <q-item-section>
@@ -130,34 +67,17 @@
             </q-item-section>
 
             <q-item-section side>
-              <q-chip
-                :class="{
-                  'bg-teal-1 text-teal': item.status == 'payée',
-                  'bg-pink-1 text-pink': item.status == 'en attente',
-                  'bg-grey-3 text-grey-8': item.status == 'archivée',
-                }"
-              >
+              <q-chip :class="{
+                'bg-teal-1 text-teal': item.status == 'payée',
+                'bg-pink-1 text-pink': item.status == 'en attente',
+                'bg-grey-3 text-grey-8': item.status == 'archivée',
+              }">
                 {{ item.totalPrice }}F
-                <q-icon
-                  v-if="item.status == 'payée'"
-                  size="15px"
-                  right
-                  name="verified"
-                >
+                <q-icon v-if="item.status == 'payée'" size="15px" right name="verified">
                 </q-icon>
-                <q-icon
-                  v-if="item.status == 'en attente'"
-                  size="15px"
-                  right
-                  name="schedule"
-                >
+                <q-icon v-if="item.status == 'en attente'" size="15px" right name="schedule">
                 </q-icon>
-                <q-icon
-                  v-if="item.status == 'archivée'"
-                  size="15px"
-                  right
-                  name="archive"
-                >
+                <q-icon v-if="item.status == 'archivée'" size="15px" right name="archive">
                 </q-icon>
               </q-chip>
             </q-item-section>
@@ -166,14 +86,7 @@
       </div>
     </div>
     <q-page-sticky v-if="$q.platform.is.mobile" :offset="[18, 18]">
-      <q-btn
-        class="shadow-20"
-        round
-        size="md"
-        icon="add"
-        color="teal-8"
-        @click="add = true"
-      />
+      <q-btn class="shadow-20" round size="md" icon="add" color="teal-8" @click="add = true" />
     </q-page-sticky>
   </q-page>
 </template>
@@ -240,18 +153,18 @@ function getDatas() {
     .catch((err) => {
       let dialog = $q.dialog({});
       if (!Boolean(err.response)) {
-        dialog
-          .update({
-            title: "Erreur de réseau",
-            message:
-              "Impossible de se connecter au server. Veuillez vous connecter à internet et actualiser",
-            ok: "actualiser",
-            progress: false,
-            persistent: true,
-          })
-          .onOk(() => {
-            window.location.reload();
-          });
+         // dialog
+        //   .update({
+        //     title: "Erreur de réseau",
+        //     message:
+        //       "Impossible de se connecter au server. Veuillez vous connecter à internet et actualiser",
+        //     ok: "actualiser",
+        //     progress: false,
+        //     persistent: true,
+        //   })
+        //   .onOk(() => {
+        //     window.location.reload();
+        //   });
       } else {
         if (err.response.status == "401") {
           dialog

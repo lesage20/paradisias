@@ -1,18 +1,8 @@
 <template>
   <q-layout view="lHh Lpr lFf">
-    <q-header
-      class="text-teal-7"
-      :class="{ 'bg-grey-2': !$q.dark.mode, 'bg-dark': $q.dark.mode }"
-    >
+    <q-header class="text-teal-7" :class="{ 'bg-grey-2': !$q.dark.mode, 'bg-dark': $q.dark.mode }">
       <q-toolbar>
-        <q-btn
-          flat
-          dense
-          round
-          icon="menu"
-          aria-label="Menu"
-          @click="toggleLeftDrawer"
-        />
+        <q-btn flat dense round icon="menu" aria-label="Menu" @click="toggleLeftDrawer" />
 
         <q-toolbar-title> Paradisias Hotel </q-toolbar-title>
         <q-btn-dropdown flat color="teal-" dense rounded>
@@ -26,11 +16,7 @@
           <div class="row no-wrap q-pa-md">
             <div class="column">
               <div class="text-subtitle2 text-grey q-mb-xs">Apparence</div>
-              <q-toggle
-                v-model="$q.dark.mode"
-                label="Mode Nuit"
-                @click="$q.dark.toggle"
-              />
+              <q-toggle v-model="$q.dark.mode" label="Mode Nuit" @click="$q.dark.toggle" />
               <div class="text-subtitle2 text-grey q-mb-xs">Compte</div>
 
               <q-btn no-caps flat icon="person" label="Mon Profile"> </q-btn>
@@ -47,19 +33,15 @@
                 {{ user.username }}
               </div>
 
-              <q-btn
-                v-close-popup
-                flat
-                color="negative"
-                label="Deconnexion"
-                size="md"
-                no-caps
-                @click="logout()"
-              />
+              <q-btn v-close-popup flat color="negative" label="Deconnexion" size="md" no-caps @click="logout()" />
             </div>
           </div>
         </q-btn-dropdown>
       </q-toolbar>
+      <q-banner v-if="!isOnLine" color="danger" class="bg-red-2 text-red-8">
+        <q-icon size="md" name="signal_wifi_off" />
+        Vous n'êtes pas connecté à internet veuillez vous reconnecter pour actualiser
+      </q-banner>
     </q-header>
 
     <q-drawer v-model="leftDrawerOpen" class="text-dark">
@@ -80,32 +62,21 @@
           </div>
         </div>
       </q-img>
-      <q-scroll-area
-        style="
+      <q-scroll-area style="
           height: calc(100% - 150px);
           margin-top: 150px;
           border-right: 1px solid #ddd;
-        "
-      >
+        ">
         <q-list>
           <q-item-label class="text-tea" header> Menu </q-item-label>
 
-          <EssentialLink
-            v-for="link in linksList"
-            :key="link.title"
-            v-bind="link"
-          />
+          <EssentialLink v-for="link in linksList" :key="link.title" v-bind="link" />
         </q-list>
       </q-scroll-area>
     </q-drawer>
 
     <q-page-container :class="{ 'bg-grey-2': !$q.dark.mode }">
-      <transition
-        appear
-        enter-active-class="animated fadeIn"
-        leave-active-class="animated fadeOut"
-        mode="out-in"
-      >
+      <transition appear enter-active-class="animated fadeIn" leave-active-class="animated fadeOut" mode="out-in">
         <router-view />
       </transition>
     </q-page-container>
@@ -137,15 +108,16 @@
 </template>
 
 <script setup>
-import { computed, watch, ref } from "vue";
+import { computed, watch, ref, provide, inject } from "vue";
 import EssentialLink from "components/EssentialLink.vue";
 import { useLoginStore as store } from "src/stores/login";
 import BreadCrumb from "src/components/BreadCrumb.vue";
 import { useRoute, useRouter } from "vue-router";
 import { useQuasar } from "quasar";
-import { provide } from "vue";
+
 
 provide("token", store().token);
+const isOnLine = inject('isOnline')
 const $q = useQuasar();
 const night = ref(true);
 const linksList = computed(() => {
@@ -266,6 +238,11 @@ const linksList = computed(() => {
       caption: "gestion des clients",
       icon: "fa fa-user",
       link: { name: "Guests" },
+    }, {
+      title: "Accueil",
+      caption: "gestion des clients",
+      icon: "fa fa-home",
+      link: { name: "Tests" },
     },
   ];
 
@@ -296,6 +273,7 @@ function toggleLeftDrawer() {
   --animate-duration: 800ms;
   --animate-delay: 0.9s;
 }
+
 .gradian {
   background: linear-gradient(to top, teal 20%, rgb(47, 163, 163));
 }

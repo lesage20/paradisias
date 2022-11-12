@@ -2,57 +2,31 @@
   <q-page :padding="true">
     <div class="row">
       <div class="col">
-        <h2
-          :class="{
-            'q-px-sm text-subtitle1': true,
-            'text-center': $q.platform.is.mobile,
-          }"
-        >
+        <h2 :class="{
+          'q-px-sm text-subtitle1': true,
+          'text-center': $q.platform.is.mobile,
+        }">
           Aujourd'hui
         </h2>
       </div>
       <div class="col-3 desktop-only">
-        <q-select
-          dense
-          label="Choisir période"
-          :options="['jour', 'semaine', 'mois']"
-        >
+        <q-select dense label="Choisir période" :options="['jour', 'semaine', 'mois']">
         </q-select>
       </div>
     </div>
 
     <div class="row desktop-only">
       <div class="col-xs-12 col-sm-6 col-md-3 q-pa-xs">
-        <ImportantCard
-          color="teal"
-          title="Locations"
-          :number="todayLoc.length"
-          icon="fa fa-list"
-        />
+        <ImportantCard color="teal" title="Locations" :number="todayLoc.length" icon="fa fa-list" />
       </div>
       <div class="col-xs-12 col-sm-6 col-md-3 q-pa-xs">
-        <ImportantCard
-          title="Revenue"
-          :number="todayRev"
-          color="orange-9"
-          icon="fa fa-dollar-sign fa-bounce"
-        />
+        <ImportantCard title="Revenue" :number="todayRev" color="orange-9" icon="fa fa-dollar-sign fa-bounce" />
       </div>
       <div class="col-xs-12 col-sm-6 col-md-3 q-pa-xs">
-        <ImportantCard
-          color="blue-8"
-          title="Nouveau client"
-          :number="todayClient"
-          icon="fa fa-users"
-        />
+        <ImportantCard color="blue-8" title="Nouveau client" :number="todayClient" icon="fa fa-users" />
       </div>
       <div class="col-xs-12 col-sm-6 col-md-3 q-pa-xs">
-        <ImportantCard
-          color="red-7"
-          title="Dépensés"
-          :number="todayDep"
-          icon="fa fa-dollar-sign"
-        />
+        <ImportantCard color="red-7" title="Dépensés" :number="todayDep" icon="fa fa-dollar-sign" />
       </div>
     </div>
 
@@ -79,83 +53,59 @@
       </div>
     </q-card>
 
-    <h2
-      :class="{
-        'q-px-sm text-subtitle1': true,
-        'text-center': $q.platform.is.mobile,
-      }"
-    >
+    <h2 :class="{
+      'q-px-sm text-subtitle1': true,
+      'text-center': $q.platform.is.mobile,
+    }">
       Cette Semaine
     </h2>
     <div class="q-py-sm row">
-      <div
-        :class="{
-          'col-xs-12 col-sm-6 col-md-6 q-pb-sm': true,
-          'q-px-sm': $q.platform.is.desktop,
-          'q-py-sm': $q.platform.is.mobile,
-        }"
-      >
+      <div :class="{
+        'col-xs-12 col-sm-6 col-md-6 q-pb-sm': true,
+        'q-px-sm': $q.platform.is.desktop,
+        'q-py-sm': $q.platform.is.mobile,
+      }">
         <q-card id="chart">
           <q-item>
-            <q-item-section
-              :class="{
+            <q-item-section :class="{
+              'text-body2 text-center': true,
+              'text-center': true,
+            }">
+              <q-item-label :class="{
                 'text-body2 text-center': true,
                 'text-center': true,
-              }"
-            >
-              <q-item-label
-                :class="{
-                  'text-body2 text-center': true,
-                  'text-center': true,
-                }"
-              >
+              }">
                 Revenue par jour
               </q-item-label>
             </q-item-section>
           </q-item>
           <q-separator></q-separator>
-          <apexchart
-            type="bar"
-            width="100%"
-            :options="chartOptions"
-            :series="daySeries"
-          ></apexchart>
+          <apexchart type="bar" width="100%" :options="chartOptions" :series="daySeries"></apexchart>
         </q-card>
       </div>
 
-      <div
-        :class="{
-          'col-xs-12 col-sm-6 col-md-6': true,
-          'q-px-sm': $q.platform.is.desktop,
-          'q-py-sm': false,
-        }"
-      >
+      <div :class="{
+        'col-xs-12 col-sm-6 col-md-6': true,
+        'q-px-sm': $q.platform.is.desktop,
+        'q-py-sm': false,
+      }">
         <q-card id="chart">
           <q-toolbar>
-            <q-toolbar-title
-              :class="{
-                'text-body2': true,
-                'text-center': $q.platform.is.mobile,
-              }"
-            >
+            <q-toolbar-title :class="{
+              'text-body2': true,
+              'text-center': $q.platform.is.mobile,
+            }">
               Type de chambre les plus loué
             </q-toolbar-title>
           </q-toolbar>
-          <apexchart
-            type="bar"
-            width="100%"
-            :options="optionsBar"
-            :series="optionsBar.series"
-          ></apexchart>
+          <apexchart type="bar" width="100%" :options="optionsBar" :series="optionsBar.series"></apexchart>
         </q-card>
       </div>
-      <div
-        :class="{
-          'col-xs-12 col-sm-6 col-md-6': true,
-          'q-px-sm': $q.platform.is.desktop,
-          'q-py-sm': true,
-        }"
-      >
+      <div :class="{
+        'col-xs-12 col-sm-6 col-md-6': true,
+        'q-px-sm': $q.platform.is.desktop,
+        'q-py-sm': true,
+      }">
         <q-card>
           <q-list>
             <q-item>
@@ -212,30 +162,21 @@
           </q-list>
         </q-card>
       </div>
-      <div
-        :class="{
-          'col-xs-12 col-sm-6 col-md-6 q-py-sm': true,
-          'q-px-sm': $q.platform.is.desktop,
-          'q-py-sm': true,
-        }"
-      >
+      <div :class="{
+        'col-xs-12 col-sm-6 col-md-6 q-py-sm': true,
+        'q-px-sm': $q.platform.is.desktop,
+        'q-py-sm': true,
+      }">
         <q-card id="chart">
           <q-toolbar>
-            <q-toolbar-title
-              :class="{
-                'text-body2': true,
-                'text-center': $q.platform.is.mobile,
-              }"
-            >
+            <q-toolbar-title :class="{
+              'text-body2': true,
+              'text-center': $q.platform.is.mobile,
+            }">
               Nouveau client par jour
             </q-toolbar-title>
           </q-toolbar>
-          <apexchart
-            type="area"
-            width="100%"
-            :options="lineOptions"
-            :series="seriesClient"
-          ></apexchart>
+          <apexchart type="area" width="100%" :options="lineOptions" :series="seriesClient"></apexchart>
         </q-card>
       </div>
     </div>
@@ -305,7 +246,7 @@ const weekRev = ref(0);
 const monRev = ref(0);
 const tueRev = ref(0);
 const wedRev = ref(0);
-const thuRev = ref(0);
+        uRev = ref(0);
 const friRev = ref(0);
 const satRev = ref(0);
 const sunRev = ref(0);
@@ -491,18 +432,18 @@ function getAllData() {
     .catch((err) => {
       let dialog = $q.dialog({});
       if (!Boolean(err.response)) {
-        dialog
-          .update({
-            title: "Erreur de réseau",
-            message:
-              "Impossible de se connecter au server. Veuillez vous connecter à internet et actualiser",
-            ok: "actualiser",
-            progress: false,
-            persistent: true,
-          })
-          .onOk(() => {
-            window.location.reload();
-          });
+         // dialog
+        //   .update({
+        //     title: "Erreur de réseau",
+        //     message:
+        //       "Impossible de se connecter au server. Veuillez vous connecter à internet et actualiser",
+        //     ok: "actualiser",
+        //     progress: false,
+        //     persistent: true,
+        //   })
+        //   .onOk(() => {
+        //     window.location.reload();
+        //   });
       } else {
         if (err.response.status == "401") {
           dialog

@@ -114,13 +114,20 @@ const routes = [
         component: () => import("pages/ReportPage.vue"),
         name: "Reports",
         beforeEnter: (to, from) => {
-          if (!Boolean(store().user.groups[0].name == "admin")) {
+          if (!Boolean(store().user.groups[0].name === "admin")) {
             return { name: "Locations" };
           }
         },
       },
+    ],
+  },
+  {
+    path: "/index/",
+    component: () => import("layouts/UserAccessLayout.vue"),
+    name: "UserHome",
+    children: [
       {
-        path: "/test",
+        path: "",
         component: () => import("pages/TestPage.vue"),
         name: "Tests",
       },

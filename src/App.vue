@@ -1,6 +1,7 @@
 <template>
   <div>
-    <q-ajax-bar color="red" style="height: 4px"></q-ajax-bar>
+    <q-ajax-bar color="primary" style="height: 4px"></q-ajax-bar>
+
     <keep-alive>
       <router-view />
     </keep-alive>
@@ -8,13 +9,28 @@
 </template>
 
 <script setup>
-import { provide } from "vue";
+import { provide, ref } from "vue";
+import { useQuasar } from 'quasar'
 
-if (process.env.DEV) {
+const $q = useQuasar()
+const isOnLine = ref(navigator.onLine)
+window.onoffline = (e) => {
+  isOnLine.value = false
+}
+window.ononline = (e) => {
+  isOnLine.value = true
+}
+if (!isOnLine.value) {
+  $q.notify('Vous êtes hors connexion.')
+}
+provide('isOnline', isOnLine)
+
+if (false) {
   provide("api", "http://192.168.43.108:8000/");
 } else {
   provide("api", "https://paradisias-api.herokuapp.com/");
 }
+
 </script>
 <style lang="scss">
 .funspinner {
@@ -32,14 +48,14 @@ if (process.env.DEV) {
     position: relative;
     border: 1px solid rgba(255, 255, 255, 0.3);
 
-    & > b {
+    &>b {
       top: 1rem;
       left: 1rem;
       position: absolute;
       font-weight: normal;
     }
 
-    & > div {
+    &>div {
       width: 20%;
       height: 20%;
       text-align: center;
@@ -52,6 +68,7 @@ if (process.env.DEV) {
     }
   }
 }
+
 div.progresser {
   width: 6rem;
   height: auto;
@@ -73,13 +90,16 @@ div.progresser {
     }
   }
 }
+
 @keyframes progresser {
   0% {
     transform: translateX(0);
   }
+
   50% {
     transform: translateX(7rem);
   }
+
   100% {
     transform: translateX(0);
   }

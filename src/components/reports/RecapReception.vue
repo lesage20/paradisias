@@ -33,28 +33,12 @@
 
           <q-card flat>
             <div class="q-py-sm">
-              <q-table
-                v-model:pagination="pagination"
-                wrap-cells
-                :rows-per-page-options="[0]"
-                flat
-                bordered
-                :rows="rows"
-                :columns="columns"
-                separator="cell"
-                :hide-pagination="true"
-                hide-bottom
-              >
+              <q-table v-model:pagination="pagination" wrap-cells :rows-per-page-options="[0]" flat bordered
+                :rows="rows" :columns="columns" separator="cell" :hide-pagination="true" hide-bottom>
                 <template #body-cell-observation="attr">
                   <q-td :attr="attr" cols="1" @click="attr.row.active = true">
-                    <q-input
-                      v-if="attr.row.active"
-                      v-model="attr.row.model"
-                      :autogrow="true"
-                      label="observation"
-                      type="textarea"
-                      @keyup.enter.ctrl="attr.row.active = false"
-                    ></q-input>
+                    <q-input v-if="attr.row.active" v-model="attr.row.model" :autogrow="true" label="observation"
+                      type="textarea" @keyup.enter.ctrl="attr.row.active = false"></q-input>
                     <p v-else class="text-wrap">{{ attr.row.model }}</p>
                   </q-td>
                 </template>
@@ -129,18 +113,18 @@ onMounted(() => {
     .catch((err) => {
       let dialog = $q.dialog({});
       if (!Boolean(err.response)) {
-        dialog
-          .update({
-            title: "Erreur de réseau",
-            message:
-              "Impossible de se connecter au server. Veuillez vous connecter à internet et actualiser",
-            ok: "actualiser",
-            progress: false,
-            persistent: true,
-          })
-          .onOk(() => {
-            window.location.reload();
-          });
+         // dialog
+        //   .update({
+        //     title: "Erreur de réseau",
+        //     message:
+        //       "Impossible de se connecter au server. Veuillez vous connecter à internet et actualiser",
+        //     ok: "actualiser",
+        //     progress: false,
+        //     persistent: true,
+        //   })
+        //   .onOk(() => {
+        //     window.location.reload();
+        //   });
       } else {
         if (err.response.status == "401") {
           dialog

@@ -5,22 +5,11 @@
       <q-space></q-space>
 
       <q-btn icon="event" label="date" class="q-mx-sm" color="blue-8">
-        <q-popup-proxy
-          cover
-          transition-show="scale"
-          transition-hide="scale"
-          @before-show="updateProxy"
-        >
+        <q-popup-proxy cover transition-show="scale" transition-hide="scale" @before-show="updateProxy">
           <q-date v-model="selectedRange">
             <div class="row items-center justify-end q-gutter-sm">
               <q-btn v-close-popup label="Cancel" color="primary" flat />
-              <q-btn
-                v-close-popup
-                label="OK"
-                color="primary"
-                flat
-                @click="save"
-              />
+              <q-btn v-close-popup label="OK" color="primary" flat @click="save" />
             </div>
           </q-date>
         </q-popup-proxy>
@@ -48,28 +37,12 @@
     <q-toolbar class="q-ma-none q-pa-none mobile-only">
       <div class="row" style="width: 100%">
         <div class="col-xs-12 q-pa-sm">
-          <q-btn
-            icon="event"
-            label="date"
-            class="q-mx-sm full-width"
-            color="blue-8"
-          >
-            <q-popup-proxy
-              cover
-              transition-show="scale"
-              transition-hide="scale"
-              @before-show="updateProxy"
-            >
+          <q-btn icon="event" label="date" class="q-mx-sm full-width" color="blue-8">
+            <q-popup-proxy cover transition-show="scale" transition-hide="scale" @before-show="updateProxy">
               <q-date v-model="selectedRange">
                 <div class="row items-center justify-end q-gutter-sm">
                   <q-btn v-close-popup label="Cancel" color="primary" flat />
-                  <q-btn
-                    v-close-popup
-                    label="OK"
-                    color="primary"
-                    flat
-                    @click="save"
-                  />
+                  <q-btn v-close-popup label="OK" color="primary" flat @click="save" />
                 </div>
               </q-date>
             </q-popup-proxy>
@@ -79,11 +52,7 @@
           </q-btn>
         </div>
         <div class="col-xs-12 q-pa-sm">
-          <q-btn
-            class="q-mx-sm full-width"
-            color="teal-6"
-            @click="selectedRange = 'day'"
-          >
+          <q-btn class="q-mx-sm full-width" color="teal-6" @click="selectedRange = 'day'">
             <q-icon left size="xs" name="fa fa-calendar-day" />
             jour
             <q-tooltip class="text-subtitle2">
@@ -92,11 +61,7 @@
           </q-btn>
         </div>
         <div class="col-xs-12 q-pa-sm">
-          <q-btn
-            class="q-mx-sm full-width"
-            color="orange-8"
-            @click="selectedRange = 'week'"
-          >
+          <q-btn class="q-mx-sm full-width" color="orange-8" @click="selectedRange = 'week'">
             <q-icon left size="xs" name="fa fa-calendar-week" />
             semaine
             <q-tooltip class="text-subtitle2">
@@ -105,11 +70,7 @@
           </q-btn>
         </div>
         <div class="col-xs-12 q-pa-sm">
-          <q-btn
-            class="q-mx-sm full-width"
-            color="purple"
-            @click="selectedRange = 'month'"
-          >
+          <q-btn class="q-mx-sm full-width" color="purple" @click="selectedRange = 'month'">
             <q-icon left size="xs" name="fa fa-calendar-days" />
             mois
             <q-tooltip class="text-subtitle2"> Rapport de ce mois </q-tooltip>
@@ -118,9 +79,7 @@
       </div>
     </q-toolbar>
 
-    <PdfGenerator
-      :title="`reservation_journalière_du_${new Date().toLocaleDateString()}`"
-    >
+    <PdfGenerator :title="`reservation_journalière_du_${new Date().toLocaleDateString()}`">
       <template #content>
         <div>
           <q-toolbar class="q-ma-none q-pb-none q-px-lg">
@@ -142,25 +101,16 @@
             <q-space></q-space>
             Journée du
             {{
-              selectedRange == "day"
-                ? new Date().toLocaleDateString()
-                : new Date(selectedRange).toLocaleDateString()
+            selectedRange == "day"
+            ? new Date().toLocaleDateString()
+            : new Date(selectedRange).toLocaleDateString()
             }}
           </q-toolbar>
 
           <q-card flat>
             <div class="q-py-sm">
-              <q-table
-                v-model:pagination="pagination"
-                :rows-per-page-options="[0]"
-                flat
-                bordered
-                :rows="chambres"
-                :columns="columns"
-                separator="cell"
-                :hide-pagination="true"
-                hide-bottom
-              >
+              <q-table v-model:pagination="pagination" :rows-per-page-options="[0]" flat bordered :rows="chambres"
+                :columns="columns" separator="cell" :hide-pagination="true" hide-bottom>
               </q-table>
             </div>
           </q-card>
@@ -226,18 +176,18 @@ onMounted(() => {
     .catch((err) => {
       let dialog = $q.dialog({});
       if (!Boolean(err.response)) {
-        dialog
-          .update({
-            title: "Erreur de réseau",
-            message:
-              "Impossible de se connecter au server. Veuillez vous connecter à internet et actualiser",
-            ok: "actualiser",
-            progress: false,
-            persistent: true,
-          })
-          .onOk(() => {
-            window.location.reload();
-          });
+         // dialog
+        //   .update({
+        //     title: "Erreur de réseau",
+        //     message:
+        //       "Impossible de se connecter au server. Veuillez vous connecter à internet et actualiser",
+        //     ok: "actualiser",
+        //     progress: false,
+        //     persistent: true,
+        //   })
+        //   .onOk(() => {
+        //     window.location.reload();
+        //   });
       } else {
         if (err.response.status == "401") {
           dialog

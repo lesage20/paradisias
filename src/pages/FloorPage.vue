@@ -9,13 +9,7 @@
     </div>
     <div class="row">
       <div class="col-12 desktop-only">
-        <ListTable
-          :columns="columns"
-          :items="items"
-          title="Etage"
-          @add="add = true"
-          @delete="deleteFloor"
-        />
+        <ListTable :columns="columns" :items="items" title="Etage" @add="add = true" @delete="deleteFloor" />
       </div>
       <div class="col-12 mobile-only">
         <q-toolbar>
@@ -44,14 +38,7 @@
       </div>
     </div>
     <q-page-sticky v-if="$q.platform.is.mobile" :offset="[18, 18]">
-      <q-btn
-        class="shadow-20"
-        round
-        size="md"
-        icon="add"
-        color="teal-8"
-        @click="add = true"
-      />
+      <q-btn class="shadow-20" round size="md" icon="add" color="teal-8" @click="add = true" />
     </q-page-sticky>
   </q-page>
 </template>
@@ -81,18 +68,18 @@ function getData() {
     .catch((err) => {
       let dialog = $q.dialog({});
       if (!Boolean(err.response)) {
-        dialog
-          .update({
-            title: "Erreur de réseau",
-            message:
-              "Impossible de se connecter au server. Veuillez vous connecter à internet et actualiser",
-            ok: "actualiser",
-            progress: false,
-            persistent: true,
-          })
-          .onOk(() => {
-            window.location.reload();
-          });
+         // dialog
+        //   .update({
+        //     title: "Erreur de réseau",
+        //     message:
+        //       "Impossible de se connecter au server. Veuillez vous connecter à internet et actualiser",
+        //     ok: "actualiser",
+        //     progress: false,
+        //     persistent: true,
+        //   })
+        //   .onOk(() => {
+        //     window.location.reload();
+        //   });
       } else {
         if (err.response.status == "401") {
           dialog
