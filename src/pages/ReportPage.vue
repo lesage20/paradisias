@@ -50,17 +50,10 @@
             <q-toolbar>
               <q-item-label class="text-h4"> Liste des rapports </q-item-label>
             </q-toolbar>
-            <q-separator
-              :class="{ 'q-mb-lg': $q.platform.is.mobile }"
-            ></q-separator>
+            <q-separator :class="{ 'q-mb-lg': $q.platform.is.mobile }"></q-separator>
 
-            <q-item
-              v-for="rap in listRapport"
-              :key="rap.label"
-              v-ripple="{ color: 'teal' }"
-              clickable
-              @click="rap.callBack"
-            >
+            <q-item v-for="rap in listRapport" :key="rap.label" v-ripple="{ color: 'teal' }" clickable
+              @click="rap.callBack">
               <q-item-section side>
                 <q-icon :name="rap.icon"> </q-icon>
               </q-item-section>
@@ -106,7 +99,7 @@ export default defineComponent({
     listRapport() {
       return [
         {
-          label: "Fiche de réservations",
+          label: "Planning journaliers",
           icon: "fa fa-file",
           callBack: () => {
             this.comp = "ReservationReport";

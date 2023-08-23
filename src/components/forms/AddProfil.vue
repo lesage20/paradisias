@@ -14,6 +14,10 @@ const props = defineProps({
     type: String,
     default: "",
   },
+  type: {
+    type: String,
+    default: "user"
+  }
 });
 
 let users = [];
@@ -27,8 +31,8 @@ onMounted(() => {
       },
     })
     .then((res) => {
-      users = res.data;
-      console.log(users.value);
+      users = res.data.filter(el => el.profil == null)
+
       users.forEach((el) => {
         let opt = {
           label: el.username,
@@ -41,7 +45,7 @@ onMounted(() => {
     .catch((err) => {
       let dialog = $q.dialog({});
       if (!Boolean(err.response)) {
-         // dialog
+        // dialog
         //   .update({
         //     title: "Erreur de réseau",
         //     message:
@@ -86,15 +90,15 @@ function cancel() {
 const loading = ref(false);
 
 const fields = ref([
-  {
-    type: "select",
-    options: userOptions,
-    "emit-value": true,
-    name: "user",
-    required: true,
-    model: "user",
-    label: "Compte Utilisateur*",
-  },
+  // {
+  //   type: "select",
+  //   options: userOptions,
+  //   "emit-value": true,
+  //   name: "user",
+  //   required: true,
+  //   model: "user",
+  //   label: "Compte Utilisateur*",
+  // },
   {
     type: "text",
     name: "name",

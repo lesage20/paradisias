@@ -4,7 +4,7 @@ export const generalStore = defineStore(
   "general",
   {
     state: () => ({
-      api: "https://paradisias-api.herokuapp.com/",
+      api: "http://192.168.1.67:8002/", // "https://paradisias-api.herokuapp.com/",
     }),
   },
   {

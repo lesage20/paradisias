@@ -42,7 +42,7 @@ function getDatas() {
 
         clients.data.forEach((el) => {
           let opt = {
-            label: el.name,
+            label: el.name + " " + el.firstname,
             value: el.id,
           };
           clientOptions.value.push(opt);
@@ -59,7 +59,7 @@ function getDatas() {
     .catch((err) => {
       let dialog = $q.dialog({});
       if (!Boolean(err.response)) {
-         // dialog
+        // dialog
         //   .update({
         //     title: "Erreur de réseau",
         //     message:
@@ -140,7 +140,14 @@ const fields = ref([
     label: "status de la commande",
     model: "status",
     hint: "Le status de la commande",
-    options: ["en attente", "payée", "archivée"],
+    options: [
+      'pj',
+      'dj',
+      'dt',
+      'dp',
+      'paye',
+      'archivée',
+    ],
   },
 ]);
 function validLocation(data, list) {

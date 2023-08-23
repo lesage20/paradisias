@@ -23,6 +23,7 @@
     "quasar": "^2.7.4",
     "vee-validate": "^4.5.11",
     "vue": "^3.0.0",
+    "vue-draggable-next": "^2.2.1",
     "vue-router": "^4.0.0",
     "vue3-apexcharts": "^1.4.1"
   },

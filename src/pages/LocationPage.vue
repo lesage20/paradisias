@@ -49,8 +49,7 @@
         <q-list>
           <q-item v-for="item in items" :key="item.reference" class="q-py-md" @contextmenu="toggleSelection(item)">
             <q-item-section v-if="selected.length" side>
-              <q-icon v-if="selected.indexOf(item) != -1" color="primary" name="check_box"
-                @click="toggleSelection(item)">
+              <q-icon v-if="selected.indexOf(item) != -1" color="primary" name="check_box" @click="toggleSelection(item)">
               </q-icon>
               <q-icon v-else name="check_box_outline_blank" @click="toggleSelection(item)">
               </q-icon>
@@ -137,23 +136,24 @@ function getDatas() {
         items.value = locations.data;
         clients.value = clientsData.data;
         items.value.forEach((el) => {
-          el.chambre = chambres.value.filter(
+          console.log(el)
+          el.chambre = chambres.value.find(
             (chambre) => chambre.id == el.room
-          )[0];
+          );
 
-          el.type_chambre = types_chambre.value.filter(
-            (type) => (type.id = el.chambre.type)
-          )[0];
-          el.client = clients.value.filter(
+          el.type_chambre = types_chambre.value.find(
+            (type) => (type.id == el.chambre.type)
+          );
+          el.client = clients.value.find(
             (client) => client.id == el.guest
-          )[0];
+          );
         });
       })
     )
     .catch((err) => {
       let dialog = $q.dialog({});
       if (!Boolean(err.response)) {
-         // dialog
+        // dialog
         //   .update({
         //     title: "Erreur de réseau",
         //     message:
@@ -285,9 +285,8 @@ function created() {
 function deleteLocation(location) {
   $q.dialog({
     title: "Suppression d'élément",
-    message: `Voulez vous vraiment supprimer la location de la  <b> chambre ${
-      location.chambre.number + " qui a couté " + location.totalPrice
-    }FCFA </b> de la liste de locations?`,
+    message: `Voulez vous vraiment supprimer la location de la  <b> chambre ${location.chambre.number + " qui a couté " + location.totalPrice
+      }FCFA </b> de la liste de locations?`,
     ok: { label: "supprimer", color: "red", flat: true },
     cancel: "annuler",
     html: true,

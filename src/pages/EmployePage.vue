@@ -15,24 +15,56 @@
               <q-list>
                 <q-expansion-item v-for="group in groups" :key="group.name" expand-separator icon="perm_identity"
                   :label="group.name">
-                  <q-list>
-                    <q-item>
-                      <span class="text-subtitle1 text-teal">
-                        Liste des permissions
-                      </span>
-                    </q-item>
-                  </q-list>
+                  <div class="flex bordered">
+                    <div class="col">
 
-                  <q-item v-for="perm in group.permissions" :key="perm.name">
-                    <q-item-section>
-                      <q-item-label>
-                        {{ perm.codename }}
-                      </q-item-label>
-                      <q-item-label caption>
-                        {{ perm.name }}
-                      </q-item-label>
-                    </q-item-section>
-                  </q-item>
+                      <q-item>
+                        <q-item-section>
+                          <q-item-label>
+                            <b>Liste de toutes les permissions possibles de ce groupe</b>
+                          </q-item-label>
+                        </q-item-section>
+                      </q-item>
+                      <draggable class="dragArea list-group w-full overflow-auto" :list="group.permissions"
+                        style="max-height: 200px;">
+                        <q-item v-for="perm in group.permissions" :key="perm.name">
+                          <q-item-section avatar>
+                            <q-icon color="primary" name="manage_accounts" />
+                          </q-item-section>
+                          <q-item-section>
+                            <q-item-label>
+                              {{ perm.name }}
+                            </q-item-label>
+                          </q-item-section>
+                        </q-item>
+                      </draggable>
+                    </div>
+
+                    <div class="col">
+                      <q-item>
+                        <q-item-section>
+                          <q-item-label>
+                            <b> Liste des permissions de cet utilisateur </b>
+                          </q-item-label>
+                        </q-item-section>
+                      </q-item>
+
+                      <draggable class="dragArea list-group w-full overflow-auto" :list="group.permissions"
+                        style="max-height: 200px;">
+                        <q-item v-for="perm in group.permissions" :key="perm.name">
+                          <q-item-section avatar class="">
+                            <q-icon color="primary" name="manage_accounts" />
+                          </q-item-section>
+                          <q-item-section>
+                            <q-item-label>
+                              {{ perm.name }}
+                            </q-item-label>
+                          </q-item-section>
+                        </q-item>
+                      </draggable>
+                    </div>
+                  </div>
+
                 </q-expansion-item>
               </q-list>
             </div>
@@ -78,9 +110,9 @@
                       </q-item-label>
                     </q-item-section>
                     <q-item-section side>
-                      <q-badge class="bg-teal-1 text-teal">{{
-                      item.group.name
-                      }}</q-badge>
+                      <q-badge class="bg-teal-1 text-teal">
+                        {{ item.group.name }}
+                      </q-badge>
                     </q-item-section>
                   </q-item>
                 </q-list>
@@ -97,6 +129,8 @@
 import { useQuasar } from "quasar";
 import { ref, onMounted, inject, defineAsyncComponent } from "vue";
 import axios from "axios";
+import { VueDraggableNext as draggable } from 'vue-draggable-next'
+
 const ListTable = defineAsyncComponent(() =>
   import("src/components/ListTable.vue")
 );
@@ -164,7 +198,7 @@ function getDatas() {
     .catch((err) => {
       let dialog = $q.dialog({});
       if (!Boolean(err.response)) {
-         // dialog
+        // dialog
         //   .update({
         //     title: "Erreur de réseau",
         //     message:
@@ -285,9 +319,8 @@ function createRole() {
 function deleteEmploye(employe) {
   $q.dialog({
     title: "Suppression d'élément",
-    message: `Voulez vous vraiment supprimer l'employe de la  <b>  ${
-      employe.name + " " + employe.firstname
-    } </b> de la liste de employes?`,
+    message: `Voulez vous vraiment supprimer l'employe de la  <b>  ${employe.name + " " + employe.firstname
+      } </b> de la liste de employes?`,
     ok: { label: "supprimer", color: "red", flat: true },
     cancel: "annuler",
     html: true,

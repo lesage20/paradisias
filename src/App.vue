@@ -25,8 +25,8 @@ if (!isOnLine.value) {
 }
 provide('isOnline', isOnLine)
 
-if (false) {
-  provide("api", "http://192.168.43.108:8000/");
+if (true) {
+  provide("api", "http://127.0.0.1:8002/");
 } else {
   provide("api", "https://paradisias-api.herokuapp.com/");
 }
