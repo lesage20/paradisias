@@ -10,18 +10,17 @@
     </q-toolbar>
     <q-form>
       <div class="row">
-        <div v-for="(field, i) in  fields " :key="field.name" class="col-xs-12 col-sm-12  q-pa-sm"
+        <div v-for="(field, i) in  fields " :key="field.name" class="col-xs-12 col-sm-12 q-px-md  q-py-sm"
           :class="fields?.length > 7 ? 'col-md-6' : 'col-md-12'">
           <q-input v-if="field.type != 'select' && field.type != 'date' && field.type != 'datetime'"
-            v-model="formContent[field.model]" :type="field.type ? field.type : ''" :label="field.label"
-            :hint="field.hint ? field.hint : ''" :required="field.required ? true : false"
-            :prefix="field.prefix ? field.prefix : ''" :suffix="field.suffix ? field.suffix : ''" :dense="dense"
-            :autogrow="field.autogrow" :min="field.min" />
+            v-model="formContent[field.model]" :type="field.type" :label="field.label" :hint="field.hint"
+            :required="field.required" :prefix="field.prefix ? field.prefix : ''"
+            :suffix="field.suffix ? field.suffix : ''" :dense="dense" :autogrow="field.autogrow" :min="field.min" />
           <template v-else-if="field.type == 'date'">
             <q-input v-if="dateFocus[i] === undefined || dateFocus[i] === false" v-model="formContent[field.model]"
-              :type="'text'" :label="field.label" :hint="field.hint ? field.hint : ''"
-              :required="field.required ? true : false" :prefix="field.prefix ? field.prefix : ''"
-              :suffix="field.suffix ? field.suffix : ''" :dense="dense" @click="textToDate(i)" />
+              :type="'text'" :label="field.label" :hint="field.hint" :required="field.required"
+              :prefix="field.prefix ? field.prefix : ''" :suffix="field.suffix ? field.suffix : ''" :dense="dense"
+              @click="textToDate(i)" />
             <div v-else>
               <q-dialog v-model="dateFocus[i]" transition-show="scale" transition-hide="scale">
                 <q-date v-model="formContent[field.model]" :options="field.dateOptions" :title="field.label"
@@ -31,9 +30,9 @@
           </template>
           <template v-else-if="field.type == 'datetime'">
             <q-input v-if="dateFocus[i] === undefined || dateFocus[i] === false" v-model="formContent[field.model]"
-              :type="'text'" :label="field.label" :hint="field.hint ? field.hint : ''"
-              :required="field.required ? true : false" :prefix="field.prefix ? field.prefix : ''"
-              :suffix="field.suffix ? field.suffix : ''" :dense="dense" @click="textToDate(i)" />
+              :type="'text'" :label="field.label" :hint="field.hint" :required="field.required"
+              :prefix="field.prefix ? field.prefix : ''" :suffix="field.suffix ? field.suffix : ''" :dense="dense"
+              @click="textToDate(i)" />
             <div v-else>
               <q-dialog v-model="dateFocus[i]" transition-show="scale" transition-hide="scale">
                 <q-date v-model="formContent[field.model]" :options="field.dateOptions" :title="field.label"
@@ -43,8 +42,10 @@
               </q-dialog>
             </div>
           </template>
-          <q-select v-else v-model="formContent[field.model]" :label="field.label" :options="field.options" emit-value
-            :hint="field.hint" :dense="dense">
+          <q-select v-else v-model="formContent[field.model]" :label="field.label"
+            :options="select_filters.find(el => el.label == field.label)?.options" emit-value :hint="field.hint"
+            :dense="dense" :autocomplete="field.autocomplete" :use-input="field['use-input']"
+            @filter="(val, update) => filterFn(val, update, field)">
             <span> {{ field["option-value"] }}</span>
           </q-select>
         </div>
@@ -61,7 +62,7 @@
 </template>
 
 <script setup>
-import { reactive, watch } from "vue";
+import { reactive, watch, ref } from "vue";
 
 const props = defineProps({
   fields: { type: Array, required: true },
@@ -102,7 +103,26 @@ function save() {
   emits("save", formContent);
 }
 function textToDate(number) {
-  console.log(Object.keys(dateFocus).length);
   dateFocus[number] = true;
 }
+const select_filters = reactive([])
+props.fields.forEach(element => {
+  if (element.type == "select") {
+    select_filters.push({ label: element.label, options: element.options })
+  }
+});
+
+const filterFn = (val, update, field) => {
+
+  update(() => {
+    const ind = select_filters.findIndex(el => el.label == field.label)
+    let options = field.options
+    if (val) {
+      options = options.filter(el => el.label.toLocaleLowerCase().includes(val.toLocaleLowerCase()))
+    }
+    select_filters[ind].options = options
+
+  })
+}
+
 </script>

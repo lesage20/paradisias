@@ -182,8 +182,8 @@ const linksList = computed(() => {
       link: { name: "Calendar" },
     },
     {
-      title: "Invités",
-      caption: "gestion des invités",
+      title: "Clients",
+      caption: "gestion des clients",
       icon: "fa fa-user",
       link: { name: "Guests" },
     },
@@ -238,7 +238,14 @@ const linksList = computed(() => {
       caption: "gestion des clients",
       icon: "fa fa-user",
       link: { name: "Guests" },
-    }, {
+    },
+    // {
+    //   title: "Rapports",
+    //   caption: "rapports quotidiens, hebdo...",
+    //   icon: "fas fa-file",
+    //   link: { name: "Reports" },
+    // },
+    {
       title: "Accueil",
       caption: "gestion des clients",
       icon: "fa fa-home",

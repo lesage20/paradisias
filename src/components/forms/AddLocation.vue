@@ -106,6 +106,8 @@ const fields = ref([
     model: "guest",
     hint: "Le client qui reserve la chambre",
     options: clientOptions,
+    'use-input': true,
+    'input-model': "search"
   },
 
   {
