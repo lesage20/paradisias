@@ -78,6 +78,7 @@ import { ref, computed, watch, defineComponent } from "vue";
 import ListDownloader from "src/components/reports/ListDownloader.vue";
 import ReportGenerator from "src/components/reports/ReportGenerator.vue";
 import ReservationReport from "src/components/reports/ReservationReport.vue";
+import PassationReport from "src/components/reports/PassationReport.vue";
 import SituationChambre from "src/components/reports/SituationChambre.vue";
 import RecapReception from "src/components/reports/RecapReception.vue";
 import RoomOccup from "src/components/reports/RoomOccup.vue";
@@ -90,6 +91,7 @@ export default defineComponent({
     SituationChambre,
     RecapReception,
     RoomOccup,
+    PassationReport
   },
   data: () => ({
     comp: "",
@@ -131,7 +133,18 @@ export default defineComponent({
           },
         },
 
-        { label: "Rapport de passation", icon: "fa fa-file" },
+        {
+          label: "Rapport de passation", icon: "fa fa-file", callBack: () => {
+            this.comp = "PassationReport";
+            this.menu = false;
+          }
+        },
+        {
+          label: "Journal du jour", icon: "fa fa-file", callBack: () => {
+            this.comp = "ReservationReport";
+            this.menu = false;
+          },
+        },
         {
           label: "Rapport global",
           icon: "fa fa-file",

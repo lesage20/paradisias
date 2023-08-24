@@ -60,7 +60,7 @@ import { useQuasar } from "quasar";
 import axios from "axios";
 import PdfGenerator from "./PdfGenerator.vue";
 import { ref, onMounted, inject, computed, watch } from "vue";
-import { isToday, isThisWeek, isThisMonth } from "date-fns";
+import { isToday, isThisWeek, isThisMonth, isWithinInterval } from "date-fns";
 
 const emits = defineEmits(["back"]);
 const token = inject("token");
@@ -103,11 +103,15 @@ onMounted(() => {
             (res) => el.id == res.room
           );
         });
-        todayReservations.value = reservations.value.filter((loc) =>
-          isToday(new Date(loc.checkIn))
-        );
+        todayReservations.value = locations.value.filter((loc) => {
+          const tod = new Date()
+          return isWithinInterval(tod, {
+            start: new Date(loc.checkIn),
+            end: new Date(loc.checkOut),
+          })
+        })
 
-        thisMonthLocations.value = reservations.value.filter((loc) =>
+        thisMonthLocations.value = locations.value.filter((loc) =>
           isThisMonth(new Date(loc.checkIn))
         );
       })
@@ -115,7 +119,7 @@ onMounted(() => {
     .catch((err) => {
       let dialog = $q.dialog({});
       if (!Boolean(err.response)) {
-         // dialog
+        // dialog
         //   .update({
         //     title: "Erreur de réseau",
         //     message:
@@ -156,10 +160,17 @@ onMounted(() => {
 
 const TotalRooms = computed(() => chambres.value.length);
 const BusyRooms = computed(
-  () => locations.value.filter((loc) => isToday(new Date(loc.checkIn))).length
+  () => locations.value.filter((loc) => {
+    const tod = new Date()
+    return isWithinInterval(tod, {
+      start: new Date(loc.checkIn),
+      end: new Date(loc.checkOut),
+    })
+  }).length
 );
+
 const WaitingCheckIn = computed(
-  () => locations.value.filter((loc) => isToday(new Date(loc.checkIn))).length
+  () => reservations.value.filter((loc) => isToday(new Date(loc.checkIn))).length
 );
 
 const WaitingCheckOut = computed(

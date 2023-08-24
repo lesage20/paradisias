@@ -101,9 +101,9 @@
             <q-space></q-space>
             Journée du
             {{
-            selectedRange == "day"
-            ? new Date().toLocaleDateString()
-            : new Date(selectedRange).toLocaleDateString()
+              selectedRange == "day"
+              ? new Date().toLocaleDateString()
+              : new Date(selectedRange).toLocaleDateString()
             }}
           </q-toolbar>
 
@@ -125,7 +125,7 @@ import { useQuasar } from "quasar";
 import axios from "axios";
 import PdfGenerator from "./PdfGenerator.vue";
 import { ref, onMounted, inject, computed, watchEffect } from "vue";
-import { isToday, isThisWeek, isThisMonth } from "date-fns";
+import { isToday, isThisWeek, isThisMonth, isWithinInterval } from "date-fns";
 
 const emits = defineEmits(["back"]);
 const token = inject("token");
@@ -133,7 +133,7 @@ const api = inject("api");
 const $q = useQuasar();
 
 const endpoints = [
-  api + "hotel/reservations/",
+  api + "hotel/locations/",
   api + "hotel/chambres/",
   api + "accounts/clients/",
 ];
@@ -164,19 +164,25 @@ onMounted(() => {
             (res) => el.id == res.room
           );
         });
-        todayReservations.value = reservations.value.filter((loc) =>
-          isToday(new Date(loc.checkIn))
-        );
 
+        todayReservations.value = reservations.value.filter((loc) => {
+          const tod = new Date()
+          return isWithinInterval(tod, {
+            start: new Date(loc.checkIn),
+            end: new Date(loc.checkOut),
+          })
+        })
         thisMonthLocations.value = reservations.value.filter((loc) =>
           isThisMonth(new Date(loc.checkIn))
         );
+
+
       })
     )
     .catch((err) => {
       let dialog = $q.dialog({});
       if (!Boolean(err.response)) {
-         // dialog
+        // dialog
         //   .update({
         //     title: "Erreur de réseau",
         //     message:
@@ -308,7 +314,7 @@ watchEffect(() => {
         (res) =>
           el.id == res.room &&
           new Date(selectedRange.value).toLocaleDateString() ==
-            new Date(res.checkIn).toLocaleDateString()
+          new Date(res.checkIn).toLocaleDateString()
       );
     });
   }

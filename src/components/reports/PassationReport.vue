@@ -4,8 +4,6 @@
       <q-btn round flat icon="fa fa-arrow-left" @click="emits('back')"></q-btn>
       <q-space></q-space>
 
-      <!-- <q-btn color="indigo" icon="check" label="Type" @click="" /> -->
-
       <q-btn icon="event" label="date" class="q-mx-sm" color="blue-8">
         <q-popup-proxy cover transition-show="scale" transition-hide="scale" @before-show="updateProxy">
           <q-date v-model="selectedRange">
@@ -31,12 +29,10 @@
         Ce Mois
         <q-tooltip class="text-subtitle2"> Rapport de ce mois </q-tooltip>
       </q-btn>
-      <q-toggle v-model="reception" title="Reception" color="indigo" label="Reception" />
     </q-toolbar>
     <q-toolbar class="q-ma-none q-pa-none mobile-only">
       <q-btn round flat icon="fa fa-arrow-left" @click="emits('back')"></q-btn>
       <q-space></q-space>
-      <q-toggle v-model="reception" title="Reception" color="indigo" label="Reception" />
     </q-toolbar>
     <q-toolbar class="q-ma-none q-pa-none mobile-only">
       <div class="row" style="width: 100%">
@@ -60,7 +56,7 @@
             <q-icon left size="xs" name="fa fa-calendar-day" />
             jour
             <q-tooltip class="text-subtitle2">
-              Rapport Journalier de location
+              Rapport Journalier de reservation
             </q-tooltip>
           </q-btn>
         </div>
@@ -83,7 +79,7 @@
       </div>
     </q-toolbar>
 
-    <PdfGenerator :title="`rapport_occupation_chambre_hotel_${new Date().toLocaleDateString()}`">
+    <PdfGenerator :title="`passation_service_${new Date().toLocaleDateString()}`">
       <template #content>
         <div>
           <q-toolbar class="q-ma-none q-pb-none q-px-lg">
@@ -98,8 +94,7 @@
           <q-separator inset></q-separator>
           <q-toolbar class="q-mt-lg">
             <q-toolbar-title class="text-center text-uppercase">
-              Rapport d'occupation des chambres
-              {{ reception ? "-- Réception" : "de l'hotel" }}
+              Rapport de passation de service
             </q-toolbar-title>
           </q-toolbar>
           <q-toolbar class="q-pr-xl q-pa-none q-ma-none">
@@ -114,11 +109,8 @@
 
           <q-card flat>
             <div class="q-py-sm">
-              <q-table v-if="!reception" v-model:pagination="pagination" :rows-per-page-options="[0]" flat bordered
-                :rows="chambres" :columns="columns" separator="cell" :hide-pagination="true" hide-bottom>
-              </q-table>
-              <q-table v-if="reception" v-model:pagination="pagination" :rows-per-page-options="[0]" flat bordered
-                :rows="chambres" :columns="recepColumns" separator="cell" :hide-pagination="true" hide-bottom>
+              <q-table v-model:pagination="pagination" :rows-per-page-options="[0]" flat bordered :rows="chambres"
+                :columns="columns" separator="cell" :hide-pagination="true" hide-bottom>
               </q-table>
             </div>
           </q-card>
@@ -145,11 +137,10 @@ const endpoints = [
   api + "hotel/chambres/",
   api + "accounts/clients/",
 ];
-const reception = ref(false);
-const locations = ref([]);
+const reservations = ref([]);
 const chambres = ref([]);
 const clients = ref([]);
-const todaylocations = ref([]);
+const todayReservations = ref([]);
 const thisMonthLocations = ref([]);
 
 onMounted(() => {
@@ -164,22 +155,25 @@ onMounted(() => {
       )
     )
     .then(
-      axios.spread((locationList, chambreList, clientList) => {
-        locations.value = locationList.data;
+      axios.spread((reservationList, chambreList, clientList) => {
+        reservations.value = reservationList.data;
         chambres.value = chambreList.data;
         clients.value = clientList.data;
         chambres.value.forEach((el) => {
-          el.locations = locations.value.filter((res) => el.id == res.room);
+          el.reservations = reservations.value.filter(
+            (res) => el.id == res.room
+          );
         });
-        todaylocations.value = locations.value.filter((loc) => {
+        todayReservations.value = reservations.value.filter((loc) => {
           const tod = new Date()
           return isWithinInterval(tod, {
             start: new Date(loc.checkIn),
             end: new Date(loc.checkOut),
           })
-        })
+        }
+        );
 
-        thisMonthLocations.value = locations.value.filter((loc) =>
+        thisMonthLocations.value = reservations.value.filter((loc) =>
           isThisMonth(new Date(loc.checkIn))
         );
       })
@@ -244,62 +238,36 @@ const currentSelectionText = ref("Aujourd'hui");
 // tableau
 const columns = [
   {
+    name: "client",
+    required: true,
+    label: "Clients",
+    align: "center",
+    field: (row) =>
+      row.reservations.length ? guestName(row.reservations[0].guest) : "",
+    format: (val) => `${val}`,
+    sortable: true,
+  },
+  {
     name: "room",
     required: true,
     label: "Chambre",
     align: "center",
     field: (row) => row.number,
-    format: (val) => `${val}`,
-    sortable: true,
-  },
-  {
-    name: "adults",
-    required: true,
-    label: "Adultes",
-    align: "center",
-    field: (row) => (row.locations.length ? row.locations[0].adults : ""),
     format: (val) => `${val}`,
     sortable: true,
   },
 
   {
-    name: "children",
-    required: true,
-    label: "Enfants",
-    align: "center",
-    field: (row) => (row.locations.length ? row.locations[0].children : ""),
-    format: (val) => val,
-    sortable: true,
-  },
-  {
-    name: "price",
+    name: "Prix",
     required: true,
     label: "Prix",
     align: "center",
     field: (row) =>
-      row.locations.length ? row.locations[0].totalPrice + " F" : "",
+      row.reservations.length ? row.reservations[0].totalPrice : "",
+    format: (val) => (val ? val + " FCFA" : ""),
     sortable: true,
   },
-];
-const recepColumns = [
-  {
-    name: "room",
-    required: true,
-    label: "Chambre",
-    align: "center",
-    field: (row) => row.number,
-    format: (val) => `${val}`,
-    sortable: true,
-  },
-  {
-    name: "status",
-    required: true,
-    label: "Etat",
-    align: "center",
-    field: (row) => row.status,
-    format: (val) => `${val}`,
-    sortable: true,
-  },
+
 ];
 const pagination = {
   page: 1,
@@ -310,7 +278,9 @@ watchEffect(() => {
   if (selectedRange.value == "day") {
     currentSelectionText.value = "Aujourd'hui";
     chambres.value.forEach((el) => {
-      el.locations = todaylocations.value.filter((res) => el.id == res.room);
+      el.reservations = todayReservations.value.filter(
+        (res) => el.id == res.room
+      );
     });
   } else if (selectedRange.value == "week") {
     currentSelectionText.value = "Cette Semaine";
@@ -321,7 +291,7 @@ watchEffect(() => {
       selectedRange.value
     ).toLocaleDateString()}`;
     chambres.value.forEach((el) => {
-      el.locations = locations.value.filter(
+      el.reservations = reservations.value.filter(
         (res) =>
           el.id == res.room &&
           new Date(selectedRange.value).toLocaleDateString() ==
