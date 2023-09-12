@@ -1,5 +1,12 @@
 <template>
-  <q-page padding>
-    <h1 class="text-h6">Test page</h1>
+  <q-page>
+    <div class="row">
+      <div class="col">
+        <hero-component></hero-component>
+      </div>
+    </div>
   </q-page>
 </template>
+<script setup>
+import HeroComponent from '../components/UserFront/HeroComponent.vue'
+</script>

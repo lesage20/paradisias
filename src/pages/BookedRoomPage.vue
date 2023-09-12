@@ -2,42 +2,99 @@
   <q-page padding>
     <p class="text-h5">Chambres Occupées</p>
     <div v-if="bookings.length" class="row">
-      <div
-        v-for="item in bookings"
-        :key="item.reference"
-        class="col-xs-12 col-md-4 q-pa-sm"
-      >
-        <q-card dark bordered class="bg-grey-9 my-card">
+      <div v-for="item in bookings" :key="item.reference" class="col-xs-12 col-md-4 q-pa-sm">
+        <q-card bordered class="my-card q-py-md">
           <q-card-section class="q-pb-none">
-            <div class="text-h6 text-center">{{ item.room_.number }}</div>
-            <q-separator dark class="q-mb-md" />
-          </q-card-section>
-          <q-card-section>
-            <div class="text-body2 text-center">
-              Cette chambre est/sera occupée par
-              <span class="text-green">
-                {{ item.client.name }} {{ item.client.firstname }}
-              </span>
+            <q-item>
+              <q-item-section avatar>
+                <q-avatar icon="bed" class="bg-grey-3"></q-avatar>
+              </q-item-section>
+              <q-item-section>
+                <q-item-label class="text-bold text-h6">
+                  {{ item.room_.number }}
+                </q-item-label>
+                <q-item-label caption>
+                  Chambre
+                </q-item-label>
 
-              du
-              <span class="text-">
-                {{ new Date(item.checkIn).toLocaleDateString() }}
-                au {{ new Date(item.checkOut).toLocaleDateString() }} à
-                {{ new Date(item.checkOut).toLocaleTimeString() }}
-              </span>
-            </div>
-            <div
-              v-if="isAfter(new Date(), new Date(item.checkIn))"
-              class="q-pt-md text-center"
-            >
-              Cette chambre sera libre dans: <br />
-              <CountDown :date="item.checkOut" />
-            </div>
-            <div v-else class="q-pt-md text-center">
-              Cette location n'a pas encore débutée <br />
-              <p class="text-h4 text-red q-pa-none q-ma-none">Réservation</p>
-            </div>
+              </q-item-section>
+            </q-item>
+            <q-item>
+              <q-item-section avatar>
+                <q-avatar icon="attach_money" class="bg-grey-3"></q-avatar>
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>
+                  Prix
+                </q-item-label>
+                <q-item-label caption>
+                  {{ item.totalPrice }} FCFA
+                </q-item-label>
+
+
+              </q-item-section>
+            </q-item>
+
+            <q-item>
+              <q-item-section avatar>
+                <q-avatar icon="person" class="bg-grey-3"></q-avatar>
+
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>
+                  Client
+                </q-item-label>
+                <q-item-label caption>
+                  <span>
+                    {{ item.client.name }} {{ item.client.firstname }}
+                  </span>
+                </q-item-label>
+              </q-item-section>
+            </q-item>
+
+            <q-item>
+              <q-item-section avatar>
+                <q-avatar icon="alarm" class="bg-grey-3"></q-avatar>
+              </q-item-section>
+
+              <q-item-section>
+                <q-item-label>
+                  Période
+                </q-item-label>
+                <q-item-label caption>
+                  <span class="text-">
+                    {{ new Date(item.checkIn).toLocaleDateString("fr") }} -
+                    {{ new Date(item.checkOut).toLocaleDateString("fr") }}
+                  </span>
+                </q-item-label>
+
+
+              </q-item-section>
+            </q-item>
+
+            <q-item>
+              <q-item-section avatar>
+                <q-avatar icon="timer" class="bg-pink-1 text-red-8"></q-avatar>
+
+              </q-item-section>
+
+              <q-item-section>
+                <q-item-label>
+                  <div v-if="isAfter(new Date(), new Date(item.checkIn))">
+                    <CountDown class="text-body1" :date="item.checkOut" />
+                  </div>
+                  <div v-else>
+                    Réservation
+                  </div>
+                </q-item-label>
+                <q-item-label caption>
+                  Temps restant
+                </q-item-label>
+
+              </q-item-section>
+            </q-item>
           </q-card-section>
+
         </q-card>
       </div>
     </div>
@@ -94,32 +151,21 @@ onMounted(() => {
     .catch((err) => {
       let dialog = $q.dialog({});
       if (!Boolean(err.response) && err.message == "Network error") {
-        dialog
-          .update({
-            title: "Erreur de réseau",
-            message:
-              "Impossible de se connecter au server. Veuillez vous connecter à internet et actualiser",
-            ok: "actualiser",
-            progress: false,
-            persistent: true,
-          })
-          .onOk(() => {
-            window.location.reload();
-          });
+        // dialog
+        //   .update({
+        //     title: "Erreur de réseau",
+        //     message:
+        //       "Impossible de se connecter au server. Veuillez vous connecter à internet et actualiser",
+        //     ok: "actualiser",
+        //     progress: false,
+        //     persistent: true,
+        //   })
+        //   .onOk(() => {
+        //     window.location.reload();
+        //   });
       } else {
         if (err.response.status == "401") {
-          dialog
-            .update({
-              title: "Erreur",
-              message:
-                "Votre delai de connexion est passé veuillez vous reconnecter",
-              ok: "se connecter",
-              progress: false,
-            })
-            .onOk(() => {
-              store().logout();
-              router.push({ name: "Login" });
-            });
+          router.push({ name: "Login" });//
         } else {
           dialog.update({
             title: "Erreur",

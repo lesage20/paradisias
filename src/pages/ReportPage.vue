@@ -50,17 +50,10 @@
             <q-toolbar>
               <q-item-label class="text-h4"> Liste des rapports </q-item-label>
             </q-toolbar>
-            <q-separator
-              :class="{ 'q-mb-lg': $q.platform.is.mobile }"
-            ></q-separator>
+            <q-separator :class="{ 'q-mb-lg': $q.platform.is.mobile }"></q-separator>
 
-            <q-item
-              v-for="rap in listRapport"
-              :key="rap.label"
-              v-ripple="{ color: 'teal' }"
-              clickable
-              @click="rap.callBack"
-            >
+            <q-item v-for="rap in listRapport" :key="rap.label" v-ripple="{ color: 'teal' }" clickable
+              @click="rap.callBack">
               <q-item-section side>
                 <q-icon :name="rap.icon"> </q-icon>
               </q-item-section>
@@ -74,7 +67,7 @@
     </div>
     <div v-show="!menu" class="row justify-center">
       <div class="col">
-        <component :is="comp" @back="menu = true"></component>
+        <component :is="comp" flat @back="menu = true"></component>
       </div>
     </div>
   </q-page>
@@ -85,8 +78,10 @@ import { ref, computed, watch, defineComponent } from "vue";
 import ListDownloader from "src/components/reports/ListDownloader.vue";
 import ReportGenerator from "src/components/reports/ReportGenerator.vue";
 import ReservationReport from "src/components/reports/ReservationReport.vue";
+import PassationReport from "src/components/reports/PassationReport.vue";
 import SituationChambre from "src/components/reports/SituationChambre.vue";
 import RecapReception from "src/components/reports/RecapReception.vue";
+import RoomOccup from "src/components/reports/RoomOccup.vue";
 const $q = useQuasar();
 export default defineComponent({
   components: {
@@ -95,6 +90,8 @@ export default defineComponent({
     ReservationReport,
     SituationChambre,
     RecapReception,
+    RoomOccup,
+    PassationReport
   },
   data: () => ({
     comp: "",
@@ -104,7 +101,7 @@ export default defineComponent({
     listRapport() {
       return [
         {
-          label: "Fiche de réservations",
+          label: "Planning journaliers",
           icon: "fa fa-file",
           callBack: () => {
             this.comp = "ReservationReport";
@@ -123,7 +120,7 @@ export default defineComponent({
           label: "Rapport d'occupation des chambres",
           icon: "fa fa-file",
           callBack: () => {
-            this.comp = "SituationChambre";
+            this.comp = "RoomOccup";
             this.menu = false;
           },
         },
@@ -136,7 +133,18 @@ export default defineComponent({
           },
         },
 
-        { label: "Rapport de passation", icon: "fa fa-file" },
+        {
+          label: "Rapport de passation", icon: "fa fa-file", callBack: () => {
+            this.comp = "PassationReport";
+            this.menu = false;
+          }
+        },
+        {
+          label: "Journal du jour", icon: "fa fa-file", callBack: () => {
+            this.comp = "ReservationReport";
+            this.menu = false;
+          },
+        },
         {
           label: "Rapport global",
           icon: "fa fa-file",

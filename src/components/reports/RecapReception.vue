@@ -33,28 +33,12 @@
 
           <q-card flat>
             <div class="q-py-sm">
-              <q-table
-                v-model:pagination="pagination"
-                wrap-cells
-                :rows-per-page-options="[0]"
-                flat
-                bordered
-                :rows="rows"
-                :columns="columns"
-                separator="cell"
-                :hide-pagination="true"
-                hide-bottom
-              >
+              <q-table v-model:pagination="pagination" wrap-cells :rows-per-page-options="[0]" flat bordered :rows="rows"
+                :columns="columns" separator="cell" :hide-pagination="true" hide-bottom>
                 <template #body-cell-observation="attr">
                   <q-td :attr="attr" cols="1" @click="attr.row.active = true">
-                    <q-input
-                      v-if="attr.row.active"
-                      v-model="attr.row.model"
-                      :autogrow="true"
-                      label="observation"
-                      type="textarea"
-                      @keyup.enter.ctrl="attr.row.active = false"
-                    ></q-input>
+                    <q-input v-if="attr.row.active" v-model="attr.row.model" :autogrow="true" label="observation"
+                      type="textarea" @keyup.enter.ctrl="attr.row.active = false"></q-input>
                     <p v-else class="text-wrap">{{ attr.row.model }}</p>
                   </q-td>
                 </template>
@@ -72,7 +56,7 @@ import { useQuasar } from "quasar";
 import axios from "axios";
 import PdfGenerator from "./PdfGenerator.vue";
 import { ref, onMounted, inject, computed } from "vue";
-import { isToday, isThisWeek, isThisMonth } from "date-fns";
+import { isToday, isThisWeek, isThisMonth, isWithinInterval } from "date-fns";
 import { useLoginStore as store } from "src/stores/login";
 import { useRouter } from "vue-router";
 
@@ -117,9 +101,13 @@ onMounted(() => {
             (res) => el.id == res.room
           );
         });
-        todayReservations.value = reservations.value.filter((loc) =>
-          isToday(new Date(loc.checkIn))
-        );
+        todayReservations.value = locations.value.filter((loc) => {
+          const tod = new Date()
+          return isWithinInterval(tod, {
+            start: new Date(loc.checkIn),
+            end: new Date(loc.checkOut),
+          })
+        })
 
         thisMonthLocations.value = reservations.value.filter((loc) =>
           isThisMonth(new Date(loc.checkIn))
@@ -129,32 +117,21 @@ onMounted(() => {
     .catch((err) => {
       let dialog = $q.dialog({});
       if (!Boolean(err.response)) {
-        dialog
-          .update({
-            title: "Erreur de réseau",
-            message:
-              "Impossible de se connecter au server. Veuillez vous connecter à internet et actualiser",
-            ok: "actualiser",
-            progress: false,
-            persistent: true,
-          })
-          .onOk(() => {
-            window.location.reload();
-          });
+        // dialog
+        //   .update({
+        //     title: "Erreur de réseau",
+        //     message:
+        //       "Impossible de se connecter au server. Veuillez vous connecter à internet et actualiser",
+        //     ok: "actualiser",
+        //     progress: false,
+        //     persistent: true,
+        //   })
+        //   .onOk(() => {
+        //     window.location.reload();
+        //   });
       } else {
         if (err.response.status == "401") {
-          dialog
-            .update({
-              title: "Erreur",
-              message:
-                "Votre delai de connexion est passé veuillez vous reconnecter",
-              ok: "se connecter",
-              progress: false,
-            })
-            .onOk(() => {
-              store().logout();
-              router.push({ name: "Login" });
-            });
+          router.push({ name: "Login" });//
         } else {
           dialog.update({
             title: "Erreur",
@@ -171,7 +148,13 @@ onMounted(() => {
 const TotalRooms = computed(() => chambres.value.length);
 
 const BusyRooms = computed(
-  () => locations.value.filter((loc) => isToday(new Date(loc.checkIn))).length
+  () => locations.value.filter((loc) => {
+    const tod = new Date()
+    return isWithinInterval(tod, {
+      start: new Date(loc.checkIn),
+      end: new Date(loc.checkOut),
+    })
+  }).length
 );
 const BusyRoomsObs = ref("");
 
@@ -182,11 +165,15 @@ const FreeLocationsObs = ref("");
 
 const RevenuCash = computed(() => {
   let revenu = 0;
-  locations.value
-    .filter((loc) => isToday(new Date(loc.checkIn)))
-    .forEach((loc) => {
-      revenu += loc.payment == "espece" ? loc.totalPrice : 0;
-    });
+  locations.value.filter((loc) => {
+    const tod = new Date()
+    return isWithinInterval(tod, {
+      start: new Date(loc.checkIn),
+      end: new Date(loc.checkOut),
+    })
+  }).forEach((loc) => {
+    revenu += loc.payment == "espece" ? loc.totalPrice : 0;
+  });
   return revenu;
 });
 const RevenuCashObs = ref("");

@@ -1,52 +1,27 @@
 <template>
   <q-page>
-    <q-card class="q-pa-lg">
+    <q-card v-bind="$attrs" class="q-pa-lg">
       <div class="row q-mb-lg">
         <div class="col-1">
-          <q-btn
-            round
-            flat
-            icon="fa fa-arrow-left"
-            @click="emits('back')"
-          ></q-btn>
+          <q-btn round flat icon="fa fa-arrow-left" @click="emits('back')"></q-btn>
         </div>
 
         <div class="col q-px-sm">
-          <q-btn
-            outline
-            class="q-mx-sm full-width"
-            color="green-8"
-            @click="selectedList = 'location'"
-          >
-            <q-icon
-              left
-              size="xs"
-              :name="
-                selectedList == 'location'
-                  ? 'fa fa-check-circle'
-                  : 'fa-solid fa-list-check'
-              "
-            />
+          <q-btn outline class="q-mx-sm full-width" color="green-8" @click="selectedList = 'location'">
+            <q-icon left size="xs" :name="selectedList == 'location'
+              ? 'fa fa-check-circle'
+              : 'fa-solid fa-list-check'
+              " />
             Locations
             <q-tooltip class="text-subtitle2"> Liste de locations </q-tooltip>
           </q-btn>
         </div>
         <div class="col q-px-sm">
-          <q-btn
-            outline
-            class="q-mx-sm full-width"
-            color="orange-8"
-            @click="selectedList = 'reservation'"
-          >
-            <q-icon
-              left
-              size="xs"
-              :name="
-                selectedList == 'reservation'
-                  ? 'fa fa-check-circle'
-                  : 'pending_actions'
-              "
-            />
+          <q-btn outline class="q-mx-sm full-width" color="orange-8" @click="selectedList = 'reservation'">
+            <q-icon left size="xs" :name="selectedList == 'reservation'
+              ? 'fa fa-check-circle'
+              : 'pending_actions'
+              " />
             Réservations
             <q-tooltip class="text-subtitle2">
               Liste de Réservations
@@ -54,21 +29,11 @@
           </q-btn>
         </div>
         <div class="col q-px-sm">
-          <q-btn
-            outline
-            class="q-mx-sm full-width"
-            color="red-8"
-            @click="selectedList = 'depense'"
-          >
-            <q-icon
-              left
-              size="xs"
-              :name="
-                selectedList == 'depense'
-                  ? 'fa fa-check-circle'
-                  : 'fa fa-dollar-sign'
-              "
-            />
+          <q-btn outline class="q-mx-sm full-width" color="red-8" @click="selectedList = 'depense'">
+            <q-icon left size="xs" :name="selectedList == 'depense'
+              ? 'fa fa-check-circle'
+              : 'fa fa-dollar-sign'
+              " />
             Depenses
             <q-tooltip class="text-subtitle2"> Liste des depenses </q-tooltip>
           </q-btn>
@@ -76,35 +41,22 @@
       </div>
       <div class="row justify-center">
         <div class="col-xs-6 col-sm-6 col-md-3 q-px-sm">
-          <q-btn
-            icon="fa fa-table-list"
-            label="Tout"
-            class="q-mx-sm full-width"
-            color="blue-8"
-            @click="selectedRange = 'all'"
-          >
+          <q-btn icon="fa fa-table-list" label="Tout" class="q-mx-sm full-width" color="blue-8"
+            @click="selectedRange = 'all'">
             <q-tooltip class="text-subtitle2">
               Afficher la liste de tous/toutes les {{ selectedList }}s
             </q-tooltip>
           </q-btn>
         </div>
         <div class="col-xs-6 col-sm-6 col-md-3 q-px-sm">
-          <q-btn
-            class="q-mx-sm full-width"
-            color="teal-6"
-            @click="selectedRange = 'day'"
-          >
+          <q-btn class="q-mx-sm full-width" color="teal-6" @click="selectedRange = 'day'">
             <q-icon left size="xs" name="fa fa-calendar-day" />
             jour
             <q-tooltip class="text-subtitle2"> Rapport d'aujourdui </q-tooltip>
           </q-btn>
         </div>
         <div class="col-xs-6 col-sm-6 col-md-3 q-px-sm">
-          <q-btn
-            class="q-mx-sm full-width"
-            color="orange-8"
-            @click="selectedRange = 'week'"
-          >
+          <q-btn class="q-mx-sm full-width" color="orange-8" @click="selectedRange = 'week'">
             <q-icon left size="xs" name="fa fa-calendar-week" />
             semaine
             <q-tooltip class="text-subtitle2">
@@ -113,11 +65,7 @@
           </q-btn>
         </div>
         <div class="col-xs-6 col-sm-6 col-md-3 q-px-sm">
-          <q-btn
-            class="q-mx-sm full-width"
-            color="purple"
-            @click="selectedRange = 'month'"
-          >
+          <q-btn class="q-mx-sm full-width" color="purple" @click="selectedRange = 'month'">
             <q-icon left size="xs" name="fa fa-calendar-days" />
             mois
             <q-tooltip class="text-subtitle2"> Rapport de ce mois </q-tooltip>
@@ -125,9 +73,7 @@
         </div>
       </div>
 
-      <PdfGenerator
-        :title="`liste_${selectedList}_${new Date().toLocaleDateString()}`"
-      >
+      <PdfGenerator :title="`liste_${selectedList}_${new Date().toLocaleDateString()}`">
         <template #content>
           <q-toolbar class="q-ma-none q-pb-none q-px-lg">
             <span style="font-size: 12px" class="text-grey">
@@ -147,16 +93,8 @@
 
           <q-card flat>
             <div class="q-py-md">
-              <q-table
-                v-model:pagination="pagination"
-                :rows-per-page-options="[0]"
-                flat
-                bordered
-                :rows="currentSelectionRows"
-                :hide-pagination="true"
-                hide-bottom
-                :columns="columns"
-              >
+              <q-table v-model:pagination="pagination" :rows-per-page-options="[0]" flat bordered
+                :rows="currentSelectionRows" :hide-pagination="true" hide-bottom :columns="columns">
               </q-table>
             </div>
           </q-card>
@@ -235,32 +173,21 @@ onMounted(() => {
     .catch((err) => {
       let dialog = $q.dialog({});
       if (!Boolean(err.response)) {
-        dialog
-          .update({
-            title: "Erreur de réseau",
-            message:
-              "Impossible de se connecter au server. Veuillez vous connecter à internet et actualiser",
-            ok: "actualiser",
-            progress: false,
-            persistent: true,
-          })
-          .onOk(() => {
-            window.location.reload();
-          });
+        // dialog
+        //   .update({
+        //     title: "Erreur de réseau",
+        //     message:
+        //       "Impossible de se connecter au server. Veuillez vous connecter à internet et actualiser",
+        //     ok: "actualiser",
+        //     progress: false,
+        //     persistent: true,
+        //   })
+        //   .onOk(() => {
+        //     window.location.reload();
+        //   });
       } else {
         if (err.response.status == "401") {
-          dialog
-            .update({
-              title: "Erreur",
-              message:
-                "Votre delai de connexion est passé veuillez vous reconnecter",
-              ok: "se connecter",
-              progress: false,
-            })
-            .onOk(() => {
-              store().logout();
-              router.push({ name: "Login" });
-            });
+          router.push({ name: "Login" });//
         } else {
           dialog.update({
             title: "Erreur",

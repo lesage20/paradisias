@@ -1,11 +1,5 @@
 <template>
-  <form-generator
-    :fields="fields"
-    title="Ajouter un étage"
-    :loading="loading"
-    @save="getFormContent"
-    @close="cancel"
-  />
+  <form-generator :fields="fields" title="Ajouter un étage" :loading="loading" @save="getFormContent" @close="cancel" />
 </template>
 <script setup>
 import { ref, onMounted, inject } from "vue";
@@ -56,32 +50,21 @@ onMounted(() => {
     .catch((err) => {
       let dialog = $q.dialog({});
       if (!Boolean(err.response)) {
-        dialog
-          .update({
-            title: "Erreur de réseau",
-            message:
-              "Impossible de se connecter au server. Veuillez vous connecter à internet et actualiser",
-            ok: "actualiser",
-            progress: false,
-            persistent: true,
-          })
-          .onOk(() => {
-            window.location.reload();
-          });
+        // dialog
+        //   .update({
+        //     title: "Erreur de réseau",
+        //     message:
+        //       "Impossible de se connecter au server. Veuillez vous connecter à internet et actualiser",
+        //     ok: "actualiser",
+        //     progress: false,
+        //     persistent: true,
+        //   })
+        //   .onOk(() => {
+        //     window.location.reload();
+        //   });
       } else {
         if (err.response.status == "401") {
-          dialog
-            .update({
-              title: "Erreur",
-              message:
-                "Votre delai de connexion est passé veuillez vous reconnecter",
-              ok: "se connecter",
-              progress: false,
-            })
-            .onOk(() => {
-              store().logout();
-              router.push({ name: "Login" });
-            });
+          router.push({ name: "Login" });//
         } else {
           dialog.update({
             title: "Erreur",

@@ -3,34 +3,14 @@
     <div v-if="add" class="row">
       <div class="col">
         <div>
-          <q-stepper
-            ref="stepper"
-            v-model="step"
-            alternative-labels
-            color="primary"
-            animated
-          >
-            <q-step
-              :name="1"
-              title="Ajouté un nouvel utilisateur"
-              icon="fa fa-user-plus"
-              :done="step > 1"
-              caption="Optionnel"
-            >
+          <q-stepper ref="stepper" v-model="step" alternative-labels color="primary" animated>
+            <!-- <q-step :name="1" title="Ajouté un nouvel utilisateur" icon="fa fa-user-plus" :done="step > 1"
+              caption="Optionnel">
               <AddUser @close="add = false" @saved="$refs.stepper.next()" />
-            </q-step>
+            </q-step> -->
 
-            <q-step
-              :name="2"
-              title="Ajouter un nouveau client"
-              caption="Obligatoire"
-              icon="fa fa-user-plus"
-            >
-              <AddProfil
-                title="client"
-                @close="$refs.stepper.previous()"
-                @saved="guestCreated"
-              />
+            <q-step :name="1" title="Ajouter un nouveau client" caption="Obligatoire" icon="fa fa-user-plus">
+              <AddProfil title="client" @close="add = false" @saved="guestCreated" />
             </q-step>
           </q-stepper>
         </div>
@@ -38,13 +18,7 @@
     </div>
     <div v-else class="row">
       <div class="col-12 desktop-only">
-        <ListTable
-          :items="items"
-          :columns="columns"
-          title="Clients"
-          @add="startAdd"
-          @delete="deleteGuest"
-        />
+        <ListTable :items="items" :columns="columns" title="Clients" @add="startAdd" @delete="deleteGuest" />
       </div>
       <div class="col-12 mobile-only">
         <q-toolbar>
@@ -104,20 +78,21 @@ const items = ref([]);
 
 function startAdd() {
   add.value = true;
-  $q.dialog({
-    title: "Question",
-    message:
-      "Pour Ajouter un client il faut d'abord ajouter son compte utilisateur. Le client a t'il un compte enregistré?",
-    cancel: "non",
-    ok: "oui",
-    persistent: true,
-  })
-    .onOk(() => {
-      step.value = 2;
-    })
-    .onCancel(() => {
-      step.value = 1;
-    });
+  step.value = 1
+  // $q.dialog({
+  //   title: "Question",
+  //   message:
+  //     "Pour Ajouter un client il faut d'abord ajouter son compte utilisateur. Le client a t'il un compte enregistré?",
+  //   cancel: "non",
+  //   ok: "oui",
+  //   persistent: true,
+  // })
+  //   .onOk(() => {
+  //     step.value = 2;
+  //   })
+  //   .onCancel(() => {
+  //     step.value = 1;
+  //   });
 }
 function getClients() {
   axios
@@ -132,32 +107,21 @@ function getClients() {
     .catch((err) => {
       let dialog = $q.dialog({});
       if (!Boolean(err.response)) {
-        dialog
-          .update({
-            title: "Erreur de réseau",
-            message:
-              "Impossible de se connecter au server. Veuillez vous connecter à internet et actualiser",
-            ok: "actualiser",
-            progress: false,
-            persistent: true,
-          })
-          .onOk(() => {
-            window.location.reload();
-          });
+        // dialog
+        //   .update({
+        //     title: "Erreur de réseau",
+        //     message:
+        //       "Impossible de se connecter au server. Veuillez vous connecter à internet et actualiser",
+        //     ok: "actualiser",
+        //     progress: false,
+        //     persistent: true,
+        //   })
+        //   .onOk(() => {
+        //     window.location.reload();
+        //   });
       } else {
         if (err.response.status == "401") {
-          dialog
-            .update({
-              title: "Erreur",
-              message:
-                "Votre delai de connexion est passé veuillez vous reconnecter",
-              ok: "se connecter",
-              progress: false,
-            })
-            .onOk(() => {
-              store().logout();
-              router.push({ name: "Login" });
-            });
+          router.push({ name: "Login" });//
         } else {
           dialog.update({
             title: "Erreur",
@@ -177,9 +141,8 @@ function guestCreated() {
 function deleteGuest(guest) {
   $q.dialog({
     title: "Suppression d'élément",
-    message: `Voulez vous vraiment supprimer <b> ${
-      guest.name + " " + guest.firstname
-    } </b> de la liste de clients?`,
+    message: `Voulez vous vraiment supprimer <b> ${guest.name + " " + guest.firstname
+      } </b> de la liste de clients?`,
     ok: { label: "supprimer", color: "red", flat: true },
     cancel: "annuler",
     html: true,
@@ -201,9 +164,8 @@ function del(id) {
 function updateGuest(guest) {
   $q.dialog({
     title: "Suppression d'élément",
-    message: `Voulez vous vraiment supprimer <b> ${
-      guest.name + " " + guest.firstname
-    } </b> de la liste de clients?`,
+    message: `Voulez vous vraiment supprimer <b> ${guest.name + " " + guest.firstname
+      } </b> de la liste de clients?`,
     ok: { label: "supprimer", color: "red", flat: true },
     cancel: "annuler",
     html: true,

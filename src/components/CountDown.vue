@@ -1,8 +1,8 @@
 <template>
-  <p class="text-h4 text-red q-ma-none">
-    <span v-if="daysToShow"> {{ daysToShow }}j </span>
-    <span v-if="hoursToShow"> {{ hoursToShow }}h </span>
-    <span v-if="minutesToShow"> {{ minutesToShow }}m </span>
+  <p class="text-h4 text-red q-ma-none" v-bind="$attrs">
+    <span v-if="daysToShow"> {{ daysToShow }}jrs </span>
+    <span v-if="hoursToShow"> {{ hoursToShow }}hrs </span>
+    <span v-if="minutesToShow"> {{ minutesToShow }}min </span>
     <span> {{ secondsToShow }}s </span>
   </p>
 </template>

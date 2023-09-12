@@ -5,36 +5,17 @@
         <ImportantCard title="Revenue Total" color="blue" :number="revenue" />
       </div>
       <div class="col-xs-12 col-sm-6 col-md-6 q-pl-xs q-py-xs q-mb-sm">
-        <ImportantCard
-          title="Revenue de ce mois"
-          color="indigo"
-          :number="revenue"
-        />
+        <ImportantCard title="Revenue de ce mois" color="indigo" :number="monRev" />
       </div>
 
       <div class="col-xs-12 col-sm-6 col-md-4 q-pr-xs q-py-xs">
-        <transparent-card
-          color="blue"
-          title="Chambres"
-          icon="king_bed"
-          :number="chambres.length"
-        />
+        <transparent-card color="blue" title="Chambres" icon="king_bed" :number="chambres.length" />
       </div>
       <div class="col-xs-12 col-sm-6 col-md-4 q-pa-xs">
-        <transparent-card
-          color="teal"
-          title="Clients"
-          icon="people"
-          :number="clients.length"
-        />
+        <transparent-card color="teal" title="Clients" icon="people" :number="clients.length" />
       </div>
       <div class="col-xs-12 col-sm-6 col-md-4 q-pl-xs q-py-xs">
-        <transparent-card
-          color="green"
-          title="Locations"
-          :number="locations.length"
-          icon="book"
-        />
+        <transparent-card color="green" title="Locations" :number="locations.length" icon="book" />
       </div>
     </div>
 
@@ -75,12 +56,10 @@
           <q-item>
             <q-item-section>
               <q-item-label>
-                <h2
-                  :class="{
-                    'q-mt-sm q-mb-none text-h6': true,
-                    'text-center': $q.platform.is.mobile,
-                  }"
-                >
+                <h2 :class="{
+                  'q-mt-sm q-mb-none text-h6': true,
+                  'text-center': $q.platform.is.mobile,
+                }">
                   <span> Locations </span>
                 </h2>
               </q-item-label>
@@ -89,27 +68,15 @@
               </q-item-label>
             </q-item-section>
             <q-item-section side>
-              <q-btn
-                :to="{ name: 'Reservations' }"
-                no-caps
-                flat
-                color="primary"
-                class="q-mt-sm"
-              >
+              <q-btn :to="{ name: 'Reservations' }" no-caps flat color="primary" class="q-mt-sm">
                 Toutes les locations
                 <q-icon right name="keyboard_arrow_right"></q-icon>
-                <q-tooltip class="text-body1"
-                  >Voir toutes les locations</q-tooltip
-                >
+                <q-tooltip class="text-body1">Voir toutes les locations</q-tooltip>
               </q-btn>
             </q-item-section>
           </q-item>
           <q-list separator>
-            <q-item
-              v-for="item in locations.slice(0, 5)"
-              :key="item.reference"
-              class="mobile-only"
-            >
+            <q-item v-for="item in locations.slice(0, 5)" :key="item.reference" class="mobile-only">
               <q-item-section>
                 <q-item-label>
                   {{
@@ -124,45 +91,26 @@
                 </q-item-section>
               </q-item-section>
               <q-item-section side>
-                <q-badge class="bg-teal-1 text-teal"
-                  >{{ item.totalPrice }}F</q-badge
-                >
+                <q-badge class="bg-teal-1 text-teal">{{ item.totalPrice }}F</q-badge>
               </q-item-section>
             </q-item>
           </q-list>
-          <q-table
-            flat
-            separator="cell"
-            bordered
-            hide-bottom
-            class="desktop-only"
-            :columns="locationColumns"
-            :rows="locations"
-          >
+          <q-table flat separator="cell" bordered hide-bottom class="desktop-only" :columns="locationColumns"
+            :rows="locations">
             <template #body-cell-statut="props">
               <q-td align="center" :props="props.row.staus">
-                <q-chip
-                  v-if="props.row.status == 'en attente'"
-                  style="width: 105px"
-                  class="bg-pink-1 text-pink text-center"
-                >
+                <q-chip v-if="props.row.status == 'en attente'" style="width: 105px"
+                  class="bg-pink-1 text-pink text-center">
                   <q-icon name="schedule" left></q-icon>
                   {{ props.row.status }}
                 </q-chip>
-                <q-chip
-                  v-else-if="props.row.status == 'payée'"
-                  style="width: 105px"
-                  class="bg-teal-1 text-teal-8 text-center"
-                >
+                <q-chip v-else-if="props.row.status == 'payée'" style="width: 105px"
+                  class="bg-teal-1 text-teal-8 text-center">
                   <q-icon left name="verified"></q-icon>
 
                   {{ props.row.status }}
                 </q-chip>
-                <q-chip
-                  v-else
-                  style="width: 105px"
-                  class="bg-grey-3 text-grey-8 text-center"
-                >
+                <q-chip v-else style="width: 105px" class="bg-grey-3 text-grey-8 text-center">
                   <q-icon name="archive" left></q-icon>
 
                   {{ props.row.status }}
@@ -180,36 +128,16 @@
         </q-toolbar>
       </div>
       <div class="col-xs-6 col-md-3 q-pa-xs">
-        <transparent-card
-          color="indigo"
-          title="Coupons"
-          icon="local_offer"
-          :number="coupons.length"
-        ></transparent-card>
+        <transparent-card color="indigo" title="Coupons" icon="local_offer" :number="coupons.length"></transparent-card>
       </div>
       <div class="col-xs-6 col-md-3 q-pa-xs">
-        <transparent-card
-          color="blue"
-          title="Clients"
-          icon="person"
-          :number="clients.length"
-        ></transparent-card>
+        <transparent-card color="blue" title="Clients" icon="person" :number="clients.length"></transparent-card>
       </div>
       <div class="col-xs-6 col-md-3 q-pa-xs">
-        <transparent-card
-          color="teal"
-          title="Empoyés"
-          icon="people"
-          :number="employes.length"
-        ></transparent-card>
+        <transparent-card color="teal" title="Empoyés" icon="people" :number="employes.length"></transparent-card>
       </div>
       <div class="col-xs-6 col-md-3 q-pa-xs">
-        <transparent-card
-          color="green"
-          title="roles"
-          icon="check_circle"
-          :number="roles.length"
-        ></transparent-card>
+        <transparent-card color="green" title="roles" icon="check_circle" :number="roles.length"></transparent-card>
       </div>
     </div>
     <div class="row content-end items-end">
@@ -221,66 +149,40 @@
       <div class="col-xs-12 col-sm-12 col-md-8 q-py-sm q-pr-sm">
         <q-card id="chart" flat bordered>
           <q-item>
-            <q-item-section
-              :class="{
+            <q-item-section :class="{
+              'text-body2 text-center': true,
+              'text-center': true,
+            }">
+              <q-item-label :class="{
                 'text-body2 text-center': true,
                 'text-center': true,
-              }"
-            >
-              <q-item-label
-                :class="{
-                  'text-body2 text-center': true,
-                  'text-center': true,
-                }"
-              >
+              }">
                 Revenues et dépenses de la semaine
               </q-item-label>
             </q-item-section>
           </q-item>
           <q-separator></q-separator>
-          <apexchart
-            type="bar"
-            width="100%"
-            height="130%"
-            :options="chartOptions"
-            :series="series"
-          ></apexchart>
+          <apexchart type="bar" width="100%" height="130%" :options="chartOptions" :series="series"></apexchart>
         </q-card>
       </div>
-      <div
-        class="col-xs-12 col-sm-4 q-py-sm"
-        :class="{
-          'q-pr-sm': $q.platform.is.desktop,
-        }"
-      >
-        <q-card
-          flat
-          bordered
-          :style="$q.platform.is.desktop ? 'height: 317px ' : ''"
-        >
+      <div class="col-xs-12 col-sm-4 q-py-sm" :class="{
+        'q-pr-sm': $q.platform.is.desktop,
+      }">
+        <q-card flat bordered :style="$q.platform.is.desktop ? 'height: 317px ' : ''">
           <q-list separator>
             <q-item>
               <q-item-section>
                 <q-item-label> Chambres </q-item-label>
               </q-item-section>
               <q-item-section side>
-                <q-btn
-                  dense
-                  :to="{ name: 'Rooms' }"
-                  flat
-                  color="primary"
-                  no-caps
-                >
+                <q-btn dense :to="{ name: 'Rooms' }" flat color="primary" no-caps>
                   Toutes les chambres
                   <q-icon right name="keyboard_arrow_right"></q-icon>
                   <q-tooltip> Voir tous les étages </q-tooltip>
                 </q-btn>
               </q-item-section>
             </q-item>
-            <q-item
-              v-for="chambre in chambres.slice(0, 5)"
-              :key="chambre.number"
-            >
+            <q-item v-for="chambre in chambres.slice(0, 5)" :key="chambre.number">
               <q-item-section>
                 <q-item-label>
                   {{ chambre.number }}
@@ -318,12 +220,8 @@
         </q-toolbar>
       </div>
 
-      <div
-        v-for="t in types_chambre.slice(0, 4)"
-        :key="t.name"
-        class="col-xs-12 col-sm-6 col-md-3 q-px-sm"
-        :class="{ 'q-py-sm': $q.platform.is.mobile }"
-      >
+      <div v-for="t in types_chambre.slice(0, 4)" :key="t.name" class="col-xs-12 col-sm-6 col-md-3 q-px-sm"
+        :class="{ 'q-py-sm': $q.platform.is.mobile }">
         <q-card bordered flat style="height: 200px">
           <q-card-section>
             <q-toolbar class="q-ma-none q-pa-none">
@@ -369,12 +267,8 @@
         </q-card-section>
       </div>
 
-      <div
-        v-for="depense in depenses.slice(0, 3)"
-        :key="depense.title"
-        class="col-xs-12 col-sm-6 col-md-4 q-px-sm"
-        :class="{ 'q-py-sm': $q.platform.is.mobile }"
-      >
+      <div v-for="depense in depenses.slice(0, 3)" :key="depense.title" class="col-xs-12 col-sm-6 col-md-4 q-px-sm"
+        :class="{ 'q-py-sm': $q.platform.is.mobile }">
         <q-card class="text-center" flat style="height: 200px">
           <q-card-section>
             <q-toolbar class="q-ma-none q-pa-none">
@@ -401,13 +295,7 @@
     </div>
 
     <q-page-sticky :offset="[18, 18]">
-      <q-btn
-        :to="{ name: 'Reports' }"
-        color="primary"
-        icon="download"
-        round
-        class="full-width shadow-8"
-      >
+      <q-btn :to="{ name: 'Reports' }" color="primary" icon="download" round class="full-width shadow-8">
         <q-tooltip position="left" class="text-body2">
           Télécharger rapport
         </q-tooltip>
@@ -579,6 +467,10 @@ function getAllData() {
             el.chambre = chambres.value.filter(
               (chambre) => (chambre.id = el.room)
             )[0];
+            if (isThisMonth(el.checkIn)) {
+
+              monRev.value += el.totalPrice
+            }
             el.type_chambre = types_chambre.value.filter(
               (type) => (type.id = el.chambre.type)
             )[0];
@@ -638,18 +530,7 @@ function getAllData() {
           });
       } else {
         if (err.response.status == "401") {
-          dialog
-            .update({
-              title: "Erreur",
-              message:
-                "Votre delai de connexion est passé veuillez vous reconnecter",
-              ok: "se connecter",
-              progress: false,
-            })
-            .onOk(() => {
-              store().logout();
-              router.push({ name: "Login" });
-            });
+          router.push({ name: "Login" });//
         } else {
           dialog.update({
             title: "Erreur",
@@ -715,7 +596,7 @@ const chartOptions = {
   },
 };
 
-watchEffect(() => {});
+watchEffect(() => { });
 
 var colorPalette = ["#00D8B6", "#008FFB", "#FEB019", "#FF4560", "#775DD0"];
 var optionsBar = {
@@ -832,20 +713,21 @@ const locationColumns = [
   background: linear-gradient(to right, teal 25%, rgb(47, 163, 163));
   color: white;
 }
+
 .blue-gradient {
-  background: #00b4db; /* fallback for old browsers */
-  background: -webkit-linear-gradient(
-    to right,
-    #0083b0,
-    #00b4db
-  ); /* Chrome 10-25, Safari 5.1-6 */
-  background: linear-gradient(
-    to right,
-    #186db6,
-    #00b4db
-  ); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+  background: #00b4db;
+  /* fallback for old browsers */
+  background: -webkit-linear-gradient(to right,
+      #0083b0,
+      #00b4db);
+  /* Chrome 10-25, Safari 5.1-6 */
+  background: linear-gradient(to right,
+      #186db6,
+      #00b4db);
+  /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
   color: white;
 }
+
 .border-red {
   border: 1px solid $pink-2 !important;
 }

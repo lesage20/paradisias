@@ -15,45 +15,18 @@
     </div>
     <div class="row">
       <div v-if="$q.platform.is.desktop" class="col-12 desktop-only">
-        <ListTable
-          :columns="columns"
-          :items="items"
-          title="Reservations"
-          :dense="true"
-          :tools="true"
-          :reservation-tools="true"
-          @add="add = true"
-          @delete="deleteLocation"
-          @selected="showSelected"
-          @archive="archive"
-          @pending="pending"
-          @verified="confirm"
-          @canceled="cancel"
-        >
+        <ListTable :columns="columns" :items="items" title="Reservations" :dense="true" :tools="true"
+          :reservation-tools="true" @add="add = true" @delete="deleteLocation" @selected="showSelected" @archive="archive"
+          @pending="pending" @verified="confirm" @canceled="cancel">
           <template #status="status">
             <q-td class="text-center" :attr="attr">
-              <q-icon
-                v-if="status.status == 'confirmée'"
-                size="sm"
-                color="primary"
-                name="check"
-              >
+              <q-icon v-if="status.status == 'confirmée'" size="sm" color="primary" name="check">
                 <q-tooltip class="text-body2"> {{ status.status }} </q-tooltip>
               </q-icon>
-              <q-icon
-                v-if="status.status == 'annulée'"
-                size="sm"
-                color="red-7"
-                name="close"
-              >
+              <q-icon v-if="status.status == 'annulée'" size="sm" color="red-7" name="close">
                 <q-tooltip class="text-body2"> {{ status.status }} </q-tooltip>
               </q-icon>
-              <q-icon
-                v-if="status.status == 'en attente'"
-                size="sm"
-                color="orange-8"
-                name="schedule"
-              >
+              <q-icon v-if="status.status == 'en attente'" size="sm" color="orange-8" name="schedule">
                 <q-tooltip class="text-body2"> {{ status.status }} </q-tooltip>
               </q-icon>
             </q-td>
@@ -66,96 +39,36 @@
         </q-toolbar>
 
         <q-toolbar v-if="selected.length" class="bg-grey-4 text-grey-9">
-          <q-btn
-            size="md"
-            outlined
-            round
-            flat
-            icon="arrow_back"
-            @click="selected = []"
-          >
+          <q-btn size="md" outlined round flat icon="arrow_back" @click="selected = []">
             {{ selected.length }}
           </q-btn>
 
           <q-space></q-space>
 
-          <q-btn
-            size="md"
-            outlined
-            round
-            flat
-            icon="done_all"
-            @click="multipleSelect"
-          >
+          <q-btn size="md" outlined round flat icon="done_all" @click="multipleSelect">
           </q-btn>
 
-          <q-btn
-            v-if="selected.length == 1"
-            size="md"
-            outlined
-            round
-            flat
-            icon="close"
-            @click="cancel"
-          >
+          <q-btn v-if="selected.length == 1" size="md" outlined round flat icon="close" @click="cancel">
             <q-tooltip class="text-body2"> Annuler la réservation </q-tooltip>
           </q-btn>
 
-          <q-btn
-            v-if="selected.length"
-            size="md"
-            outlined
-            round
-            flat
-            icon="verified"
-            @click="confirm"
-          >
+          <q-btn v-if="selected.length" size="md" outlined round flat icon="verified" @click="confirm">
             <q-tooltip class="text-body2"> Confirmée la réservation </q-tooltip>
           </q-btn>
-          <q-btn
-            v-if="selected.length"
-            size="md"
-            outlined
-            round
-            flat
-            icon="archive"
-            @click="archive"
-          >
+          <q-btn v-if="selected.length" size="md" outlined round flat icon="archive" @click="archive">
           </q-btn>
-          <q-btn
-            v-if="selected.length"
-            size="md"
-            outlined
-            round
-            flat
-            icon="schedule"
-            @click="pending"
-          >
+          <q-btn v-if="selected.length" size="md" outlined round flat icon="schedule" @click="pending">
             <q-tooltip class="text-body2">
               Mettre la selection en attente
             </q-tooltip>
           </q-btn>
         </q-toolbar>
         <q-list>
-          <q-item
-            v-for="item in items"
-            :key="item.reference"
-            class="q-py-md"
-            @contextmenu="toggleSelection(item)"
-          >
+          <q-item v-for="item in items" :key="item.reference" class="q-py-md" @contextmenu="toggleSelection(item)">
             <q-item-section v-if="selected.length" side>
-              <q-icon
-                v-if="selected.indexOf(item) != -1"
-                color="primary"
-                name="check_box"
-                @click="toggleSelection(item)"
-              >
+              <q-icon v-if="selected.indexOf(item) != -1" color="primary" name="check_box" @click="toggleSelection(item)">
               </q-icon>
-              <q-icon
-                v-else
-                name="check_box_outline_blank"
-                @click="toggleSelection(item)"
-              >
+              <q-icon v-else name="check_box_outline_blank" @click="toggleSelection(item)">
               </q-icon>
             </q-item-section>
             <q-item-section v-else side avatar>
@@ -178,24 +91,9 @@
               </q-item-section>
             </q-item-section>
             <q-item-section side>
-              <q-icon
-                v-if="item.status == 'annulée'"
-                color="red"
-                left
-                name="close"
-              ></q-icon>
-              <q-icon
-                v-else-if="item.status == 'en attente'"
-                color="pink"
-                left
-                name="schedule"
-              ></q-icon>
-              <q-icon
-                v-else-if="item.status == 'confirmée'"
-                color="teal"
-                left
-                name="check"
-              ></q-icon>
+              <q-icon v-if="item.status == 'annulée'" color="red" left name="close"></q-icon>
+              <q-icon v-else-if="item.status == 'en attente'" color="pink" left name="schedule"></q-icon>
+              <q-icon v-else-if="item.status == 'confirmée'" color="teal" left name="check"></q-icon>
             </q-item-section>
           </q-item>
         </q-list>
@@ -269,32 +167,21 @@ function getDatas() {
     .catch((err) => {
       let dialog = $q.dialog({});
       if (!Boolean(err.response)) {
-        dialog
-          .update({
-            title: "Erreur de réseau",
-            message:
-              "Impossible de se connecter au server. Veuillez vous connecter à internet et actualiser",
-            ok: "actualiser",
-            progress: false,
-            persistent: true,
-          })
-          .onOk(() => {
-            window.location.reload();
-          });
+        // dialog
+        //   .update({
+        //     title: "Erreur de réseau",
+        //     message:
+        //       "Impossible de se connecter au server. Veuillez vous connecter à internet et actualiser",
+        //     ok: "actualiser",
+        //     progress: false,
+        //     persistent: true,
+        //   })
+        //   .onOk(() => {
+        //     window.location.reload();
+        //   });
       } else {
         if (err.response.status == "401") {
-          dialog
-            .update({
-              title: "Erreur",
-              message:
-                "Votre delai de connexion est passé veuillez vous reconnecter",
-              ok: "se connecter",
-              progress: false,
-            })
-            .onOk(() => {
-              store().logout();
-              router.push({ name: "Login" });
-            });
+          router.push({ name: "Login" });//
         } else {
           dialog.update({
             title: "Erreur",

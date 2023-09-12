@@ -1,10 +1,5 @@
 <template>
-  <form-generator
-    :fields="fields"
-    :loading="loading"
-    @save="getFormContent"
-    @close="cancel"
-  />
+  <form-generator :fields="fields" :loading="loading" @save="getFormContent" @close="cancel" />
 </template>
 <script setup>
 import { ref, onMounted, inject } from "vue";
@@ -19,6 +14,10 @@ const props = defineProps({
     type: String,
     default: "",
   },
+  type: {
+    type: String,
+    default: "user"
+  }
 });
 
 let users = [];
@@ -32,8 +31,8 @@ onMounted(() => {
       },
     })
     .then((res) => {
-      users = res.data;
-      console.log(users.value);
+      users = res.data.filter(el => el.profil == null)
+
       users.forEach((el) => {
         let opt = {
           label: el.username,
@@ -46,32 +45,21 @@ onMounted(() => {
     .catch((err) => {
       let dialog = $q.dialog({});
       if (!Boolean(err.response)) {
-        dialog
-          .update({
-            title: "Erreur de réseau",
-            message:
-              "Impossible de se connecter au server. Veuillez vous connecter à internet et actualiser",
-            ok: "actualiser",
-            progress: false,
-            persistent: true,
-          })
-          .onOk(() => {
-            window.location.reload();
-          });
+        // dialog
+        //   .update({
+        //     title: "Erreur de réseau",
+        //     message:
+        //       "Impossible de se connecter au server. Veuillez vous connecter à internet et actualiser",
+        //     ok: "actualiser",
+        //     progress: false,
+        //     persistent: true,
+        //   })
+        //   .onOk(() => {
+        //     window.location.reload();
+        //   });
       } else {
         if (err.response.status == "401") {
-          dialog
-            .update({
-              title: "Erreur",
-              message:
-                "Votre delai de connexion est passé veuillez vous reconnecter",
-              ok: "se connecter",
-              progress: false,
-            })
-            .onOk(() => {
-              store().logout();
-              router.push({ name: "Login" });
-            });
+          router.push({ name: "Login" });//
         } else {
           dialog.update({
             title: "Erreur",
@@ -91,15 +79,15 @@ function cancel() {
 const loading = ref(false);
 
 const fields = ref([
-  {
-    type: "select",
-    options: userOptions,
-    "emit-value": true,
-    name: "user",
-    required: true,
-    model: "user",
-    label: "Compte Utilisateur*",
-  },
+  // {
+  //   type: "select",
+  //   options: userOptions,
+  //   "emit-value": true,
+  //   name: "user",
+  //   required: true,
+  //   model: "user",
+  //   label: "Compte Utilisateur*",
+  // },
   {
     type: "text",
     name: "name",

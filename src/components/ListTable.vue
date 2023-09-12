@@ -7,28 +7,14 @@
       <div class="col-auto">
         <div class="row">
           <div class="col">
-            <q-input
-              v-model="search"
-              clearable
-              clear-icon="fa fa-close"
-              placeholder="Recherche..."
-              dense
-              borderless
-            >
+            <q-input v-model="search" clearable clear-icon="fa fa-close" placeholder="Recherche..." dense borderless>
               <template #append>
                 <q-icon name="fa fa-search" color="grey-5" size="xs"></q-icon>
               </template>
             </q-input>
           </div>
           <div class="col-5 q-pl-md q-pr-xs q-py-sm">
-            <q-btn
-              size="sm"
-              icon="fa fa-plus"
-              color="teal"
-              unelevated
-              label="Ajouter"
-              @click="addItem"
-            >
+            <q-btn size="sm" icon="fa fa-plus" color="teal" unelevated label="Ajouter" @click="addItem">
             </q-btn>
           </div>
         </div>
@@ -41,164 +27,85 @@
           unique
         </q-tooltip>
       </q-btn>
-      <q-btn
-        size="md"
-        outlined
-        round
-        flat
-        icon="done_all"
-        @click="multipleSelect"
-      >
+      <q-btn size="md" outlined round flat icon="done_all" @click="multipleSelect">
         <q-tooltip class="text-body2">
           {{ selectable == "multiple" ? "Désactiver" : "Activer" }} la selection
           multiple
         </q-tooltip>
       </q-btn>
       <template v-if="locationTools">
-        <q-btn
-          v-if="selected.length == 1"
-          size="md"
-          outlined
-          round
-          flat
-          icon="more_time"
-          @click="emits('addTime')"
-        >
+        <q-btn v-if="selected.length == 1" size="md" outlined round flat icon="more_time" @click="emits('addTime')">
           <q-tooltip class="text-body2">
             Ajouter temps supplémentaire
           </q-tooltip>
         </q-btn>
 
-        <q-btn
-          v-if="selected.length"
-          size="md"
-          outlined
-          round
-          flat
-          icon="paid"
-          @click="emits('paid')"
-        >
+        <q-btn v-if="selected.length" size="md" outlined round flat icon="paid" @click="emits('paid')">
           <q-tooltip class="text-body2">
             Marquée la/les selections payées
           </q-tooltip>
         </q-btn>
+        <q-btn v-if="selected.length" size="md" outlined round flat label="dt" @click="emits('dt')">
+          <q-tooltip class="text-body2">
+            Marquée la/les selections dt
+          </q-tooltip>
+        </q-btn>
       </template>
       <template v-if="reservationTools">
-        <q-btn
-          v-if="selected.length == 1"
-          size="md"
-          outlined
-          round
-          flat
-          icon="close"
-          @click="emits('canceled')"
-        >
+        <q-btn v-if="selected.length == 1" size="md" outlined round flat icon="close" @click="emits('canceled')">
           <q-tooltip class="text-body2"> Annuler la réservation </q-tooltip>
         </q-btn>
 
-        <q-btn
-          v-if="selected.length"
-          size="md"
-          outlined
-          round
-          flat
-          icon="verified"
-          @click="emits('verified')"
-        >
+        <q-btn v-if="selected.length" size="md" outlined round flat icon="verified" @click="emits('verified')">
           <q-tooltip class="text-body2"> Confirmée la réservation </q-tooltip>
+        </q-btn>
+        <q-btn v-if="selected.length" size="md" outlined round flat icon="schedule" @click="emits('pending')">
+          <q-tooltip class="text-body2">
+            Mettre la selection en attente
+          </q-tooltip>
         </q-btn>
       </template>
 
-      <q-btn
-        v-if="selected.length"
-        size="md"
-        outlined
-        round
-        flat
-        icon="archive"
-        @click="emits('archive')"
-      >
+      <q-btn v-if="selected.length" size="md" outlined round flat icon="archive" @click="emits('archive')">
         <q-tooltip class="text-body2"> Archivée la selection </q-tooltip>
       </q-btn>
-      <q-btn
-        v-if="selected.length"
-        size="md"
-        outlined
-        round
-        flat
-        icon="schedule"
-        @click="emits('pending')"
-      >
-        <q-tooltip class="text-body2">
-          Mettre la selection en attente
-        </q-tooltip>
-      </q-btn>
     </q-toolbar>
-    <q-table
-      v-model:selected="selected"
-      separator="cell"
-      bordered
-      :filter="search"
-      flat
-      :selection="selectable"
-      :grid="grid"
-      :columns="columns"
-      :rows="items"
-      :dense="dense"
-    >
+    <q-table v-model:selected="selected" separator="cell" bordered :filter="search" flat :selection="selectable"
+      :grid="grid" :columns="columns" :rows="items" :dense="dense">
       <template #body-cell-status="attr">
         <slot name="status" :status="attr.row.status">
           <q-td class="text-center" :attr="attr">
-            <q-icon
-              v-if="attr.row.status == 'payée'"
-              size="sm"
-              color="primary"
-              name="paid"
-            >
+            <q-icon v-if="attr.row.status == 'paye'" size="sm" color="primary" name="paid">
               <q-tooltip class="text-body2"> Payée </q-tooltip>
             </q-icon>
-            <q-icon
-              v-if="attr.row.status == 'archivée'"
-              size="sm"
-              color="blue-7"
-              name="archive"
-            >
+            <q-icon v-else-if="attr.row.status == 'archivée'" size="sm" color="blue-7" name="archive">
               <q-tooltip class="text-body2"> Archivée </q-tooltip>
             </q-icon>
-            <q-icon
-              v-if="attr.row.status == 'en attente'"
-              size="sm"
-              color="orange-8"
-              name="schedule"
-            >
+            <q-icon v-else-if="attr.row.status == 'en attente'" size="sm" color="orange-8" name="schedule">
               <q-tooltip class="text-body2"> En attente </q-tooltip>
             </q-icon>
+            <q-btn v-else size="sm" :label="attr.row.status" flat>
+              <q-tooltip class="text-body2 text-uppercase"> {{ attr.row.status }} </q-tooltip>
+            </q-btn>
           </q-td>
         </slot>
       </template>
       <template #body-cell-actions="attr">
         <q-td class="text-center" :attr="attr">
-          <q-btn
-            flat
-            round
-            class="q-mx-sm"
-            color="red-9"
-            size="sm"
-            icon="fa-solid fa-trash"
-            @click="deleteItem(attr.row)"
-          >
+          <q-btn v-if="facturable" flat round size="sm" class="q-mx-sm" color="blue-5" icon="fa fa-receipt"
+            @click="emits('addFacture', attr.row)">
+            <q-tooltip class="text-body2">Ajouter payement</q-tooltip>
+          </q-btn>
+
+          <q-btn flat round class="q-mx-sm" color="red-9" size="sm" icon="fa-solid fa-trash"
+            @click="deleteItem(attr.row)">
             <q-tooltip class="text-body2">Supprimer</q-tooltip>
           </q-btn>
-          <q-btn
-            flat
-            round
-            size="sm"
-            class="q-mx-sm"
-            color="blue-5"
-            icon="fa fa-edit"
-          >
+          <q-btn flat round size="sm" class="q-mx-sm" color="blue-5" icon="fa fa-edit">
             <q-tooltip class="text-body2">Modifier</q-tooltip>
           </q-btn>
+
+
         </q-td>
       </template>
     </q-table>
@@ -208,6 +115,7 @@
 import { ref, inject, watch } from "vue";
 
 const props = defineProps({
+  facturable: Boolean,
   columns: {
     type: Array,
     required: true,
@@ -245,8 +153,18 @@ const emits = defineEmits([
   "update",
   "selected",
   "addTime",
+  "addFacture",
   "archive",
   "paid",
+  "dt",
+  "dp",
+  "dj",
+  "pj",
+  "ls",
+  "lb",
+  "os",
+  "op",
+  "og",
   "canceled",
   "verified",
 ]);
@@ -291,6 +209,7 @@ function multipleSelect() {
   position: relative;
   border-radius: 3px 5px 5px 0;
 }
+
 .doc-card-title:after {
   content: "";
   position: absolute;
