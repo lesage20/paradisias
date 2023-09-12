@@ -1,11 +1,6 @@
 <template>
-  <form-generator
-    :fields="fields"
-    title="Ajouter une réservation"
-    :dense="$q.platform.is.desktop"
-    @save="getFormContent"
-    @close="cancel"
-  />
+  <form-generator :fields="fields" title="Ajouter une réservation" :dense="$q.platform.is.desktop" @save="getFormContent"
+    @close="cancel" />
 </template>
 <script setup>
 import { ref, onMounted, inject } from "vue";
@@ -78,18 +73,7 @@ function getDatas() {
           });
       } else {
         if (err.response.status == "401") {
-          dialog
-            .update({
-              title: "Erreur",
-              message:
-                "Votre delai de connexion est passé veuillez vous reconnecter",
-              ok: "se connecter",
-              progress: false,
-            })
-            .onOk(() => {
-              store().logout();
-              router.push({ name: "Login" });
-            });
+          router.push({ name: "Login" });//
         } else {
           dialog.update({
             title: "Erreur",

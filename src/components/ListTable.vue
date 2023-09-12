@@ -92,6 +92,11 @@
       </template>
       <template #body-cell-actions="attr">
         <q-td class="text-center" :attr="attr">
+          <q-btn v-if="facturable" flat round size="sm" class="q-mx-sm" color="blue-5" icon="fa fa-receipt"
+            @click="emits('addFacture', attr.row)">
+            <q-tooltip class="text-body2">Ajouter payement</q-tooltip>
+          </q-btn>
+
           <q-btn flat round class="q-mx-sm" color="red-9" size="sm" icon="fa-solid fa-trash"
             @click="deleteItem(attr.row)">
             <q-tooltip class="text-body2">Supprimer</q-tooltip>
@@ -99,6 +104,8 @@
           <q-btn flat round size="sm" class="q-mx-sm" color="blue-5" icon="fa fa-edit">
             <q-tooltip class="text-body2">Modifier</q-tooltip>
           </q-btn>
+
+
         </q-td>
       </template>
     </q-table>
@@ -108,6 +115,7 @@
 import { ref, inject, watch } from "vue";
 
 const props = defineProps({
+  facturable: Boolean,
   columns: {
     type: Array,
     required: true,
@@ -145,6 +153,7 @@ const emits = defineEmits([
   "update",
   "selected",
   "addTime",
+  "addFacture",
   "archive",
   "paid",
   "dt",

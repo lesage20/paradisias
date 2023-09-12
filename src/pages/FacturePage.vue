@@ -4,11 +4,7 @@
       <div class="col">
         <q-dialog v-model="add" :maximized="$q.platform.is.mobile" persistent>
           <AddLocation @saved="created" @close="add = false" />
-        </q-dialog>
-      </div>
-      <div class="col">
-        <q-dialog v-model="addFacture" :maximized="$q.platform.is.mobile" persistent>
-          <AddFacture @saved="created" @close="addFacture = false" />
+          {{ $q.platform.is.desktop }}
         </q-dialog>
       </div>
       <div class="col">
@@ -19,10 +15,9 @@
     </div>
     <div class="row">
       <div v-if="$q.platform.is.desktop" class="col-12 desktop-only">
-        <ListTable :facturable="true" :columns="columns" :items="items" title="Reservations" :dense="true" :tools="true"
+        <ListTable :columns="columns" :items="items" title="Reservations" :dense="true" :tools="true"
           :location-tools="true" @add="add = true" @delete="deleteLocation" @selected="showSelected"
-          @add-time="addingTime = true" @add-facture="addFacture = true" @archive="archive" @paid="paid"
-          @pending="pending" />
+          @add-time="addingTime = true" @archive="archive" @paid="paid" @pending="pending" />
       </div>
       <div v-if="$q.platform.is.mobile" class="col-12 mobile-only">
         <q-toolbar>
@@ -109,9 +104,6 @@ const ListTable = defineAsyncComponent(() =>
 const AddTime = defineAsyncComponent(() =>
   import("src/components/forms/AddTime.vue")
 );
-const AddFacture = defineAsyncComponent(() =>
-  import("src/components/forms/AddFacture.vue")
-);
 const token = inject("token");
 const api = inject("api");
 
@@ -126,7 +118,6 @@ const endpoints = [
   api + "hotel/types_chambre/",
   api + "accounts/clients/",
 ];
-const addFacture = ref(false)
 function getDatas() {
   axios
     .all(

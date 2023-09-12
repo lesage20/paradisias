@@ -246,7 +246,7 @@ const weekRev = ref(0);
 const monRev = ref(0);
 const tueRev = ref(0);
 const wedRev = ref(0);
-        uRev = ref(0);
+uRev = ref(0);
 const friRev = ref(0);
 const satRev = ref(0);
 const sunRev = ref(0);
@@ -432,7 +432,7 @@ function getAllData() {
     .catch((err) => {
       let dialog = $q.dialog({});
       if (!Boolean(err.response)) {
-         // dialog
+        // dialog
         //   .update({
         //     title: "Erreur de réseau",
         //     message:
@@ -446,18 +446,7 @@ function getAllData() {
         //   });
       } else {
         if (err.response.status == "401") {
-          dialog
-            .update({
-              title: "Erreur",
-              message:
-                "Votre delai de connexion est passé veuillez vous reconnecter",
-              ok: "se connecter",
-              progress: false,
-            })
-            .onOk(() => {
-              store().logout();
-              router.push({ name: "Login" });
-            });
+          router.push({ name: "Login" });//
         } else {
           dialog.update({
             title: "Erreur",
@@ -570,7 +559,7 @@ const chartOptions = {
   },
 };
 
-watchEffect(() => {});
+watchEffect(() => { });
 
 var colorPalette = ["#00D8B6", "#008FFB", "#FEB019", "#FF4560", "#775DD0"];
 var optionsBar = {

@@ -67,7 +67,7 @@
     </div>
     <div v-show="!menu" class="row justify-center">
       <div class="col">
-        <component :is="comp" @back="menu = true"></component>
+        <component :is="comp" flat @back="menu = true"></component>
       </div>
     </div>
   </q-page>

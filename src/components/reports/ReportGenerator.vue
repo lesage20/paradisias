@@ -111,7 +111,7 @@
                   {{ currentSelectionCount }} locations qui ont généré
                   {{ currentSelectionRevenue }} FCFA de revenue brut, avec
                   {{ currentSelectionDepenseCount }} dépense{{
-                  currentSelectionDepenseCount > 1 ? "s" : ""
+                    currentSelectionDepenseCount > 1 ? "s" : ""
                   }}
                   qui a couté {{ currentSelectionDepenseAmount }} FCFA <br />
                   Ci dessous les tableaux de locations et de depenses
@@ -212,7 +212,7 @@ onMounted(() => {
     .catch((err) => {
       let dialog = $q.dialog({});
       if (!Boolean(err.response)) {
-         // dialog
+        // dialog
         //   .update({
         //     title: "Erreur de réseau",
         //     message:
@@ -226,18 +226,7 @@ onMounted(() => {
         //   });
       } else {
         if (err.response.status == "401") {
-          dialog
-            .update({
-              title: "Erreur",
-              message:
-                "Votre delai de connexion est passé veuillez vous reconnecter",
-              ok: "se connecter",
-              progress: false,
-            })
-            .onOk(() => {
-              store().logout();
-              router.push({ name: "Login" });
-            });
+          router.push({ name: "Login" });//
         } else {
           dialog.update({
             title: "Erreur",

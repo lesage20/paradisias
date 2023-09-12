@@ -28,7 +28,7 @@ provide('isOnline', isOnLine)
 if (true) {
   provide("api", "http://127.0.0.1:8002/");
 } else {
-  provide("api", "https://paradisias-api.herokuapp.com/");
+  provide("api", "https://api.paradisias-hotel.com/");
 }
 
 </script>

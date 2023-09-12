@@ -16,8 +16,8 @@
     <div class="row">
       <div v-if="$q.platform.is.desktop" class="col-12 desktop-only">
         <ListTable :columns="columns" :items="items" title="Reservations" :dense="true" :tools="true"
-          :reservation-tools="true" @add="add = true" @delete="deleteLocation" @selected="showSelected"
-          @archive="archive" @pending="pending" @verified="confirm" @canceled="cancel">
+          :reservation-tools="true" @add="add = true" @delete="deleteLocation" @selected="showSelected" @archive="archive"
+          @pending="pending" @verified="confirm" @canceled="cancel">
           <template #status="status">
             <q-td class="text-center" :attr="attr">
               <q-icon v-if="status.status == 'confirmée'" size="sm" color="primary" name="check">
@@ -66,8 +66,7 @@
         <q-list>
           <q-item v-for="item in items" :key="item.reference" class="q-py-md" @contextmenu="toggleSelection(item)">
             <q-item-section v-if="selected.length" side>
-              <q-icon v-if="selected.indexOf(item) != -1" color="primary" name="check_box"
-                @click="toggleSelection(item)">
+              <q-icon v-if="selected.indexOf(item) != -1" color="primary" name="check_box" @click="toggleSelection(item)">
               </q-icon>
               <q-icon v-else name="check_box_outline_blank" @click="toggleSelection(item)">
               </q-icon>
@@ -81,9 +80,9 @@
               <q-item-label>
                 {{ item.chambre.number }} -
                 {{
-                item.client.name.toUpperCase() +
-                " " +
-                item.client.firstname.toUpperCase()
+                  item.client.name.toUpperCase() +
+                  " " +
+                  item.client.firstname.toUpperCase()
                 }}
               </q-item-label>
               <q-item-section caption class="text-grey">
@@ -168,7 +167,7 @@ function getDatas() {
     .catch((err) => {
       let dialog = $q.dialog({});
       if (!Boolean(err.response)) {
-         // dialog
+        // dialog
         //   .update({
         //     title: "Erreur de réseau",
         //     message:
@@ -182,18 +181,7 @@ function getDatas() {
         //   });
       } else {
         if (err.response.status == "401") {
-          dialog
-            .update({
-              title: "Erreur",
-              message:
-                "Votre delai de connexion est passé veuillez vous reconnecter",
-              ok: "se connecter",
-              progress: false,
-            })
-            .onOk(() => {
-              store().logout();
-              router.push({ name: "Login" });
-            });
+          router.push({ name: "Login" });//
         } else {
           dialog.update({
             title: "Erreur",

@@ -9,8 +9,7 @@
     </div>
     <div class="row">
       <div class="col-12 desktop-only">
-        <ListTable :columns="columns" title="Type de Chambre" :items="items" @add="add = true"
-          @delete="deleteRomType" />
+        <ListTable :columns="columns" title="Type de Chambre" :items="items" @add="add = true" @delete="deleteRomType" />
       </div>
       <div class="col-12 mobile-only">
         <q-toolbar>
@@ -66,7 +65,7 @@ function getData() {
     .catch((err) => {
       let dialog = $q.dialog({});
       if (!Boolean(err.response)) {
-         // dialog
+        // dialog
         //   .update({
         //     title: "Erreur de réseau",
         //     message:
@@ -80,18 +79,7 @@ function getData() {
         //   });
       } else {
         if (err.response.status == "401") {
-          dialog
-            .update({
-              title: "Erreur",
-              message:
-                "Votre delai de connexion est passé veuillez vous reconnecter",
-              ok: "se connecter",
-              progress: false,
-            })
-            .onOk(() => {
-              store().logout();
-              router.push({ name: "Login" });
-            });
+          router.push({ name: "Login" });//
         } else {
           dialog.update({
             title: "Erreur",

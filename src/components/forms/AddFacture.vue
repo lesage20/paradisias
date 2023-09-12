@@ -1,5 +1,5 @@
 <template>
-  <form-generator style="min-width:450px" :fields="fields" title="Ajouter une location" :dense="$q.platform.is.desktop"
+  <form-generator style="min-width:450px" :fields="fields" title="Ajouter un paiement" :dense="false"
     @save="getFormContent" @close="cancel" />
 </template>
 <script setup>
@@ -17,13 +17,7 @@ const emits = defineEmits(["close", "saved"]);
 function cancel() {
   emits("close");
 }
-const endpoints = [
-  api + "accounts/clients/",
-  api + "hotel/chambres/",
-  api + "hotel/locations/",
-];
-const clientOptions = ref([]);
-const roomOptions = ref([]);
+const endpoints = [api + "hotel/locations/"]
 const locations = ref([]);
 function getDatas() {
   axios
@@ -37,40 +31,14 @@ function getDatas() {
       )
     )
     .then(
-      axios.spread((clients, rooms, locationList) => {
+      axios.spread((locationList) => {
         locations.value = locationList.data;
-
-        clients.data.forEach((el) => {
-          let opt = {
-            label: el.name + " " + el.firstname,
-            value: el.id,
-          };
-          clientOptions.value.push(opt);
-        });
-        rooms.data.forEach((el) => {
-          let opt = {
-            label: el.number,
-            value: el.id,
-          };
-          roomOptions.value.push(opt);
-        });
       })
     )
     .catch((err) => {
       let dialog = $q.dialog({});
       if (!Boolean(err.response)) {
-        // dialog
-        //   .update({
-        //     title: "Erreur de réseau",
-        //     message:
-        //       "Impossible de se connecter au server. Veuillez vous connecter à internet et actualiser",
-        //     ok: "actualiser",
-        //     progress: false,
-        //     persistent: true,
-        //   })
-        //   .onOk(() => {
-        //     window.location.reload();
-        //   });
+        //
       } else {
         if (err.response.status == "401") {
           router.push({ name: "Login" });//
@@ -90,48 +58,11 @@ onMounted(getDatas);
 
 const fields = ref([
   {
-    type: "select",
-    label: "Client",
-    model: "guest",
-    hint: "Le client qui reserve la chambre",
-    options: clientOptions,
-    'use-input': true,
-    'input-model': "search"
-  },
-
-  {
-    required: true,
-    name: "room",
-    model: "room",
-    label: "Numéro de chambre",
-    type: "select",
-    options: roomOptions,
-  },
-  {
-    required: true,
-    name: "totalPrice",
-    model: "totalPrice",
-    label: "Montant total",
     type: "number",
-  },
-  {
-    name: "checkIn",
-    type: "datetime",
-    model: "checkIn",
+    name: "amount",
+    model: "amount",
     required: true,
-    label: "Date d'entrée",
-    dateOptions: (date) =>
-      isAfter(new Date(date), new Date().setDate(new Date().getDate() - 1)),
-  },
-  {
-    name: "checkOut",
-    type: "datetime",
-    model: "checkOut",
-    required: true,
-    label: "Date de sorti",
-    timeOption: (hr, min, sec) => hr <= 12,
-    dateOptions: (date) =>
-      isAfter(new Date(date), new Date().setDate(new Date().getDate() - 1)),
+    label: "Montant"
   },
   {
     type: "select",
@@ -143,7 +74,6 @@ const fields = ref([
       'dj',
       'dt',
       'dp',
-      'paye',
       'archivée',
     ],
   },

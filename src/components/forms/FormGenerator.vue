@@ -4,8 +4,8 @@
       <q-btn v-if="$q.platform.is.mobile" round icon="fa fa-arrow-left" flat color="white" class="q-mx-none"
         @click="cancel"></q-btn>
 
-      <q-toolbar-title> {{ title }} </q-toolbar-title>
-      <q-space v-if="$q.platform.is.desktop" />
+      <q-toolbar-title class=""> {{ title }} </q-toolbar-title>
+      <!-- <q-space v-if="$q.platform.is.desktop" /> -->
       <q-btn v-if="$q.platform.is.desktop" round icon="close" flat color="white" @click="cancel"></q-btn>
     </q-toolbar>
     <q-form>
@@ -23,8 +23,8 @@
               @click="textToDate(i)" />
             <div v-else>
               <q-dialog v-model="dateFocus[i]" transition-show="scale" transition-hide="scale">
-                <q-date v-model="formContent[field.model]" :options="field.dateOptions" :title="field.label"
-                  years-in-month-view today-btn mask="YYYY-MM-DD"></q-date>
+                <q-date v-model="formContent[field.model]" style="min-width:450px" :options="field.dateOptions"
+                  :title="field.label" years-in-month-view today-btn mask="YYYY-MM-DD"></q-date>
               </q-dialog>
             </div>
           </template>
@@ -35,10 +35,10 @@
               @click="textToDate(i)" />
             <div v-else>
               <q-dialog v-model="dateFocus[i]" transition-show="scale" transition-hide="scale">
-                <q-date v-model="formContent[field.model]" :options="field.dateOptions" :title="field.label"
-                  years-in-month-view today-btn mask="YYYY-MM-DD HH:mm"></q-date>
-                <q-time v-model="formContent[field.model]" now-btn :options="field.timeOption" class="q-mx-md"
-                  mask="YYYY-MM-DD HH:mm" />
+                <q-date v-model="formContent[field.model]" style="min-width:450px" :options="field.dateOptions"
+                  :title="field.label" years-in-month-view today-btn mask="YYYY-MM-DD HH:mm"></q-date>
+                <q-time v-model="formContent[field.model]" style="min-width:300px" now-btn :options="field.timeOption"
+                  class="q-mx-md" mask="YYYY-MM-DD HH:mm" />
               </q-dialog>
             </div>
           </template>

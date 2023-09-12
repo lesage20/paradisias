@@ -1,6 +1,6 @@
 <template>
   <q-page>
-    <q-card class="q-pa-lg">
+    <q-card v-bind="$attrs" class="q-pa-lg">
       <div class="row q-mb-lg">
         <div class="col-1">
           <q-btn round flat icon="fa fa-arrow-left" @click="emits('back')"></q-btn>
@@ -8,22 +8,20 @@
 
         <div class="col q-px-sm">
           <q-btn outline class="q-mx-sm full-width" color="green-8" @click="selectedList = 'location'">
-            <q-icon left size="xs" :name="
-              selectedList == 'location'
-                ? 'fa fa-check-circle'
-                : 'fa-solid fa-list-check'
-            " />
+            <q-icon left size="xs" :name="selectedList == 'location'
+              ? 'fa fa-check-circle'
+              : 'fa-solid fa-list-check'
+              " />
             Locations
             <q-tooltip class="text-subtitle2"> Liste de locations </q-tooltip>
           </q-btn>
         </div>
         <div class="col q-px-sm">
           <q-btn outline class="q-mx-sm full-width" color="orange-8" @click="selectedList = 'reservation'">
-            <q-icon left size="xs" :name="
-              selectedList == 'reservation'
-                ? 'fa fa-check-circle'
-                : 'pending_actions'
-            " />
+            <q-icon left size="xs" :name="selectedList == 'reservation'
+              ? 'fa fa-check-circle'
+              : 'pending_actions'
+              " />
             Réservations
             <q-tooltip class="text-subtitle2">
               Liste de Réservations
@@ -32,11 +30,10 @@
         </div>
         <div class="col q-px-sm">
           <q-btn outline class="q-mx-sm full-width" color="red-8" @click="selectedList = 'depense'">
-            <q-icon left size="xs" :name="
-              selectedList == 'depense'
-                ? 'fa fa-check-circle'
-                : 'fa fa-dollar-sign'
-            " />
+            <q-icon left size="xs" :name="selectedList == 'depense'
+              ? 'fa fa-check-circle'
+              : 'fa fa-dollar-sign'
+              " />
             Depenses
             <q-tooltip class="text-subtitle2"> Liste des depenses </q-tooltip>
           </q-btn>
@@ -176,7 +173,7 @@ onMounted(() => {
     .catch((err) => {
       let dialog = $q.dialog({});
       if (!Boolean(err.response)) {
-         // dialog
+        // dialog
         //   .update({
         //     title: "Erreur de réseau",
         //     message:
@@ -190,18 +187,7 @@ onMounted(() => {
         //   });
       } else {
         if (err.response.status == "401") {
-          dialog
-            .update({
-              title: "Erreur",
-              message:
-                "Votre delai de connexion est passé veuillez vous reconnecter",
-              ok: "se connecter",
-              progress: false,
-            })
-            .onOk(() => {
-              store().logout();
-              router.push({ name: "Login" });
-            });
+          router.push({ name: "Login" });//
         } else {
           dialog.update({
             title: "Erreur",
