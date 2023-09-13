@@ -9,6 +9,12 @@ import { useQuasar } from "quasar";
 import { useLoginStore } from "src/stores/login";
 import { isBefore, isAfter } from "date-fns";
 
+const props = defineProps({
+  booking: {
+    type: Number,
+    default: null
+  }
+})
 const token = inject("token");
 const api = inject("api");
 const $q = useQuasar();
@@ -70,9 +76,9 @@ const fields = ref([
     model: "status",
     hint: "Le status de la commande",
     options: [
-      'pj',
+      // 'dt',
       'dj',
-      'dt',
+      'pj',
       'dp',
       'archivée',
     ],
@@ -80,26 +86,17 @@ const fields = ref([
 ]);
 function validLocation(data, list) {
   let validation = { isValid: true, message: "" };
-  if (Object.keys(data).length < 5) {
+  if (Object.keys(data).length < 2) {
     validation = {
       isValid: false,
       message: "Tous les champs sont obligatoire",
     };
     return validation;
-  } else if (
-    isBefore(new Date(data.checkIn), new Date()) ||
-    isBefore(new Date(data.checkOut), new Date())
-  ) {
+  } else if (data.amount <= 1000) {
     validation = {
       isValid: false,
       message:
-        "La date d'entrée ou de sortie ne peut pas être avant maintenant",
-    };
-    return validation;
-  } else if (isBefore(new Date(data.checkOut), new Date(data.checkIn))) {
-    validation = {
-      isValid: false,
-      message: "La date d'entrée ne peut pas être après la date de sortie",
+        "Le montant ne peut etre inferieur a 1 000 FCFA",
     };
     return validation;
   }
@@ -122,13 +119,13 @@ function getFormContent(data) {
   loading.value = true;
   const validation = validLocation(data, locations.value);
   data.recorded_by = useLoginStore().user.profil;
-  console.log(validLocation(data, locations.value));
+  if (props.booking != null) data.booking = props.booking
   if (!validation.isValid) {
     $q.notify(validation.message);
     return;
   }
   axios
-    .post(api + "hotel/locations/", data, {
+    .post(api + "hotel/factures/", data, {
       headers: {
         Authorization: "Bearer " + token,
       },

@@ -82,6 +82,7 @@ import PassationReport from "src/components/reports/PassationReport.vue";
 import SituationChambre from "src/components/reports/SituationChambre.vue";
 import RecapReception from "src/components/reports/RecapReception.vue";
 import RoomOccup from "src/components/reports/RoomOccup.vue";
+import JournalJour from "src/components/reports/JournalJour.vue";
 const $q = useQuasar();
 export default defineComponent({
   components: {
@@ -91,7 +92,8 @@ export default defineComponent({
     SituationChambre,
     RecapReception,
     RoomOccup,
-    PassationReport
+    PassationReport,
+    JournalJour
   },
   data: () => ({
     comp: "",
@@ -141,7 +143,7 @@ export default defineComponent({
         },
         {
           label: "Journal du jour", icon: "fa fa-file", callBack: () => {
-            this.comp = "ReservationReport";
+            this.comp = "JournalJour";
             this.menu = false;
           },
         },

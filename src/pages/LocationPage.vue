@@ -8,7 +8,7 @@
       </div>
       <div class="col">
         <q-dialog v-model="addFacture" :maximized="$q.platform.is.mobile" persistent>
-          <AddFacture @saved="created" @close="addFacture = false" />
+          <AddFacture :booking="locId" @saved="created($event); locId = null" @close="addFacture = false" />
         </q-dialog>
       </div>
       <div class="col">
@@ -21,8 +21,8 @@
       <div v-if="$q.platform.is.desktop" class="col-12 desktop-only">
         <ListTable :facturable="true" :columns="columns" :items="items" title="Reservations" :dense="true" :tools="true"
           :location-tools="true" @add="add = true" @delete="deleteLocation" @selected="showSelected"
-          @add-time="addingTime = true" @add-facture="addFacture = true" @archive="archive" @paid="paid"
-          @pending="pending" />
+          @add-time="addingTime = true" @add-facture="locId = $event.id; addFacture = true" @archive="archive"
+          @paid="paid" @pending="pending" />
       </div>
       <div v-if="$q.platform.is.mobile" class="col-12 mobile-only">
         <q-toolbar>
@@ -100,6 +100,9 @@ import { defineAsyncComponent, ref, onMounted, inject, provide } from "vue";
 import { useQuasar } from "quasar";
 import { useLoginStore as store } from "src/stores/login";
 import axios from "axios";
+
+const locId = ref(null)
+
 const AddLocation = defineAsyncComponent(() =>
   import("src/components/forms/AddLocation.vue")
 );
@@ -112,6 +115,7 @@ const AddTime = defineAsyncComponent(() =>
 const AddFacture = defineAsyncComponent(() =>
   import("src/components/forms/AddFacture.vue")
 );
+
 const token = inject("token");
 const api = inject("api");
 

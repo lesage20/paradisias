@@ -28,7 +28,7 @@ provide('isOnline', isOnLine)
 if (false) {
   provide("api", "http://127.0.0.1:8002/");
 } else {
-  provide("api", "http://api.paradisias-hotel.com/");
+  provide("api", "https://api.paradisias-hotel.com/");
 }
 
 </script>
