@@ -163,8 +163,6 @@ function getDatas() {
             (client) => client.id == el.guest
           )[0];
         });
-        console.log(items.value);
-        console.log(clients.value);
       })
     )
     .catch((err) => {

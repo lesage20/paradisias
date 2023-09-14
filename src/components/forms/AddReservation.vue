@@ -178,7 +178,6 @@ function getFormContent(data) {
   loading.value = true;
   const validation = validReservation(data, reservations.value);
   data.recorded_by = useLoginStore().user.profil;
-  console.log(validReservation(data, reservations.value));
   if (!validation.isValid) {
     $q.notify(validation.message);
     return;
@@ -206,7 +205,6 @@ function getFormContent(data) {
           }
         } else {
           for (let msg in data) {
-            console.log(data[msg] == "Ce champ est obligatoire.");
             if (data[msg] == "Ce champ est obligatoire.") {
               $q.notify(
                 "Tous les champs avec « * »  sont obligatoires, veuillez les remplir svp"

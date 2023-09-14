@@ -113,11 +113,6 @@ const routes = [
         path: "/reports",
         component: () => import("pages/ReportPage.vue"),
         name: "Reports",
-        // beforeEnter: (to, from) => {
-        //   if (!Boolean(store().user.groups[0].name === "admin")) {
-        //     return { name: "Locations" };
-        //   }
-        // },
       },
     ],
   },

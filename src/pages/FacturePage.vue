@@ -139,7 +139,6 @@ function getDatas() {
         items.value = locations.data;
         clients.value = clientsData.data;
         items.value.forEach((el) => {
-          console.log(el)
           el.chambre = chambres.value.find(
             (chambre) => chambre.id == el.room
           );

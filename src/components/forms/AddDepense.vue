@@ -1,11 +1,5 @@
 <template>
-  <form-generator
-    :fields="fields"
-    title="Ajouter une dépense"
-    :dense="false"
-    @save="getFormContent"
-    @close="cancel"
-  />
+  <form-generator :fields="fields" title="Ajouter une dépense" :dense="false" @save="getFormContent" @close="cancel" />
 </template>
 <script setup>
 import { ref, inject } from "vue";
@@ -58,7 +52,6 @@ const fields = ref([
 ]);
 function getFormContent(data) {
   loading.value = true;
-  console.log(data);
   data.spent_by = store().user.profil;
   axios
     .post(api + "hotel/depenses/", data, {
@@ -67,13 +60,11 @@ function getFormContent(data) {
       },
     })
     .then((res) => {
-      console.log(res);
       loading.value = false;
       $q.notify("Dépense crée avec succès");
       emits("saved");
     })
     .catch((err) => {
-      console.dir(err);
       loading.value = false;
       if (err.message && err.message == "Network Error") {
         $q.notify("Impossible de se connecter au server");
@@ -85,7 +76,6 @@ function getFormContent(data) {
           }
         } else {
           for (let msg in data) {
-            console.log(data[msg] == "Ce champ est obligatoire.");
             if (data[msg] == "Ce champ est obligatoire.") {
               $q.notify(
                 "Tous les champs avec « * »  sont obligatoires, veuillez les remplir svp"

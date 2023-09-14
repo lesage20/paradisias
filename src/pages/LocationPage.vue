@@ -98,12 +98,13 @@
 <script setup>
 import { defineAsyncComponent, ref, onMounted, inject, provide } from "vue";
 import { useQuasar } from "quasar";
-import { useLoginStore as store } from "src/stores/login";
+// import { useLoginStore as store } from "src/stores/login";
 import axios from "axios";
 import { useRouter } from "vue-router";
 
 const router = useRouter()
 const locId = ref(null)
+// const role = store()?.user?.groups?.[0].name
 
 const AddLocation = defineAsyncComponent(() =>
   import("src/components/forms/AddLocation.vue")
@@ -151,7 +152,6 @@ function getDatas() {
         items.value = locations.data;
         clients.value = clientsData.data;
         items.value.forEach((el) => {
-          console.log(el)
           el.chambre = chambres.value.find(
             (chambre) => chambre.id == el.room
           );
@@ -308,7 +308,11 @@ function del(id) {
     .then(() => {
       getDatas();
       $q.notify("Location supprimée avec suuccès");
-    });
+    })
+    .catch(err => {
+      console.log(err.response.status)
+      if (err.response.status == 403) $q.notify("Vous ne pouvez pas supprimer cet enregistrement.")
+    })
 }
 const selected = ref([]);
 provide("selected", selected);

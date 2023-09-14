@@ -1,11 +1,6 @@
 <template>
-  <form-generator
-    :fields="fields"
-    title="Ajouter une reservation"
-    :dense="$q.platform.is.desktop"
-    @save="getFormContent"
-    @close="cancel"
-  />
+  <form-generator :fields="fields" title="Ajouter une reservation" :dense="$q.platform.is.desktop" @save="getFormContent"
+    @close="cancel" />
 </template>
 <script setup>
 import { ref, inject } from "vue";
@@ -79,7 +74,6 @@ function getFormContent(data) {
   const toUpload = Object.assign({}, props.location);
   toUpload.checkOut = data.checkOut;
   toUpload.totalPrice = props.location.totalPrice + data.price;
-  console.log(toUpload);
   if (!validation.isValid) {
     $q.notify(validation.message);
     return;
@@ -104,7 +98,6 @@ function getFormContent(data) {
           }
         } else {
           for (let msg in data) {
-            console.log(data[msg] == "Ce champ est obligatoire.");
             if (data[msg] == "Ce champ est obligatoire.") {
               $q.notify(
                 "Tous les champs avec « * »  sont obligatoires, veuillez les remplir svp"

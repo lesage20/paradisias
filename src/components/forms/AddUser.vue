@@ -111,7 +111,6 @@ const loading = ref(false);
 
 function getFormContent(data) {
   loading.value = true;
-  console.log(options);
   if (props.client) {
     data.groups = "client";
   }
@@ -123,7 +122,6 @@ function getFormContent(data) {
     })
     .then((res) => {
       emits("saved");
-      console.log(res);
       loading.value = false;
       $q.notify("Compte crée avec succès");
     })

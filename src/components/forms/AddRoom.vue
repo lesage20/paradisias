@@ -32,7 +32,6 @@ onMounted(() => {
     )
     .then(
       axios.spread((types, floors) => {
-        console.log(types, floors);
         types.data.forEach((el) => {
           let opt = {
             label: el.name,
@@ -108,7 +107,6 @@ const fields = ref([
 ]);
 function getFormContent(data) {
   loading.value = true;
-  console.log(data);
   axios
     .post(api + "hotel/chambres/", data, {
       headers: {
@@ -116,7 +114,6 @@ function getFormContent(data) {
       },
     })
     .then((res) => {
-      console.log(res);
       loading.value = false;
       $q.notify("Chambre crée avec succès");
     })
@@ -133,7 +130,6 @@ function getFormContent(data) {
           }
         } else {
           for (let msg in data) {
-            console.log(data[msg] == "Ce champ est obligatoire.");
             if (data[msg] == "Ce champ est obligatoire.") {
               $q.notify(
                 "Tous les champs avec « * »  sont obligatoires, veuillez les remplir svp"

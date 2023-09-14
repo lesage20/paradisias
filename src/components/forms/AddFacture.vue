@@ -149,7 +149,6 @@ function getFormContent(data) {
           }
         } else {
           for (let msg in data) {
-            console.log(data[msg] == "Ce champ est obligatoire.");
             if (data[msg] == "Ce champ est obligatoire.") {
               $q.notify(
                 "Tous les champs avec « * »  sont obligatoires, veuillez les remplir svp"

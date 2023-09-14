@@ -1,12 +1,6 @@
 <template>
-  <form-generator
-    title="Ajouter type de chambre"
-    :fields="fields"
-    :dense="false"
-    :loading="loading"
-    @save="getFormContent"
-    @close="cancel"
-  />
+  <form-generator title="Ajouter type de chambre" :fields="fields" :dense="false" :loading="loading"
+    @save="getFormContent" @close="cancel" />
 </template>
 <script setup>
 import { inject, ref } from "vue";
@@ -67,7 +61,6 @@ const fields = ref([
 const add = ref(false);
 function getFormContent(data) {
   loading.value = true;
-  console.log(data);
   axios
     .post(api + "hotel/types_chambre/", data, {
       headers: {
@@ -75,7 +68,6 @@ function getFormContent(data) {
       },
     })
     .then((res) => {
-      console.log(res);
       loading.value = false;
       $q.notify("Type de chambre créé avec succès");
       emits("saved");
@@ -93,7 +85,6 @@ function getFormContent(data) {
           }
         } else {
           for (let msg in data) {
-            console.log(data[msg] == "Ce champ est obligatoire.");
             if (data[msg] == "Ce champ est obligatoire.") {
               $q.notify(
                 "Tous les champs avec « * »  sont obligatoires, veuillez les remplir svp"

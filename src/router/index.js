@@ -34,7 +34,7 @@ export default route(function (/* { store, ssrContext } */) {
     // quasar.conf.js -> build -> publicPath
     history: createHistory(process.env.VUE_ROUTER_BASE),
   });
-  const api = "http://192.168.1.67:8002/"; //"https://paradisias-api.herokuapp.com/"
+  const api = "https://api.paradisias-hotel.com/"; //"https://paradisias-api.herokuapp.com/"
   // process.env.DEV
   //   ? "http://192.168.43.108:8000/"
   //   :

@@ -12,22 +12,14 @@
             Télécharge directement le fichier
           </q-tooltip>
         </q-btn>
-        <q-btn
-          color="primary q-mx-md"
-          label="appercu pdf"
-          @click="preview = true"
-        >
+        <q-btn color="primary q-mx-md" label="appercu pdf" @click="preview = true">
           <q-tooltip class="text-body2">
             Affiche un apperçu avant de télécharger le fichier
           </q-tooltip>
         </q-btn>
 
-        <q-dialog
-          v-model="preview"
-          :maximized="$q.platform.is.mobile"
-          transition-show="slide-up"
-          transition-hide="slide-down"
-        >
+        <q-dialog v-model="preview" :maximized="$q.platform.is.mobile" transition-show="slide-up"
+          transition-hide="slide-down">
           <q-card style="max-width: 800px">
             <q-card-section v-html="content.innerHTML"> </q-card-section>
             <q-toolbar>
@@ -38,20 +30,10 @@
                 </div>
                 <q-space></q-space>
                 <div class="col-xs-4 q-pl-md">
-                  <q-btn
-                    color="negative"
-                    label="Annuler"
-                    flat
-                    @click="preview = false"
-                  >
+                  <q-btn color="negative" label="Annuler" flat @click="preview = false">
                     <q-tooltip> Ne pas télécharger le fichier </q-tooltip>
                   </q-btn>
-                  <q-btn
-                    color="primary"
-                    label="Télecharger"
-                    flat
-                    @click="generate"
-                  >
+                  <q-btn color="primary" label="Télecharger" flat @click="generate">
                     <q-tooltip> Télécharge le fichier </q-tooltip>
                   </q-btn>
                 </div>
@@ -112,8 +94,6 @@ function generate() {
           .get("pdf")
           .then(
             (pdf) => {
-              console.log("getHeight:" + pdf.internal.pageSize.getHeight());
-              console.log("getWidth:" + pdf.internal.pageSize.getWidth());
               var totalPages = pdf.internal.getNumberOfPages();
 
               for (let i = 1; i <= totalPages; i++) {
@@ -167,8 +147,6 @@ function generate() {
       .get("pdf")
       .then(
         (pdf) => {
-          console.log("getHeight:" + pdf.internal.pageSize.getHeight());
-          console.log("getWidth:" + pdf.internal.pageSize.getWidth());
           var totalPages = pdf.internal.getNumberOfPages();
 
           for (let i = 1; i <= totalPages; i++) {

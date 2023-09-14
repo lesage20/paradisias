@@ -40,7 +40,7 @@
           </q-tooltip>
         </q-btn>
 
-        <q-btn v-if="selected.length" size="md" outlined round flat icon="paid" @click="emits('paid')">
+        <!-- <q-btn v-if="selected.length" size="md" outlined round flat icon="paid" @click="emits('paid')">
           <q-tooltip class="text-body2">
             Marquée la/les selections payées
           </q-tooltip>
@@ -49,7 +49,7 @@
           <q-tooltip class="text-body2">
             Marquée la/les selections dt
           </q-tooltip>
-        </q-btn>
+        </q-btn> -->
       </template>
       <template v-if="reservationTools">
         <q-btn v-if="selected.length == 1" size="md" outlined round flat icon="close" @click="emits('canceled')">
@@ -96,7 +96,6 @@
             @click="emits('addFacture', attr.row)">
             <q-tooltip class="text-body2">Ajouter payement</q-tooltip>
           </q-btn>
-
           <q-btn flat round class="q-mx-sm" color="red-9" size="sm" icon="fa-solid fa-trash"
             @click="deleteItem(attr.row)">
             <q-tooltip class="text-body2">Supprimer</q-tooltip>
