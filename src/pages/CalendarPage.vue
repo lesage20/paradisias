@@ -17,6 +17,9 @@ import axios from "axios";
 import { useQuasar } from "quasar";
 import { inject, onMounted, ref, defineAsyncComponent } from "vue";
 import { useLoginStore as store } from "src/stores/login";
+import { useRouter } from "vue-router";
+
+const router = useRouter()
 const RoomValidity = defineAsyncComponent(() =>
   import("src/components/RoomValidity.vue")
 );

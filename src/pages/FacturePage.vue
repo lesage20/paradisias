@@ -95,6 +95,9 @@ import { defineAsyncComponent, ref, onMounted, inject, provide } from "vue";
 import { useQuasar } from "quasar";
 import { useLoginStore as store } from "src/stores/login";
 import axios from "axios";
+import { useRouter } from "vue-router";
+
+const router = useRouter()
 const AddLocation = defineAsyncComponent(() =>
   import("src/components/forms/AddLocation.vue")
 );

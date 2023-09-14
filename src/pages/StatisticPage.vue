@@ -196,6 +196,9 @@ import ImportantCard from "src/components/ImportantCard.vue";
 import ReportChart from "src/components/reports/ReportChart.vue";
 import { useQuasar, QSpinnerIos } from "quasar";
 import axios from "axios";
+import { useRouter } from "vue-router";
+
+const router = useRouter()
 import {
   isThisWeek,
   isThisMonth,

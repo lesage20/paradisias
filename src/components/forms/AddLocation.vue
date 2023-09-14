@@ -8,7 +8,9 @@ import axios from "axios";
 import { useQuasar } from "quasar";
 import { useLoginStore } from "src/stores/login";
 import { isBefore, isAfter } from "date-fns";
+import { useRouter } from "vue-router";
 
+const router = useRouter()
 const token = inject("token");
 const api = inject("api");
 const $q = useQuasar();

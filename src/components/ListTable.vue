@@ -71,7 +71,7 @@
       </q-btn>
     </q-toolbar>
     <q-table v-model:selected="selected" separator="cell" bordered :filter="search" flat :selection="selectable"
-      :grid="grid" :columns="columns" :rows="items" :dense="dense">
+      :grid="grid" :columns="columns" :rows="items" :dense="dense" :pagination="initialPagination">
       <template #body-cell-status="attr">
         <slot name="status" :status="attr.row.status">
           <q-td class="text-center" :attr="attr">
@@ -146,7 +146,13 @@ const props = defineProps({
 
 const search = ref("");
 const selected = ref(inject("selected"));
-
+const initialPagination = {
+  sortBy: 'desc',
+  descending: false,
+  page: 1,
+  rowsPerPage: 10
+  // rowsNumber: xx if getting data from a server
+}
 const emits = defineEmits([
   "add",
   "delete",

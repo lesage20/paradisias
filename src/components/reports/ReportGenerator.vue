@@ -149,7 +149,9 @@ import axios from "axios";
 import PdfGenerator from "./PdfGenerator.vue";
 import { ref, onMounted, inject, computed, watchEffect } from "vue";
 import { isToday, isThisWeek, isThisMonth } from "date-fns";
+import { useRouter } from "vue-router";
 
+const router = useRouter()
 const emits = defineEmits(["back"]);
 const token = inject("token");
 const api = inject("api");

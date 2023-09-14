@@ -49,7 +49,9 @@ import AddRoomType from "src/components/forms/AddRoomType.vue";
 import ListTable from "src/components/ListTable.vue";
 import { useQuasar } from "quasar";
 import axios from "axios";
+import { useRouter } from "vue-router";
 
+const router = useRouter()
 const token = inject("token");
 const api = inject("api");
 const $q = useQuasar();

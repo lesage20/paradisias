@@ -130,7 +130,9 @@ import { useQuasar } from "quasar";
 import { ref, onMounted, inject, defineAsyncComponent } from "vue";
 import axios from "axios";
 import { VueDraggableNext as draggable } from 'vue-draggable-next'
+import { useRouter } from "vue-router";
 
+const router = useRouter()
 const ListTable = defineAsyncComponent(() =>
   import("src/components/ListTable.vue")
 );

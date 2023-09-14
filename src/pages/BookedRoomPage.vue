@@ -106,7 +106,9 @@ import { ref, onMounted, inject, defineAsyncComponent } from "vue";
 import { useQuasar } from "quasar";
 import axios from "axios";
 import { isWithinInterval, isAfter } from "date-fns";
+import { useRouter } from "vue-router";
 
+const router = useRouter()
 const CountDown = defineAsyncComponent(() =>
   import("src/components/CountDown.vue")
 );

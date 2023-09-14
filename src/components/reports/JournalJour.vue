@@ -23,12 +23,6 @@
         Aujourd'hui
         <q-tooltip class="text-subtitle2"> Rapport d'aujourdui </q-tooltip>
       </q-btn>
-
-      <q-btn class="q-mx-sm" color="orange-8" @click="selectedRange = 'month'">
-        <q-icon left size="xs" name="fa fa-calendar-days" />
-        Ce Mois
-        <q-tooltip class="text-subtitle2"> Rapport de ce mois </q-tooltip>
-      </q-btn>
     </q-toolbar>
     <q-toolbar class="q-ma-none q-pa-none mobile-only">
       <q-btn round flat icon="fa fa-arrow-left" @click="emits('back')"></q-btn>
@@ -94,7 +88,7 @@
           <q-separator inset></q-separator>
           <q-toolbar class="q-mt-lg">
             <q-toolbar-title class="text-center text-uppercase">
-              Planning d'occupation Journalière des chambres
+              Journal du jour
             </q-toolbar-title>
           </q-toolbar>
           <q-toolbar class="q-pr-xl q-pa-none q-ma-none">
@@ -126,7 +120,9 @@ import axios from "axios";
 import PdfGenerator from "./PdfGenerator.vue";
 import { ref, onMounted, inject, computed, watchEffect } from "vue";
 import { isToday, isThisWeek, isThisMonth, isWithinInterval } from "date-fns";
+import { useRouter } from "vue-router";
 
+const router = useRouter()
 const emits = defineEmits(["back"]);
 const token = inject("token");
 const api = inject("api");
@@ -165,7 +161,7 @@ onMounted(() => {
             let dp = fact.filter(elm => elm.status == "dp").map(elm => elm.amount).reduce((cum, curr) => cum + curr, 0)
             el.dt = el.totalPrice - toReduce
             el.dp = dp
-            el.pj
+            el.pj = fact.filter(elm => elm.status == "pj").map(elm => elm.amount).reduce((cum, curr) => cum + curr, 0)
           }
           else {
             el.dt = el.totalPrice

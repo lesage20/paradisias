@@ -45,6 +45,9 @@
 <script setup>
 import axios from "axios";
 import { inject, onMounted, ref, defineAsyncComponent } from "vue";
+import { useRouter } from "vue-router";
+
+const router = useRouter()
 const AddDepense = defineAsyncComponent(() =>
   import("src/components/forms/AddDepense.vue")
 );

@@ -6,7 +6,9 @@
 import { inject, ref, computed, onMounted } from "vue";
 import axios from "axios";
 import { useQuasar } from "quasar";
+import { useRouter } from "vue-router";
 
+const router = useRouter()
 const props = defineProps({
   client: {
     type: Boolean,

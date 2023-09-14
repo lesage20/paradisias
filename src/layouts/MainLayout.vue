@@ -130,6 +130,43 @@ const linksList = computed(() => {
       children: [],
     },
     {
+      title: "Locations",
+      caption: "Commandes ou enregistrement",
+      icon: "fas fa-book",
+      link: { name: "Locations" },
+    },
+    {
+      title: "Clients",
+      caption: "gestion des clients",
+      icon: "fa fa-user",
+      link: { name: "Guests" },
+    },
+    {
+      title: "Chambres Occupées",
+      caption: "chambres et salles reservées",
+      icon: "fa fa-home",
+      link: { name: "Reserved" },
+    },
+
+    {
+      title: "Calendrier",
+      caption: "disponibilité des pièces",
+      icon: "fa fa-calendar",
+      link: { name: "Calendar" },
+    },
+    {
+      title: "Rapports",
+      caption: "rapports quotidiens, hebdo...",
+      icon: "fas fa-file",
+      link: { name: "Reports" },
+    },
+    {
+      title: "Reservations",
+      caption: "Commandes ou enregistrement",
+      icon: "fas fa-book",
+      link: { name: "Reservations" },
+    },
+    {
       title: "Structure Hotel",
       caption: "etages,chambres,salles...",
       icon: "fa fa-cog",
@@ -158,36 +195,6 @@ const linksList = computed(() => {
       ],
     },
     {
-      title: "Locations",
-      caption: "Commandes ou enregistrement",
-      icon: "fas fa-book",
-      link: { name: "Locations" },
-    },
-    {
-      title: "Reservations",
-      caption: "Commandes ou enregistrement",
-      icon: "fas fa-book",
-      link: { name: "Reservations" },
-    },
-    {
-      title: "Pièces reservées",
-      caption: "chambres et salles reservées",
-      icon: "fa fa-home",
-      link: { name: "Reserved" },
-    },
-    {
-      title: "Calendrier",
-      caption: "disponibilité des pièces",
-      icon: "fa fa-calendar",
-      link: { name: "Calendar" },
-    },
-    {
-      title: "Clients",
-      caption: "gestion des clients",
-      icon: "fa fa-user",
-      link: { name: "Guests" },
-    },
-    {
       title: "Administration",
       caption: "gestion des employés",
       icon: "fa fa-users",
@@ -207,12 +214,7 @@ const linksList = computed(() => {
         },
       ],
     },
-    {
-      title: "Rapports",
-      caption: "rapports quotidiens, hebdo...",
-      icon: "fas fa-file",
-      link: { name: "Reports" },
-    },
+
   ];
   const links = [
     {
@@ -222,29 +224,32 @@ const linksList = computed(() => {
       link: { name: "Locations" },
     },
     {
-      title: "Pièces reservées",
+      title: "Clients",
+      caption: "gestion des clients",
+      icon: "fa fa-user",
+      link: { name: "Guests" },
+    },
+    {
+      title: "Rapports",
+      caption: "rapports quotidiens, hebdo...",
+      icon: "fas fa-file",
+      link: { name: "Reports" },
+    },
+    {
+      title: "Chambres Occupées",
       caption: "chambres et salles reservées",
       icon: "fa fa-home",
       link: { name: "Reserved" },
     },
+
     {
       title: "Calendrier",
       caption: "disponibilité des pièces",
       icon: "fa fa-calendar",
       link: { name: "Calendar" },
     },
-    {
-      title: "Clients",
-      caption: "gestion des clients",
-      icon: "fa fa-user",
-      link: { name: "Guests" },
-    },
-    // {
-    //   title: "Rapports",
-    //   caption: "rapports quotidiens, hebdo...",
-    //   icon: "fas fa-file",
-    //   link: { name: "Reports" },
-    // },
+
+
     {
       title: "Accueil",
       caption: "gestion des clients",
