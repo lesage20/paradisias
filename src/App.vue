@@ -1,6 +1,6 @@
 <template>
   <div>
-    <q-ajax-bar color="primary" style="height: 4px"></q-ajax-bar>
+    <q-ajax-bar position="bottom" color="primary" style="height: 4px"></q-ajax-bar>
 
     <keep-alive>
       <router-view />
@@ -25,7 +25,7 @@ if (!isOnLine.value) {
 }
 provide('isOnline', isOnLine)
 
-if (false) {
+if (true) {
   provide("api", "http://127.0.0.1:8002/");
 } else {
   provide("api", "https://api.paradisias-hotel.com/");

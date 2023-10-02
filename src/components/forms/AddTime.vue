@@ -6,7 +6,7 @@
 import { ref, inject } from "vue";
 import axios from "axios";
 import { isBefore, isAfter } from "date-fns";
-import { useQuasar } from "quasar";
+import { date, useQuasar } from "quasar";
 const api = inject("api");
 const token = inject("token");
 const $q = useQuasar();
@@ -36,12 +36,13 @@ const fields = ref([
 ]);
 function validLocation(data) {
   let validation = { isValid: true, message: "" };
+
   if (Object.keys(data).length < 2) {
     validation = {
       isValid: false,
       message: "Tous les champs sont obligatoire",
     };
-  } else if (isBefore(new Date(data.checkOut), new Date())) {
+  } else if (isBefore(new Date(data.checkOut), new Date().setHours(0, 0, 0))) {
     validation = {
       isValid: false,
       message: "La date  de sortie ne peut pas être avant maintenant",

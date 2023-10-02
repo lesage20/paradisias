@@ -143,8 +143,8 @@ function validReservation(data, list) {
     };
     return validation;
   } else if (
-    isBefore(new Date(data.checkIn), new Date()) ||
-    isBefore(new Date(data.checkOut), new Date())
+    isBefore(new Date(data.checkIn), new Date().setHours(0, 0, 0)) ||
+    isBefore(new Date(data.checkOut), new Date().setHours(0, 0, 0))
   ) {
     validation = {
       isValid: false,
