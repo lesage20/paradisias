@@ -1,6 +1,6 @@
 <template>
-  <form-generator style="min-width:450px" :fields="fields" title="Ajouter une location" :dense="$q.platform.is.desktop"
-    @save="getFormContent" @close="cancel" />
+  <form-generator :style="$q.screen.gt.sm ? 'min-width:450px' : ''" :fields="fields" title="Ajouter une location"
+    :dense="$q.platform.is.desktop" @save="getFormContent" @close="cancel" />
 </template>
 <script setup>
 import { ref, onMounted, inject } from "vue";

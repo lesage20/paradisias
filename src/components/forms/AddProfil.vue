@@ -125,7 +125,7 @@ const fields = ref([
     required: true,
     name: "father",
     model: "father",
-    label: "Nom et prenoms du père *",
+    label: "Nom et prenoms du père",
     type: "text",
   },
   {
@@ -133,7 +133,7 @@ const fields = ref([
     required: true,
     name: "mother",
     model: "mother",
-    label: "Nom et prenoms de la mère *",
+    label: "Nom et prenoms de la mère",
     type: "text",
   },
   {
@@ -207,7 +207,7 @@ const fields = ref([
     required: true,
     name: "id_delivered_at",
     model: "id_delivered_at",
-    label: "Pièce d'identité ou passeport délivré le ",
+    label: "Pièce d'identité ou passeport délivré le *",
     type: "date",
   },
   {
@@ -215,7 +215,7 @@ const fields = ref([
     required: true,
     name: "id_delivered_place",
     model: "id_delivered_place",
-    label: "Pièce d'identité ou passeport délivré à ( lieu ) ",
+    label: "Pièce d'identité ou passeport délivré à ( lieu ) *",
     type: "text",
   },
   {
@@ -223,7 +223,7 @@ const fields = ref([
     required: true,
     name: "id_delivered_by",
     model: "id_delivered_by",
-    label: "Pièce d'identité ou passeport délivré par ",
+    label: "Pièce d'identité ou passeport délivré par *",
     type: "text",
   },
   {
